@@ -19,6 +19,16 @@ const MerchantSchema = new Schema({
     minlength: 7,
     trim: true,
   },
+  phone: {
+    type: Number,
+    required: true,
+  },
+});
+
+MerchantSchema.virtual("products", {
+  ref: "Product",
+  localField: "_id",
+  foreignField: "merchant",
 });
 
 const Merchant = mongoose.model("Merchant", MerchantSchema);
