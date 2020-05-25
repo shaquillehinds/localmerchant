@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Merchant = require("../../server/models/MerchantModel");
 
 const merchants = [
   {
@@ -35,4 +36,16 @@ const merchants = [
   },
 ];
 
-module.exports = merchants;
+const seedMerchantDB = async (merchants) => {
+  await Merchant.deleteMany();
+  const saved = [];
+  merchants.forEach(async (merchant) => {
+    const newMerchant = new Merchant(merchant);
+    const { _id, name, email, phone, industry } = await newMerchant.save();
+    const res = { _id: _id.toString(), name, email, phone, industry };
+    saved.push(res);
+  });
+  return saved;
+};
+
+module.exports = { merchants, seedMerchantDB };

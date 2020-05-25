@@ -24,6 +24,11 @@ const CustomerSchema = new Schema({
   },
 });
 
+CustomerSchema.methods.toJSON = function () {
+  const { _id, name, email } = this;
+  return { _id, name, email };
+};
+
 const Customer = mongoose.model("Customer", CustomerSchema);
 
 module.exports = Customer;

@@ -37,6 +37,11 @@ MerchantSchema.virtual("products", {
   foreignField: "merchant",
 });
 
+MerchantSchema.methods.toJSON = function () {
+  const { _id, name, email, phone, industry } = this;
+  return { _id, name, email, phone, industry };
+};
+
 const Merchant = mongoose.model("Merchant", MerchantSchema);
 
 module.exports = Merchant;
