@@ -15,12 +15,19 @@ const ProductSchema = new Schema({
   },
   image: {
     type: Buffer,
+    default: undefined,
+  },
+  category: {
+    type: String,
+    required: true,
   },
   merchant: {
-    type: mongoose.SchemaTypes.ObjectId,
+    type: Schema.Types.ObjectId,
     required: true,
     ref: "Merchant",
   },
 });
 
 const Product = mongoose.model("Product", ProductSchema);
+
+module.exports = Product;

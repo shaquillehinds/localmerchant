@@ -23,6 +23,11 @@ const MerchantSchema = new Schema({
     type: Number,
     required: true,
   },
+  industry: {
+    type: String,
+    required: true,
+    trim: true,
+  },
 });
 
 MerchantSchema.virtual("products", {
@@ -33,4 +38,4 @@ MerchantSchema.virtual("products", {
 
 const Merchant = mongoose.model("Merchant", MerchantSchema);
 
-export default Merchant;
+module.exports = Merchant;
