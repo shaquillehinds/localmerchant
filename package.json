@@ -7,7 +7,7 @@
     "server-dev": "nodemon server/",
     "app-dev": "nodemon server/",
     "start": "node server/",
-    "test": "jest --runInBand"
+    "node-test": "jest --runInBand --env=node"
   },
   "keywords": [],
   "author": "",

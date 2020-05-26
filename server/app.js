@@ -3,23 +3,23 @@ const express = require("express");
 const merchantRouter = require("./routers/merchantRoute");
 const Dotenv = require("dotenv");
 const multer = require("multer");
-
-//configure application
 const cors = require("cors");
+
+//configure applicatio
 const app = express();
-app.use(cors());
-app.use(express.json());
-const upload = multer();
 Dotenv.config();
+require("./db/mongoose");
+const upload = multer();
 
 //require mongoose and models
-require("./db/mongoose");
+
 const Customer = require("./models/CustomerModel");
 const Product = require("./models/ProductModel");
 const Merchant = require("./models/MerchantModel");
 
-/*************************App Routes ****************************/
-
+//middleware
+app.use(cors());
+app.use(express.json());
 app.use("/merchant", merchantRouter);
 
 //create a new customer

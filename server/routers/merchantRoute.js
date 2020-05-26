@@ -17,7 +17,7 @@ router.get("/:name/products", async (req, res) => {
   }
 });
 
-//create a new merchant
+//get merchants, post a new merchant
 router
   .route("/")
   .get(async (req, res) => {
@@ -34,8 +34,8 @@ router
       const merchant = new Merchant({ name, email, password, phone, industry });
       const token = await merchant.generateAuthToken();
       // s stands for saved
-      const { id } = await merchant.save();
-      const saved = { name, email, id, token };
+      const { _id } = await merchant.save();
+      const saved = { name, email, _id, token };
       res.status(201).send(saved);
     } catch (e) {
       console.log(e);

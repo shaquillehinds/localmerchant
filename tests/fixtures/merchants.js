@@ -36,16 +36,20 @@ const merchants = [
   },
 ];
 
-const seedMerchantDB = async (merchants) => {
-  await Merchant.deleteMany();
+const seedMerchantDB = async () => {
   const saved = [];
-  merchants.forEach(async (merchant) => {
-    const newMerchant = new Merchant(merchant);
-    await newMerchant.generateAuthToken();
-    const { _id, name, email, phone, industry } = await newMerchant.save();
-    const res = { _id: _id.toString(), name, email, phone, industry };
-    saved.push(res);
-  });
+  try {
+    await Merchant.deleteMany();
+    for (merchant of merchants) {
+      const newMerchant = new Merchant(merchant);
+      const token = await newMerchant.generateAuthToken();
+      const { _id, name, email, phone, industry } = await newMerchant.save();
+      const res = { _id: _id.toString(), name, email, phone, industry };
+      saved.push(res);
+    }
+  } catch (e) {
+    console.log(e);
+  }
   return saved;
 };
 
