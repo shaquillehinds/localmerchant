@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-const Product = require("./ProductModel");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const Schema = mongoose.Schema;
 
 const MerchantSchema = new Schema({
@@ -29,6 +30,14 @@ const MerchantSchema = new Schema({
     required: true,
     trim: true,
   },
+  tokens: [
+    {
+      token: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
 });
 
 MerchantSchema.virtual("products", {
@@ -37,9 +46,27 @@ MerchantSchema.virtual("products", {
   foreignField: "merchant",
 });
 
+//configures the JSON response to only send certain fields
 MerchantSchema.methods.toJSON = function () {
   const { _id, name, email, phone, industry } = this;
   return { _id, name, email, phone, industry };
+};
+
+//hash password before saving if modified or new
+MerchantSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 8);
+  }
+  next();
+});
+
+MerchantSchema.methods.generateAuthToken = async function () {
+  const _id = this._id.toString();
+  const token = jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+  this.tokens.push({ token });
+  await this.save();
+  return token;
 };
 
 const Merchant = mongoose.model("Merchant", MerchantSchema);
