@@ -17,9 +17,10 @@ const ProductSchema = new Schema({
     type: Buffer,
     default: undefined,
   },
-  category: {
-    type: String,
+  tags: {
+    type: Array,
     required: true,
+    trim: true,
   },
   merchant: {
     type: Schema.Types.ObjectId,
@@ -27,6 +28,19 @@ const ProductSchema = new Schema({
     ref: "Merchant",
   },
 });
+
+ProductSchema.index({ tags: "text" });
+
+ProductSchema.methods.toJSON = function () {
+  const { _id, name, price, merchant } = this;
+  return { _id, name, price, merchant };
+};
+
+ProductSchema.statics.findPartial = async function (field, characters, limit = 10) {
+  const search = {};
+  search[field] = new RegExp(characters, "gi");
+  return await this.find(search).limit(limit);
+};
 
 const Product = mongoose.model("Product", ProductSchema);
 

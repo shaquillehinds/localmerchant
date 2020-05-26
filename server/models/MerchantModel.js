@@ -46,12 +46,6 @@ MerchantSchema.virtual("products", {
   foreignField: "merchant",
 });
 
-//configures the JSON response to only send certain fields
-MerchantSchema.methods.toJSON = function () {
-  const { _id, name, email, phone, industry } = this;
-  return { _id, name, email, phone, industry };
-};
-
 //hash password before saving if modified or new
 MerchantSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
@@ -60,6 +54,20 @@ MerchantSchema.pre("save", async function (next) {
   next();
 });
 
+//
+MerchantSchema.statics.findPartial = async function (field, characters, limit = 10) {
+  const search = {};
+  search[field] = new RegExp(characters, "gi");
+  return await this.find(search).limit(limit);
+};
+
+//configures the JSON response to only send certain fields
+MerchantSchema.methods.toJSON = function () {
+  const { _id, name, email, phone, industry } = this;
+  return { _id, name, email, phone, industry };
+};
+
+//Creates and saves a new JSONWebToken from merchant id and returns said token
 MerchantSchema.methods.generateAuthToken = async function () {
   const _id = this._id.toString();
   const token = jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: "7d" });

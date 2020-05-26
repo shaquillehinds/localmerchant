@@ -4,25 +4,25 @@ const products = [
   {
     name: "brake pads",
     price: 9000,
-    category: "car parts",
+    tags: ["brakes", "brake pads", "car parts"],
     merchant: "",
   },
   {
     name: "headphones",
     price: 5000,
-    category: "audio",
+    tags: ["headphones", "speakers", "audio"],
     merchant: "",
   },
   {
     name: "watch",
     price: 100000,
-    category: "wrist wear",
+    tags: ["watch", "jewelry", "wrist wear"],
     merchant: "",
   },
   {
     name: "bath soap",
     price: 300,
-    category: "skin care",
+    tags: ["skin care", "soap", "beauty"],
     merchant: "",
   },
 ];
@@ -32,21 +32,13 @@ const seedProductsDB = async (products, id) => {
   const saved = [];
   for (product of products) {
     const newProduct = new Product({ ...product, merchant: id });
-    const {
-      _id,
-      name,
-      price,
-      category,
-      merchant,
-      __v,
-    } = await newProduct.save();
+    const { _id, name, price, tags, merchant } = await newProduct.save();
     const res = {
       _id: _id.toString(),
       name,
       price,
-      category,
+      tags: Array.from(tags),
       merchant: merchant.toString(),
-      __v,
     };
     saved.push(res);
   }

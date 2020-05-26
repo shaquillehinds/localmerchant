@@ -8,9 +8,7 @@ const upload = multer();
 router.get("/:name/products", async (req, res) => {
   const name = req.params.name;
   try {
-    const merchant = await Merchant.findOne({ name })
-      .populate("products")
-      .exec();
+    const merchant = await Merchant.findOne({ name }).populate("products", { __v: 0 }).lean().exec();
     res.send(merchant.products);
   } catch (e) {
     res.status(500).send(e);
@@ -42,5 +40,15 @@ router
       res.status(500).send(e);
     }
   });
+
+router.get("/search", async (req, res) => {
+  const name = req.query.name;
+  try {
+    const results = await Merchant.findPartial("name", name);
+    res.send(results);
+  } catch (e) {
+    res.status(400);
+  }
+});
 
 module.exports = router;
