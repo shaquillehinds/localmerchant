@@ -15,6 +15,7 @@ const upload = multer();
 //require mongoose and models
 
 const Customer = require("./models/CustomerModel");
+const Admin = require("./models/AdminModel");
 
 //middleware
 app.use(cors());
@@ -33,5 +34,20 @@ app.post("/customer", upload.array(), async (req, res) => {
     res.status(500).send(e);
   }
 });
+
+app.post("/admin", upload.array(), async (req, res) => {
+  const { email, password } = req.body;
+  const token = await Admin.findAndLogin(email, password);
+  if (token instanceof Error) {
+    return res.status(400).send("Unable to login.");
+  }
+  res.send(token);
+});
+
+// const { name, email, password } = req.body;
+// const newAdmin = new Admin({ name, email, password });
+// const token = await newAdmin.generateAuthToken(newAdmin._id);
+// const response = await newAdmin.save();
+// res.send({ ...response, token });
 
 module.exports = app;

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { findPartial } = require("./methods&statics/statics");
 const Schema = mongoose.Schema;
 
 const ProductSchema = new Schema({
@@ -36,11 +37,7 @@ ProductSchema.methods.toJSON = function () {
   return { _id, name, price, merchant };
 };
 
-ProductSchema.statics.findPartial = async function (field, characters, limit = 10) {
-  const search = {};
-  search[field] = new RegExp(characters, "gi");
-  return await this.find(search).limit(limit);
-};
+ProductSchema.statics.findPartial = findPartial;
 
 const Product = mongoose.model("Product", ProductSchema);
 

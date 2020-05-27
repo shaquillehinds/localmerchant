@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const { generateAuthToken } = require("./methods&statics/methods");
+const { findPartial } = require("./methods&statics/statics");
+const { hashPassword } = require("./middleware/middleware");
 const jwt = require("jsonwebtoken");
 const Schema = mongoose.Schema;
 
@@ -47,19 +50,10 @@ MerchantSchema.virtual("products", {
 });
 
 //hash password before saving if modified or new
-MerchantSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, 8);
-  }
-  next();
-});
+MerchantSchema.pre("save", hashPassword);
 
 //
-MerchantSchema.statics.findPartial = async function (field, characters, limit = 10) {
-  const search = {};
-  search[field] = new RegExp(characters, "gi");
-  return await this.find(search).limit(limit);
-};
+MerchantSchema.statics.findPartial = findPartial;
 
 //configures the JSON response to only send certain fields
 MerchantSchema.methods.toJSON = function () {
@@ -68,14 +62,7 @@ MerchantSchema.methods.toJSON = function () {
 };
 
 //Creates and saves a new JSONWebToken from merchant id and returns said token
-MerchantSchema.methods.generateAuthToken = async function () {
-  const _id = this._id.toString();
-  const token = jwt.sign({ _id }, process.env.JWT_SECRET, { expiresIn: "7d" });
-
-  this.tokens.push({ token });
-  await this.save();
-  return token;
-};
+MerchantSchema.methods.generateAuthToken = generateAuthToken;
 
 const Merchant = mongoose.model("Merchant", MerchantSchema);
 
