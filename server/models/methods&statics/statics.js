@@ -4,12 +4,18 @@ const findAndLogin = async function (email, password) {
   try {
     const found = await this.findOne({ email });
     const isValid = await bcrypt.compare(password, found.password);
-    if (isValid) {
-      const token = found.generateAuthToken();
-      return token;
+    if (!isValid) {
+      throw new Error();
     }
+    const token = found.generateAuthToken();
+    if (found.rank) {
+      if (found.rank === "super admin") {
+        return { email, token };
+      }
+    }
+    return { token };
   } catch (e) {
-    return new Error();
+    return e;
   }
 };
 

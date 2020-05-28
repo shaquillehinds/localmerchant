@@ -23,6 +23,10 @@ const ProductSchema = new Schema({
     required: true,
     trim: true,
   },
+  inStock: {
+    type: Boolean,
+    default: true,
+  },
   merchant: {
     type: Schema.Types.ObjectId,
     required: true,

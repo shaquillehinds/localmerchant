@@ -17,12 +17,28 @@ const MerchantSchema = new Schema({
     require: true,
     unique: true,
     trim: true,
+    lowercase: true,
   },
   password: {
     type: String,
     required: true,
     minlength: 7,
     trim: true,
+  },
+  address: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  coord: {
+    lat: {
+      type: Number,
+      trim: true,
+    },
+    long: {
+      type: Number,
+      trim: true,
+    },
   },
   phone: {
     type: Number,
@@ -57,8 +73,8 @@ MerchantSchema.statics.findPartial = findPartial;
 
 //configures the JSON response to only send certain fields
 MerchantSchema.methods.toJSON = function () {
-  const { _id, name, email, phone, industry } = this;
-  return { _id, name, email, phone, industry };
+  const { _id, name, email, phone, industry, address, coord } = this;
+  return { _id, name, email, phone, industry, address, coord };
 };
 
 //Creates and saves a new JSONWebToken from merchant id and returns said token

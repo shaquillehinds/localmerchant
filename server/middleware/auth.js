@@ -2,14 +2,14 @@ const jwt = require("jsonwebtoken");
 const Merchant = require("../models/MerchantModel");
 const Admin = require("../models/AdminModel");
 
-const authorize = async (req, res, next) => {
+const auth = async (req, res, next) => {
   if (!req.headers.authorization) {
-    return res.status(400).send("Please Authenticate");
+    return res.status(401).send("Please Authenticate");
   }
   const token = req.headers.authorization.replace("Bearer ", "");
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
   if (!decoded) {
-    return res.status(400).send("Please Authenticate");
+    return res.status(401).send("Please Authenticate");
   }
   const _id = decoded._id;
   const admin = await Admin.findOne({ _id, "tokens.token": token });
@@ -24,8 +24,27 @@ const authorize = async (req, res, next) => {
     req.token = token;
     return next();
   } catch {
-    res.status(400).send("Please Authenticate");
+    res.status(401).send("Please Authenticate");
   }
 };
 
-module.exports = authorize;
+const authAdmin = async (req, res, next) => {
+  if (!req.headers.authorization) {
+    res.status(401).send("Please Authenticate");
+  }
+  const token = req.headers.authorization.replace("Bearer ", "");
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (!decoded) {
+      throw new Error();
+    }
+    const user = await Admin.findOne({ _id: decoded._id, "tokens.token": token, rank: "super admin" });
+    req.user = user;
+    req.token = token;
+    return next();
+  } catch (e) {
+    res.status(401).send("Please Authenticate");
+  }
+};
+
+module.exports = { auth, authAdmin };

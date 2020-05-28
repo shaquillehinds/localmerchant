@@ -28,13 +28,11 @@ router
   })
   .post(upload.array(), async (req, res) => {
     try {
-      const { name, email, password, phone, industry } = req.body;
-      const merchant = new Merchant({ name, email, password, phone, industry });
+      const merchant = new Merchant(req.body);
       const token = await merchant.generateAuthToken();
       // s stands for saved
-      const { _id } = await merchant.save();
-      const saved = { name, email, _id, token };
-      res.status(201).send(saved);
+      await merchant.save();
+      res.status(201).send({ token });
     } catch (e) {
       console.log(e);
       res.status(500).send(e);

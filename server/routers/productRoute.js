@@ -2,7 +2,7 @@ const router = require("express").Router();
 const multer = require("multer");
 const upload = multer();
 const Product = require("../models/ProductModel");
-const auth = require("../middleware/auth");
+const { auth } = require("../middleware/auth");
 
 //create a new product
 router
@@ -23,10 +23,7 @@ router
     let limit;
     req.query.limit ? (limit = req.query.limit) : (limit = 25);
     try {
-      const results = await Product.find(
-        { $text: { $search: tag } },
-        { name: 1 }
-      ).limit(limit);
+      const results = await Product.find({ $text: { $search: tag } }, { name: 1 }).limit(limit);
       res.send(results);
     } catch (e) {
       res.status(400);
