@@ -4,8 +4,8 @@
   "description": "A product/service search app that finds a given product/service in Barbados and returns the product info plus merchant info.",
   "main": "index.js",
   "scripts": {
-    "server-dev": "nodemon server/",
-    "app-dev": "nodemon server/",
+    "node-dev": "nodemon server/",
+    "react-dev": "nodemon server/",
     "start": "node server/",
     "node-test": "jest --runInBand --env=node"
   },
