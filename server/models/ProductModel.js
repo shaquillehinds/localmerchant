@@ -37,8 +37,8 @@ const ProductSchema = new Schema({
 ProductSchema.index({ tags: "text" });
 
 ProductSchema.methods.toJSON = function () {
-  const { _id, name, price, merchant } = this;
-  return { _id, name, price, merchant };
+  const { _id, name, price, tags, merchant, inStock } = this;
+  return { _id, name, price, tags, merchant, inStock };
 };
 
 ProductSchema.statics.findPartial = findPartial;

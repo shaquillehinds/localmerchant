@@ -7,9 +7,20 @@ const jwt = require("jsonwebtoken");
 const Schema = mongoose.Schema;
 
 const MerchantSchema = new Schema({
-  name: {
+  firstName: {
     type: String,
     required: true,
+    trim: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  businessName: {
+    type: String,
+    required: true,
+    unique: true,
     trim: true,
   },
   email: {
@@ -49,6 +60,11 @@ const MerchantSchema = new Schema({
     required: true,
     trim: true,
   },
+  rank: {
+    type: String,
+    default: "Bronze",
+    trim: true,
+  },
   tokens: [
     {
       token: {
@@ -73,8 +89,8 @@ MerchantSchema.statics.findPartial = findPartial;
 
 //configures the JSON response to only send certain fields
 MerchantSchema.methods.toJSON = function () {
-  const { _id, name, email, phone, industry, address, coord } = this;
-  return { _id, name, email, phone, industry, address, coord };
+  const { _id, firstName, lastName, businessName, email, phone, industry, address, coord } = this;
+  return { _id, firstName, lastName, businessName, email, phone, industry, address, coord };
 };
 
 //Creates and saves a new JSONWebToken from merchant id and returns said token

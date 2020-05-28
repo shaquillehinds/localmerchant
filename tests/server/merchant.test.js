@@ -14,7 +14,9 @@ test("should create a new merchant correctly", async () => {
   const res = await request(app)
     .post("/merchant")
     .send({
-      name: "Lisa",
+      firstName: "Lisa",
+      lastName: "King",
+      businessName: "Speed and Control",
       email: "lisa@example.com",
       password: "lisaking",
       phone: 4643534,
@@ -38,9 +40,11 @@ test("should fetch merchants correctly", async () => {
 
 test("should get products of merchant", async () => {
   const id = savedMerchants[0]._id;
-  const saved = await seedProductsDB(products, id);
   try {
-    const res = await request(app).get(`/merchant/${merchants[0].name}/products`).expect(200);
+    const saved = await seedProductsDB(products, id);
+    const res = await request(app)
+      .get(`/merchant/${savedMerchants[0].businessName}/products`)
+      .expect(200);
     expect(res.body).toEqual(saved);
   } catch (e) {
     console.log(e);

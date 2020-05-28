@@ -32,11 +32,12 @@ const seedProductsDB = async (products, id) => {
   const saved = [];
   for (product of products) {
     const newProduct = new Product({ ...product, merchant: id });
-    const { _id, name, price, tags, merchant, inStock } = await newProduct.save();
+    const { _id, name, price, image, tags, merchant, inStock } = await newProduct.save();
     const res = {
       _id: _id.toString(),
       name,
       price,
+      image,
       tags: Array.from(tags),
       merchant: merchant.toString(),
       inStock,

@@ -35,7 +35,6 @@ router.post("/", upload.array(), async (req, res) => {
   const newAdmin = new Admin(req.body);
   try {
     const token = await newAdmin.generateAuthToken();
-    await newAdmin.save();
     if (req.body.rank === "super admin") {
       const url = `${process.env.APP_URL}/admin/login?token=${token}`;
       const info = await emailSuperToken(url);
@@ -46,8 +45,10 @@ router.post("/", upload.array(), async (req, res) => {
       return res.send("Email sent");
     }
     const { _id, name, rank } = newAdmin;
+    await newAdmin.save();
     res.status(201).send({ _id, name, rank, token });
   } catch (e) {
+    console.log(e);
     res.status(500).send(e);
   }
 });

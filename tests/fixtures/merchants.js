@@ -4,7 +4,9 @@ const Merchant = require("../../server/models/MerchantModel");
 const merchants = [
   {
     _id: new mongoose.Types.ObjectId(),
-    name: "John",
+    firstName: "John",
+    lastName: "King",
+    businessName: "Real Parts",
     email: "john@example.com",
     password: "johnking",
     phone: 4643534,
@@ -17,7 +19,9 @@ const merchants = [
   },
   {
     _id: new mongoose.Types.ObjectId(),
-    name: "Terry",
+    firstName: "Terry",
+    lastName: "King",
+    businessName: "Super Electronics",
     email: "terry@example.com",
     password: "terryking",
     phone: 4532323,
@@ -30,7 +34,9 @@ const merchants = [
   },
   {
     _id: new mongoose.Types.ObjectId(),
-    name: "Richard",
+    firstName: "Richard",
+    lastName: "King",
+    businessName: "Crown Jewels",
     email: "richard@example.com",
     password: "richardking",
     phone: 4542464,
@@ -43,7 +49,9 @@ const merchants = [
   },
   {
     _id: new mongoose.Types.ObjectId(),
-    name: "Mary",
+    firstName: "Mary",
+    lastName: "King",
+    businessName: "Natural Beauty",
     email: "mary@example.com",
     password: "maryking",
     phone: 4867444,
@@ -63,8 +71,28 @@ const seedMerchantDB = async () => {
     for (merchant of merchants) {
       const newMerchant = new Merchant(merchant);
       const token = await newMerchant.generateAuthToken();
-      const { _id, name, email, phone, industry, address, coord } = await newMerchant.save();
-      const res = { _id: _id.toString(), name, email, phone, industry, address, coord };
+      const {
+        _id,
+        firstName,
+        lastName,
+        businessName,
+        email,
+        phone,
+        industry,
+        address,
+        coord,
+      } = await newMerchant.save();
+      const res = {
+        _id: _id.toString(),
+        firstName,
+        lastName,
+        businessName,
+        email,
+        phone,
+        industry,
+        address,
+        coord,
+      };
       saved.push(res);
     }
   } catch (e) {

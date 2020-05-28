@@ -5,12 +5,16 @@ const multer = require("multer");
 const upload = multer();
 
 //get merchant products
-router.get("/:name/products", async (req, res) => {
-  const name = req.params.name;
+router.get("/:businessName/products", async (req, res) => {
+  const businessName = req.params.businessName;
   try {
-    const merchant = await Merchant.findOne({ name }).populate("products", { __v: 0 }).lean().exec();
+    const merchant = await Merchant.findOne({ businessName })
+      .populate("products", { __v: 0 })
+      .lean()
+      .exec();
     res.send(merchant.products);
   } catch (e) {
+    console.log(e);
     res.status(500).send(e);
   }
 });
