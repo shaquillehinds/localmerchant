@@ -1,41 +1,39 @@
 const router = require("express").Router();
-const Merchant = require("../models/MerchantModel");
+const Store = require("../models/StoreModel");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const upload = multer();
 
 //get merchant products
-router.get("/:businessName/products", async (req, res) => {
-  const businessName = req.params.businessName;
+router.get("/:businessURL/products", async (req, res) => {
+  const businessURL = req.params.businessURL;
   try {
-    const merchant = await Merchant.findOne({ businessName })
-      .populate("products", { __v: 0 })
-      .lean()
-      .exec();
-    res.send(merchant.products);
+    const store = await Store.findOne({ businessURL }).populate("products", { __v: 0 }).exec();
+    res.send(store.products);
   } catch (e) {
     console.log(e);
     res.status(500).send(e);
   }
 });
 
-//get merchants, post a new merchant
+//get stores, post a new store
 router
   .route("/")
   .get(async (req, res) => {
     try {
-      const merchants = await Merchant.find();
-      res.send(merchants);
+      const stores = await Store.find();
+      res.send(stores);
     } catch (e) {
       res.status(500).send(e);
     }
   })
   .post(upload.array(), async (req, res) => {
     try {
-      const merchant = new Merchant(req.body);
-      const token = await merchant.generateAuthToken();
+      req.body.businessURL = req.body.businessName.replace(/\s/g, "").toLowerCase();
+      const store = new Store(req.body);
+      const token = await store.generateAuthToken();
       // s stands for saved
-      await merchant.save();
+      await store.save();
       res.status(201).send({ token });
     } catch (e) {
       console.log(e);
@@ -46,7 +44,7 @@ router
 router.get("/search", async (req, res) => {
   const name = req.query.name;
   try {
-    const results = await Merchant.findPartial("name", name);
+    const results = await Store.findPartial("businessName", name);
     res.send(results);
   } catch (e) {
     res.status(400);

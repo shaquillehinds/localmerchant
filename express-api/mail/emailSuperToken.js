@@ -1,28 +1,26 @@
-const nodemailer = require("nodemailer");
-const mailgun = require("nodemailer-mailgun-transport");
+const sgMail = require("@sendgrid/mail");
+require("dotenv").config();
 
-const auth = {
-  auth: {
-    api_key: "4f6a426e8038726d232e348211a6fd31-7fba8a4e-7928d558",
-    domain: "sandbox761fe135f5e9458786fd394a1b3154eb.mailgun.org",
-  },
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const msg = (token) => {
+  return {
+    to: "shaqdulove@hotmail.com",
+    from: "shaqdulove@gmail.com",
+    subject: "Authorization",
+    text: `Here is your token:
+    ${token}`,
+  };
 };
 
-const emailToken = async (token) => {
-  const transport = nodemailer.createTransport(mailgun(auth));
-
+const sendEmail = async (token) => {
   try {
-    const info = await transport.sendMail({
-      from: '"Authorization" <shaqdulove@gmail.com>',
-      to: "shaqdulove@hotmail.com",
-      subject: "Super Admin Token",
-      text: token,
-    });
-    return info;
+    await sgMail.send(msg(token));
   } catch (e) {
-    console.log(e);
-    return new Error(e);
+    console.error(e);
+    if (e.response) {
+      console.error(e.response.body);
+    }
   }
 };
 
-module.exports = emailToken;
+module.exports = sendEmail;

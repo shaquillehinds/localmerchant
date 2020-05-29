@@ -1,32 +1,33 @@
-import Header from "../../components/header";
+import Header from "../../components/Header";
+import ThemeToggler from "../../components/ThemeToggler";
 import { useEffect } from "react";
 import fetch from "isomorphic-unfetch";
 import { useRouter } from "next/router";
+import styles from "../../styles/pages/index.module.scss";
 
 const Index = (props) => {
   const router = useRouter();
   useEffect(() => {
     (async () => {
-      const res = await fetch(`/api/merchant`);
+      const res = await fetch(`/api/store`);
       const merchants = await res.json();
       console.log(merchants);
     })();
   }, []);
   return (
-    <div>
+    <div className={styles.index}>
       <h1>Index Page</h1>
       <Header />
       {props.products.map((product) => (
         <p key={product.name}>{product.name}</p>
       ))}
-      {console.log(router.query)}
-      {console.log(props)}
+      <ThemeToggler />
     </div>
   );
 };
 
 Index.getInitialProps = async ({ query }) => {
-  const appUrl = `${process.env.APP_URL}/api/merchant/${query.pid}/products`;
+  const appUrl = `${process.env.APP_URL}/api/store/${query.pid}/products`;
   const res = await fetch(appUrl);
   const products = await res.json();
   return { products, appUrl };

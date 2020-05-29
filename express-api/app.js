@@ -1,6 +1,6 @@
 //require application core modules
 const express = require("express");
-const merchantRouter = require("./routers/merchantRoute");
+const storeRouter = require("./routers/storeRoute");
 const productRouter = require("./routers/productRoute");
 const adminRouter = require("./routers/adminRoute");
 const customerRouter = require("./routers/customerRoute");
@@ -16,7 +16,7 @@ connect();
 //middleware
 app.use(cors());
 app.use(express.json());
-app.use("/api/merchant", merchantRouter);
+app.use("/api/store", storeRouter);
 app.use("/api/product", productRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/customer", customerRouter);

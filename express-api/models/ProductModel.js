@@ -27,10 +27,10 @@ const ProductSchema = new Schema({
     type: Boolean,
     default: true,
   },
-  merchant: {
+  store: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: "Merchant",
+    ref: "Store",
   },
 });
 

@@ -6,7 +6,7 @@ const { hashPassword } = require("./middleware/middleware");
 const jwt = require("jsonwebtoken");
 const Schema = mongoose.Schema;
 
-const MerchantSchema = new Schema({
+const StoreSchema = new Schema({
   firstName: {
     type: String,
     required: true,
@@ -20,6 +20,11 @@ const MerchantSchema = new Schema({
   businessName: {
     type: String,
     required: true,
+    unique: true,
+    trim: true,
+  },
+  businessURL: {
+    type: String,
     unique: true,
     trim: true,
   },
@@ -75,27 +80,40 @@ const MerchantSchema = new Schema({
   ],
 });
 
-MerchantSchema.virtual("products", {
+StoreSchema.index({ businessName: "text" });
+
+StoreSchema.virtual("products", {
   ref: "Product",
   localField: "_id",
-  foreignField: "merchant",
+  foreignField: "store",
 });
 
 //hash password before saving if modified or new
-MerchantSchema.pre("save", hashPassword);
+StoreSchema.pre("save", hashPassword);
 
 //
-MerchantSchema.statics.findPartial = findPartial;
+StoreSchema.statics.findPartial = findPartial;
 
 //configures the JSON response to only send certain fields
-MerchantSchema.methods.toJSON = function () {
-  const { _id, firstName, lastName, businessName, email, phone, industry, address, coord } = this;
-  return { _id, firstName, lastName, businessName, email, phone, industry, address, coord };
+StoreSchema.methods.toJSON = function () {
+  const {
+    _id,
+    firstName,
+    lastName,
+    businessName,
+    businessURL,
+    email,
+    phone,
+    industry,
+    address,
+    coord,
+  } = this;
+  return { _id, firstName, lastName, businessName, businessURL, email, phone, industry, address, coord };
 };
 
-//Creates and saves a new JSONWebToken from merchant id and returns said token
-MerchantSchema.methods.generateAuthToken = generateAuthToken;
+//Creates and saves a new JSONWebToken from Store id and returns said token
+StoreSchema.methods.generateAuthToken = generateAuthToken;
 
-const Merchant = mongoose.model("Merchant", MerchantSchema);
+const Store = mongoose.model("Store", StoreSchema);
 
-module.exports = Merchant;
+module.exports = Store;

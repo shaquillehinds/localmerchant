@@ -1,12 +1,13 @@
 const mongoose = require("mongoose");
-const Merchant = require("../../express-api/models/MerchantModel");
+const Store = require("../../express-api/models/StoreModel");
 
-const merchants = [
+const stores = [
   {
     _id: new mongoose.Types.ObjectId(),
     firstName: "John",
     lastName: "King",
     businessName: "Real Parts",
+    businessURL: "realparts",
     email: "john@example.com",
     password: "johnking",
     phone: 4643534,
@@ -22,6 +23,7 @@ const merchants = [
     firstName: "Terry",
     lastName: "King",
     businessName: "Super Electronics",
+    businessURL: "superelectronics",
     email: "terry@example.com",
     password: "terryking",
     phone: 4532323,
@@ -37,6 +39,7 @@ const merchants = [
     firstName: "Richard",
     lastName: "King",
     businessName: "Crown Jewels",
+    businessURL: "crownjewels",
     email: "richard@example.com",
     password: "richardking",
     phone: 4542464,
@@ -52,6 +55,7 @@ const merchants = [
     firstName: "Mary",
     lastName: "King",
     businessName: "Natural Beauty",
+    businessURL: "naturalbeauty",
     email: "mary@example.com",
     password: "maryking",
     phone: 4867444,
@@ -64,29 +68,31 @@ const merchants = [
   },
 ];
 
-const seedMerchantDB = async () => {
+const seedStoreDB = async () => {
   const saved = [];
   try {
-    await Merchant.deleteMany();
-    for (merchant of merchants) {
-      const newMerchant = new Merchant(merchant);
-      const token = await newMerchant.generateAuthToken();
+    await Store.deleteMany();
+    for (store of stores) {
+      const newStore = new Store(store);
+      const token = await newStore.generateAuthToken();
       const {
         _id,
         firstName,
         lastName,
         businessName,
+        businessURL,
         email,
         phone,
         industry,
         address,
         coord,
-      } = await newMerchant.save();
+      } = await newStore.save();
       const res = {
         _id: _id.toString(),
         firstName,
         lastName,
         businessName,
+        businessURL,
         email,
         phone,
         industry,
@@ -101,4 +107,4 @@ const seedMerchantDB = async () => {
   return saved;
 };
 
-module.exports = { merchants, seedMerchantDB };
+module.exports = { stores, seedStoreDB };

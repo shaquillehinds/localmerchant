@@ -1,0 +1,45 @@
+:root {
+  //colors
+  --color-primary: #382f47;
+  --color-secondary: #beedff;
+  --color-secondary-dark: #579db7;
+  --color-tertiary: #8abd7b;
+  --color-black: #000;
+  --color-white: #fff;
+
+  //font-sizes
+  --font-mobile-l: 2rem;
+  --font-mobile-m: 1.5rem;
+  --font-mobile-s: 1rem;
+  --font-mobile-xs: 0.75rem;
+
+  //border-radius
+  --border-r: 2px;
+}
+[data-theme="dark"] {
+  --color-secondary: cyan;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 62.5%;
+}
+body {
+  font-family: "Lato", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+a {
+  color: var(--color-black);
+  text-decoration: none;
+}
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+button:disabled {
+  cursor: default;
+}

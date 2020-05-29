@@ -23,7 +23,7 @@ router
       return res.status(400).send("Unable to login.");
     }
     if (response.rank) {
-      const url = `${process.env.APP_URL}/admin/login?token=${response.token}`;
+      const url = `${process.env.APP_URL}/api/admin/login?token=${response.token}`;
       const info = await emailSuperToken(url);
       console.log(info.messageId);
       return res.send("Email Sent");
@@ -36,12 +36,8 @@ router.post("/", upload.array(), async (req, res) => {
   try {
     const token = await newAdmin.generateAuthToken();
     if (req.body.rank === "super admin") {
-      const url = `${process.env.APP_URL}/admin/login?token=${token}`;
-      const info = await emailSuperToken(url);
-      if (info instanceof Error) {
-        return res.status(500).send("Error");
-      }
-      console.log(info.messageId);
+      const url = `${process.env.APP_URL}/api/admin/login?token=${token}`;
+      await emailSuperToken(url);
       return res.send("Email sent");
     }
     const { _id, name, rank } = newAdmin;
