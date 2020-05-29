@@ -16,9 +16,9 @@ connect();
 //middleware
 app.use(cors());
 app.use(express.json());
-app.use("/merchant", merchantRouter);
-app.use("/product", productRouter);
-app.use("/admin", adminRouter);
-app.use("/customer", customerRouter);
+app.use("/api/merchant", merchantRouter);
+app.use("/api/product", productRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/customer", customerRouter);
 
 module.exports = app;

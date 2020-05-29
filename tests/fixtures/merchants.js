@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Merchant = require("../../server/models/MerchantModel");
+const Merchant = require("../../express-api/models/MerchantModel");
 
 const merchants = [
   {

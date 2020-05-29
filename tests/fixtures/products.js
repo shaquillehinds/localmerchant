@@ -1,4 +1,4 @@
-const Product = require("../../server/models/ProductModel");
+const Product = require("../../express-api/models/ProductModel");
 
 const products = [
   {

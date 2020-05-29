@@ -1,5 +1,5 @@
 const request = require("supertest");
-const app = require("../../server/app");
+const app = require("../../express-api/app");
 const { seedMerchantDB, merchants } = require("../fixtures/merchants");
 const { seedProductsDB, products } = require("../fixtures/products");
 
@@ -10,28 +10,9 @@ beforeEach(async () => {
   savedMerchants = await seedMerchantDB(merchants);
 });
 
-test("should create a new merchant correctly", async () => {
-  const res = await request(app)
-    .post("/merchant")
-    .send({
-      firstName: "Lisa",
-      lastName: "King",
-      businessName: "Speed and Control",
-      email: "lisa@example.com",
-      password: "lisaking",
-      phone: 4643534,
-      address: "87 Wanstead, St.Michael",
-      industry: "Automotive",
-    })
-    .expect(201);
-  expect(res.body).toEqual({
-    token: expect.any(String),
-  });
-});
-
 test("should fetch merchants correctly", async () => {
   try {
-    const res = await request(app).get("/merchant").expect(200);
+    const res = await request(app).get("api/merchant").expect(200);
     expect(res.body).toEqual(savedMerchants);
   } catch (e) {
     console.log(e);
@@ -43,9 +24,32 @@ test("should get products of merchant", async () => {
   try {
     const saved = await seedProductsDB(products, id);
     const res = await request(app)
-      .get(`/merchant/${savedMerchants[0].businessName}/products`)
+      .get(`api/merchant/${savedMerchants[0].businessName}/products`)
       .expect(200);
     expect(res.body).toEqual(saved);
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+test("should create a new merchant correctly", async () => {
+  try {
+    const res = await request(app)
+      .post("api/merchant")
+      .send({
+        firstName: "Lisa",
+        lastName: "King",
+        businessName: "Speed and Control",
+        email: "lisa@example.com",
+        password: "lisaking",
+        phone: 4643534,
+        address: "87 Wanstead, St.Michael",
+        industry: "Automotive",
+      })
+      .expect(201);
+    expect(res.body).toEqual({
+      token: expect.any(String),
+    });
   } catch (e) {
     console.log(e);
   }
