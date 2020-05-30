@@ -20,10 +20,10 @@ router
     }
   })
   .get(async (req, res) => {
-    const tag = req.query.tag;
-    if (!tag) {
-      res.status(400).send("Please provide query tag");
+    if (!req.query.search) {
+      res.status(400).send("Please provide query search");
     }
+    const tag = req.query.search;
     let limit, skip;
     req.query.limit ? (limit = req.query.limit) : (limit = 25);
     req.query.skip ? (skip = req.query.skip) : (skip = 0);

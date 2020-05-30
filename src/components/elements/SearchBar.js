@@ -32,6 +32,10 @@ export default () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
+    const searchValue = e.target.elements.search.value;
+    setState((prev) => ({ ...prev, results: [] }));
+    router.push(`/product?search=${searchValue}`);
+    e.target.elements.search.value = "";
   };
   const handleSuggestionClick = (info) => {
     if (info.name) {
@@ -41,6 +45,9 @@ export default () => {
     } else {
       console.log("error");
     }
+  };
+  const handleInputBlur = () => {
+    setState((prev) => ({ ...prev, results: [] }));
   };
   return (
     <div className={styles.searchBar}>
@@ -52,7 +59,13 @@ export default () => {
       </div>
       <div className={styles.searchBar__field}>
         <form onSubmit={handleSubmit}>
-          <input type="text" onChange={getMatching}></input>
+          <input
+            onBlur={handleInputBlur}
+            autoComplete="off"
+            name="search"
+            type="text"
+            onChange={getMatching}
+          ></input>
           <button className={styles.searchBar__icon}>
             <svg
               aria-hidden="true"
