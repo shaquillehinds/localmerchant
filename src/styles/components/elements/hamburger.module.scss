@@ -65,3 +65,13 @@
     }
   }
 }
+#hamburger {
+  background-color: transparent;
+
+  &::after {
+    transform: rotate(-45deg) scale(1.2) translate(-2px, 4px);
+  }
+  &::before {
+    transform: rotate(45deg) scale(1.2) translate(0px, -5px);
+  }
+}

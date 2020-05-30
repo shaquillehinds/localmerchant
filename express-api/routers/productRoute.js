@@ -21,20 +21,25 @@ router
   })
   .get(async (req, res) => {
     const tag = req.query.tag;
-    let limit;
+    if (!tag) {
+      res.status(400).send("Please provide query tag");
+    }
+    let limit, skip;
     req.query.limit ? (limit = req.query.limit) : (limit = 25);
+    req.query.skip ? (skip = req.query.skip) : (skip = 0);
     try {
-      const results = await Product.find({ $text: { $search: tag } }, { name: 1 }).limit(limit);
+      const results = await Product.find({ $text: { $search: tag } }, { tags: 0 })
+        .limit(limit)
+        .skip(skip);
       res.send(results);
     } catch (e) {
-      res.status(400);
+      res.status(400).send(e);
     }
   });
 
 //Query for search bar character entries
 router.get("/search", async (req, res) => {
   const name = req.query.name;
-  console.log(name);
   try {
     const results = await Product.findPartial("name", name);
     res.send(results);

@@ -22,7 +22,10 @@ const findAndLogin = async function (email, password) {
 const findPartial = async function (field, characters, limit = 10) {
   const search = {};
   search[field] = new RegExp(characters, "gi");
-  return await this.find(search).limit(limit);
+  if (field === "name") {
+    return await this.find(search, { name: 1, _id: 1 }).limit(limit);
+  }
+  return await this.find(search, { businessName: 1, businessURL: 1, _id: 1 }).limit(limit);
 };
 
 module.exports = { findAndLogin, findPartial };

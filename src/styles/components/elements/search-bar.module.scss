@@ -15,11 +15,11 @@
       height: 100%;
       color: var(--color-white);
       background-color: var(--color-tertiary);
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       text-transform: uppercase;
       width: 5rem;
-      padding-left: 0.4rem;
-      letter-spacing: 0.6px;
+      padding-left: 0.1rem;
+      letter-spacing: 0.3px;
       margin-right: -0.5rem;
       box-shadow: 1px 0px 4px rgba(0, 0, 0, 0.5);
     }
@@ -27,6 +27,7 @@
       text-transform: uppercase;
       font-size: 0.9rem;
       letter-spacing: 1px;
+      outline: transparent;
     }
   }
   &__field {
@@ -49,15 +50,33 @@
   &__icon {
     width: 2rem;
     margin-left: -2.4rem;
+    outline: transparent;
     svg {
       width: 1.5rem;
       height: 1.5rem;
       margin-bottom: -0.3rem;
       fill: var(--color-secondary-dark);
       transition: fill 300ms ease-in-out;
+      outline: transparent;
     }
     &:hover svg {
       fill: var(--color-primary);
     }
+  }
+  &__results {
+    position: absolute;
+    height: auto;
+    transform: translate(5rem, 2.7rem);
+    z-index: 3;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  &__result {
+    height: 2.5rem;
+    padding-top: 0.4rem;
+    font-size: var(--font-mobile-m);
+    padding-left: 2rem;
+    width: 18.5rem;
+    background: var(--color-white);
+    color: var(--color-black);
   }
 }

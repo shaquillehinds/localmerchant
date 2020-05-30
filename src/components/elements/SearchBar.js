@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useRouter } from "next/router";
 import styles from "../../styles/components/elements/search-bar.module.scss";
 
 export default () => {
-  const [state, setState] = useState({ searchBy: "item", results: [] });
+  const [state, setState] = useState({ searchBy: "item", results: [], notWaiting: true });
+  const router = useRouter();
   const changeSearchMode = (e) => {
     e.persist();
     setState((prev) => ({ ...prev, searchBy: e.target.value }));
@@ -10,15 +12,34 @@ export default () => {
   const getMatching = async (e) => {
     e.persist();
     if (e.target.value.length < 3) {
-      setState((prev) => ({ ...prev, results: [] }));
-    } else if (state.searchBy === "item") {
-      const res = await fetch(`/api/product/search?name=${e.target.value}`);
-      const matches = await res.json();
-      setState((prev) => ({ ...prev, results: matches }));
-    } else if (state.searchBy === "store") {
-      const res = await fetch(`/api/store/search?name=${e.target.value}`);
-      const matches = await res.json();
-      setState((prev) => ({ ...prev, results: matches }));
+      return setState((prev) => ({ ...prev, results: [] }));
+    }
+    if (state.notWaiting) {
+      setState((prev) => ({ ...prev, notWaiting: false }));
+      setTimeout(async () => {
+        if (state.searchBy === "item") {
+          const res = await fetch(`/api/product/search?name=${e.target.value}`);
+          const matches = await res.json();
+          setState((prev) => ({ ...prev, results: matches }));
+        } else if (state.searchBy === "store") {
+          const res = await fetch(`/api/store/search?name=${e.target.value}`);
+          const matches = await res.json();
+          setState((prev) => ({ ...prev, results: matches }));
+        }
+        setState((prev) => ({ ...prev, notWaiting: true }));
+      }, 500);
+    }
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
+  const handleSuggestionClick = (info) => {
+    if (info.name) {
+      router.push(`/product/${info._id}`);
+    } else if (info.businessName) {
+      router.push(`/store/${info.businessURL}`);
+    } else {
+      console.log("error");
     }
   };
   return (
@@ -30,7 +51,7 @@ export default () => {
         </select>
       </div>
       <div className={styles.searchBar__field}>
-        <form>
+        <form onSubmit={handleSubmit}>
           <input type="text" onChange={getMatching}></input>
           <button className={styles.searchBar__icon}>
             <svg
@@ -51,7 +72,15 @@ export default () => {
 
       <div className={styles.searchBar__results}>
         {state.results.map((result) => {
-          return <div key={result._id}>{result.name}</div>;
+          return (
+            <div
+              onClick={(e) => handleSuggestionClick(result)}
+              key={result._id}
+              className={styles.searchBar__result}
+            >
+              {result.name ? result.name : result.businessName}
+            </div>
+          );
         })}
       </div>
     </div>
