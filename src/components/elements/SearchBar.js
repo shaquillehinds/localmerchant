@@ -9,7 +9,7 @@ export default () => {
     e.persist();
     setState((prev) => ({ ...prev, searchBy: e.target.value }));
   };
-  const getMatching = async (e) => {
+  const getSuggestions = async (e) => {
     e.persist();
     if (e.target.value.length < 3) {
       return setState((prev) => ({ ...prev, results: [] }));
@@ -17,15 +17,11 @@ export default () => {
     if (state.notWaiting) {
       setState((prev) => ({ ...prev, notWaiting: false }));
       setTimeout(async () => {
-        if (state.searchBy === "item") {
-          const res = await fetch(`/api/product/search?name=${e.target.value}`);
-          const matches = await res.json();
-          setState((prev) => ({ ...prev, results: matches }));
-        } else if (state.searchBy === "store") {
-          const res = await fetch(`/api/store/search?name=${e.target.value}`);
-          const matches = await res.json();
-          setState((prev) => ({ ...prev, results: matches }));
-        }
+        let searchBy;
+        state.searchBy === "item" ? (searchBy = "/product") : (searchBy = "/store");
+        const res = await fetch(`/api${searchBy}/search?name=${e.target.value}`);
+        const matches = await res.json();
+        setState((prev) => ({ ...prev, results: matches }));
         setState((prev) => ({ ...prev, notWaiting: true }));
       }, 500);
     }
@@ -33,8 +29,13 @@ export default () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const searchValue = e.target.elements.search.value;
+    if (!searchValue) {
+      return null;
+    }
     setState((prev) => ({ ...prev, results: [] }));
-    router.push(`/product?search=${searchValue}`);
+    let searchBy;
+    state.searchBy === "item" ? (searchBy = "/product") : (searchBy = "/store");
+    router.push(`${searchBy}?search=${searchValue}`);
     e.target.elements.search.value = "";
   };
   const handleSuggestionClick = (info) => {
@@ -47,7 +48,9 @@ export default () => {
     }
   };
   const handleInputBlur = () => {
-    setState((prev) => ({ ...prev, results: [] }));
+    setTimeout(() => {
+      setState((prev) => ({ ...prev, results: [] }));
+    }, 100);
   };
   return (
     <div className={styles.searchBar}>
@@ -64,7 +67,7 @@ export default () => {
             autoComplete="off"
             name="search"
             type="text"
-            onChange={getMatching}
+            onChange={getSuggestions}
           ></input>
           <button className={styles.searchBar__icon}>
             <svg

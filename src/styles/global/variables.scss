@@ -1,0 +1,30 @@
+@import "../global/mixins";
+:root {
+  //colors
+  --color-primary: #382f47;
+  --color-primary-light: #473c5a;
+  --color-secondary: #beedff;
+  --color-secondary-dark: #579db7;
+  --color-tertiary: #8abd7b;
+  --color-heart: #ff1717;
+  --color-black: #000;
+  --color-white: #fff;
+  --color-grey: #ccc;
+
+  //font-sizes
+  --font-xxl: 3.5rem;
+  --font-xl: 2.5rem;
+  --font-l: 2rem;
+  --font-m: 1.5rem;
+  --font-s: 1rem;
+  --font-xs: 0.75rem;
+
+  //hamburger
+  --hamburger-thickness: 0.27rem;
+  @include respond(laptop) {
+    --hamburger-thickness: 0.35rem;
+  }
+
+  //border-radius
+  --border-r: 2px;
+}

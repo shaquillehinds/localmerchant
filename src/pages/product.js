@@ -1,39 +1,29 @@
-import Header from "../components/header";
+import Header from "../components/Header";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { searchProducts } from "../functions/api";
 
-const Search = () => {
+const Product = () => {
   const [state, setState] = useState({ products: [] });
   const router = useRouter();
-  const searchProducts = async () => {
-    const search = window.location.search;
-    try {
-      const res = await fetch(`api/product${search}`);
-      const products = await res.json();
-      //   console.log(products);
-      return setState((prev) => ({ ...prev, products }));
-    } catch (e) {
-      console.error(e);
-    }
-  };
   useEffect(() => {
-    searchProducts();
+    (async () => {
+      const products = await searchProducts("product");
+      setState((prev) => ({ ...prev, products }));
+    })();
   }, [router.query]);
   return (
     <div>
       <Header />
-      {state.products.length > 0
-        ? state.products.map((product) => (
-            <div key={product.__id}>
-              <p>Name: {product.name}</p>
-              <p>Price: {product.price}</p>
-              <p>inStock: {product.inStock ? "Yes" : "No"}</p>
-            </div>
-          ))
-        : null}
-      {console.log(state.products)}
+      {state.products.map((product) => (
+        <div key={product._id}>
+          <p>Name: {product.name}</p>
+          <p>Price: {product.price}</p>
+          <p>inStock: {product.inStock ? "Yes" : "No"}</p>
+        </div>
+      ))}
     </div>
   );
 };
 
-export default Search;
+export default Product;

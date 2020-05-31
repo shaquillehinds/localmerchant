@@ -1,0 +1,129 @@
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    visibility: visible;
+  }
+  99% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    visibility: visible;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  0% {
+    transform: translateX(0rem);
+  }
+  100% {
+    transform: translateX(-30rem);
+  }
+}
+@keyframes slideIn {
+  0% {
+    transform: translateX(-30rem);
+  }
+  100% {
+    transform: translateX(0rem);
+  }
+}
+
+.category_nav_wrapper {
+  display: flex;
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 150;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  visibility: hidden;
+
+  &[data-categories="open"] {
+    animation: fadeIn 200ms linear forwards;
+    visibility: visible;
+  }
+  &[data-categories="close"] {
+    animation: fadeOut 300ms 100ms linear backwards;
+    visibility: hidden;
+  }
+}
+.category_nav {
+  overflow-y: auto;
+  width: 30rem;
+  padding-bottom: 1.3rem;
+  background-color: var(--color-primary-light);
+  box-shadow: 4px 0px 21px rgba(0, 0, 0, 0.3);
+
+  &[data-categories="close"] {
+    animation: slideOut 300ms linear forwards;
+  }
+  &[data-categories="open"] {
+    animation: slideIn 300ms 100ms linear backwards;
+  }
+
+  &::-webkit-scrollbar {
+    width: 1rem;
+    background-color: var(--color-primary);
+  }
+  &::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary-light);
+  }
+
+  &__title {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    box-shadow: 0 3px 9px rgba(black, 0.6);
+    background-color: var(--color-primary);
+    padding: 1.5rem 1.8rem;
+
+    h3 {
+      font-size: var(--font-l);
+      color: var(--color-secondary);
+      font-weight: 400;
+      letter-spacing: 1px;
+      pointer-events: none;
+    }
+  }
+  &__category {
+    display: flex;
+    overflow: hidden;
+    background: var(--color-primary);
+    margin-top: 1.3rem;
+    justify-content: space-between;
+    height: 2.7rem;
+    padding: 0 1rem;
+    box-shadow: 0 2px 4px rgba(black, 0.5);
+    align-items: center;
+    cursor: pointer;
+
+    &_name {
+      font-size: var(--font-m);
+      font-weight: 400;
+    }
+    &_arrow {
+      color: var(--color-tertiary);
+      font-weight: 500;
+      font-size: var(--font-l);
+    }
+  }
+  &__close {
+    font-size: var(--font-l);
+    cursor: pointer;
+  }
+}

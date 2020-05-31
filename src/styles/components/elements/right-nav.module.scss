@@ -1,0 +1,88 @@
+@import "../../global/mixins.scss";
+.nav_items {
+  fill: var(--color-white);
+  width: 1.8rem;
+  height: 1.8rem;
+  transition: fill 200ms ease-in-out;
+
+  &:hover {
+    fill: var(--color-heart);
+  }
+
+  &__container {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0.7rem 0.2rem;
+    max-width: 9rem;
+
+    @include respond("phone") {
+      max-width: 15rem;
+    }
+  }
+  &__signup {
+    text-transform: uppercase;
+    font-size: var(--font-m);
+    font-weight: 400;
+    color: var(--color-white);
+    cursor: pointer;
+    letter-spacing: 1px;
+    padding-top: 0.4rem;
+    display: none;
+
+    @include respond(laptop) {
+      font-size: var(--font-l);
+    }
+
+    &::after {
+      display: block;
+      content: "";
+      padding-bottom: 0.3rem;
+      border-bottom: solid 1.5px var(--color-secondary);
+      transform: scaleX(0);
+      transition: transform 300ms ease-in-out;
+    }
+    &:hover::after {
+      transform: scaleX(1);
+    }
+
+    @include respond(phone) {
+      display: block;
+    }
+  }
+  &__user {
+    @extend .nav_items;
+    cursor: pointer;
+    @include respond(phone) {
+      display: none;
+    }
+  }
+  &__heart {
+    cursor: pointer;
+    @extend .nav_items;
+
+    @include respond(phone) {
+      width: 2.2rem;
+      height: 2.2rem;
+    }
+
+    &_wrapper::after {
+      content: attr(data-wishlist);
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 1.8rem;
+      height: 1.8rem;
+      font-weight: 800;
+      transform: translate(1.3rem, -3rem);
+      background-color: var(--color-heart);
+      border-radius: 5rem;
+
+      @include respond(phone) {
+        transform: translate(1.7rem, -3.3rem);
+      }
+    }
+  }
+}

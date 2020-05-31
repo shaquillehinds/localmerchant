@@ -20,8 +20,22 @@ router.get("/:businessURL/products", async (req, res) => {
 router
   .route("/")
   .get(async (req, res) => {
+    let limit, skip;
+    req.query.limit ? (limit = req.query.limit) : (limit = 25);
+    req.query.skip ? (skip = req.query.skip) : (skip = 0);
+    if (req.query.search) {
+      const businessName = req.query.search;
+      try {
+        const results = await Store.find({ $text: { $search: businessName } }, { tags: 0 })
+          .limit(limit)
+          .skip(skip);
+        return res.send(results);
+      } catch (e) {
+        return res.status(400).send(e);
+      }
+    }
     try {
-      const stores = await Store.find();
+      const stores = await Store.find().limit(limit).skip(skip);
       res.send(stores);
     } catch (e) {
       res.status(500).send(e);
