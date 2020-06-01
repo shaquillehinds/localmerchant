@@ -23,9 +23,10 @@
       z-index: 2;
       border: none;
       height: 100%;
-      color: var(--color-white);
-      background-color: var(--color-tertiary);
+      color: var(--theme-primary);
+      background-color: var(--theme-secondary);
       font-size: 0.8rem;
+      font-weight: 700;
       text-transform: uppercase;
       width: 5rem;
       padding-left: 0.1rem;
