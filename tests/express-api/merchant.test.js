@@ -1,5 +1,5 @@
 const request = require("supertest");
-const app = require("../../express-api/app");
+const app = require("../../api/app");
 const { seedStoreDB, stores } = require("../fixtures/store");
 const { seedProductsDB, products } = require("../fixtures/products");
 

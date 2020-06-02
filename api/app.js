@@ -1,5 +1,8 @@
 //require application core modules
 const express = require("express");
+const schema = require("./graphql/schema");
+const graphqlHTTP = require("express-graphql");
+const { authGraphQL } = require("./middleware/auth");
 const storeRouter = require("./routers/storeRoute");
 const productRouter = require("./routers/productRoute");
 const adminRouter = require("./routers/adminRoute");
@@ -16,6 +19,7 @@ connect();
 //middleware
 app.use(cors());
 app.use(express.json());
+app.use("/graphql", authGraphQL, graphqlHTTP({ schema, graphiql: true }));
 app.use("/api/store", storeRouter);
 app.use("/api/product", productRouter);
 app.use("/api/admin", adminRouter);

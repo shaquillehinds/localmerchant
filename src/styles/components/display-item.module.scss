@@ -1,0 +1,33 @@
+.display_item {
+  width: 10rem;
+  height: 15rem;
+  margin: 1rem;
+
+  &__image {
+    box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    margin-bottom: 1rem;
+    background-color: var(--color-white);
+    img {
+      width: 10rem;
+      height: 10rem;
+      object-fit: contain;
+    }
+  }
+  &__text {
+    width: 10rem;
+    height: 3rem;
+    box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--theme-white);
+    color: var(--theme-primary);
+
+    p {
+      font-weight: 800;
+      font-size: var(--font-m);
+    }
+  }
+}

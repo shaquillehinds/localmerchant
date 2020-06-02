@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const Merchant = require("../models/StoreModel");
+const Store = require("../models/StoreModel");
 const Admin = require("../models/AdminModel");
 
 const auth = async (req, res, next) => {
@@ -19,8 +19,8 @@ const auth = async (req, res, next) => {
     return next();
   }
   try {
-    const merchant = await Merchant.findById({ _id, "tokens.token": token });
-    req.user = merchant;
+    const store = await Store.findById({ _id, "tokens.token": token });
+    req.user = store;
     req.token = token;
     return next();
   } catch {
@@ -47,4 +47,13 @@ const authAdmin = async (req, res, next) => {
   }
 };
 
-module.exports = { auth, authAdmin };
+const authGraphQL = async (req, res, next) => {
+  if (req.header.authorization) {
+    req.token = req.header.authorization.replace("Bearer ", "");
+    return next();
+  }
+  req.token = false;
+  next();
+};
+
+module.exports = { auth, authAdmin, authGraphQL };

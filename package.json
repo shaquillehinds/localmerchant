@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "node-test": "jest --runInBand --env=node",
-    "node-dev": "nodemon express-api/",
+    "node-dev": "nodemon api/",
     "next-dev": "node server.js",
     "build": "next build",
     "start": "NODE_ENV=production node server.js"
@@ -15,20 +15,25 @@
   "license": "ISC",
   "dependencies": {
     "@sendgrid/mail": "^7.1.1",
+    "aws-sdk": "^2.687.0",
     "bcrypt": "^4.0.1",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-graphql": "^0.9.0",
+    "graphql": "^15.0.0",
     "isomorphic-unfetch": "^3.0.0",
     "js-cookie": "^2.2.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.15",
     "multer": "^1.4.2",
+    "multer-s3": "^2.9.0",
     "next": "^9.4.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "sass": "^1.26.7"
+    "sass": "^1.26.7",
+    "sharp": "^0.25.3"
   },
   "devDependencies": {
     "jest": "^26.0.1",

@@ -15,7 +15,7 @@ const FeaturedSchema = new Schema({
   },
 });
 
-FeaturedSchema.methods.toJSON = () => {
+FeaturedSchema.methods.toJSON = function () {
   const { products, category } = this;
   return { products, category };
 };

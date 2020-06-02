@@ -1,18 +1,20 @@
 const router = require("express").Router();
-const multer = require("multer");
-const upload = multer();
 const Product = require("../models/ProductModel");
 const Featured = require("../models/FeaturedModel");
 const { auth } = require("../middleware/auth");
+const sharp = require("sharp");
+const upload = require("../middleware/upload");
 
 //create a new product
 router
   .route("/")
-  .post(upload.array(), auth, async (req, res) => {
+  .post(upload.array("image", 6), auth, async (req, res) => {
     try {
       const { name, price, tags } = req.body;
-      const merchant = req.user._id;
-      const product = new Product({ name, price, tags, merchant });
+      const store = req.user._id;
+      const image = req.files[0].location;
+      console.log(image);
+      const product = new Product({ name, price, tags, store, image });
       const saved = await product.save();
       res.status(201).send(saved);
     } catch (e) {
@@ -51,7 +53,7 @@ router.get("/search", async (req, res) => {
 router
   .route("/featured")
   .get(async (req, res) => {
-    const featured = await Featured.find().populate("products", { tags: 0, merchant: 0 }).exec();
+    const featured = await Featured.find().populate("products", { tags: 0, store: 0 }).exec();
     const allArrays = featured.map((category) => category.products);
     let all = [];
     allArrays.forEach((array) => {
@@ -69,7 +71,7 @@ router
   .get(async (req, res) => {
     const category = req.params.category;
     const featured = await Featured.findOne({ category })
-      .populate("products", { tags: 0, merchant: 0 })
+      .populate("products", { tags: 0, store: 0 })
       .exec();
     res.send(featured.products);
   })

@@ -34,15 +34,12 @@ const CategoryNav = () => {
           </div>
         </div>
         {state.categories.map((category) => (
-          <div className={styles.category_nav__category}>
+          <div key={category} className={styles.category_nav__category}>
             <h5 className={styles.category_nav__category_name}>{category}</h5>
             <div className={styles.category_nav__category_arrow}>
               <svg
                 aria-hidden="true"
                 focusable="false"
-                data-prefix="fas"
-                data-icon="chevron-right"
-                class="svg-inline--fa fa-chevron-right fa-w-10"
                 role="img"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 320 512"
