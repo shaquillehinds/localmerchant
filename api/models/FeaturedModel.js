@@ -13,11 +13,20 @@ const FeaturedSchema = new Schema({
     required: true,
     trim: true,
   },
+  weeklyViews: [
+    {
+      views: Number,
+      product: {
+        type: Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    },
+  ],
 });
 
 FeaturedSchema.methods.toJSON = function () {
-  const { products, category } = this;
-  return { products, category };
+  const { weeklyViews, products, category } = this;
+  return { weeklyViews, products, category };
 };
 
 const Featured = mongoose.model("Featured", FeaturedSchema);

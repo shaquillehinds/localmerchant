@@ -5,7 +5,11 @@ const HorizontalShowcase = ({ displayItems }) => {
   return (
     <div className={styles.horizontal_showcase}>
       {displayItems.map((item) => (
-        <DisplayItem key={item._id} img={item.image} text={item.price} />
+        <DisplayItem
+          key={item._id + `${Math.random()}`}
+          img={item.image}
+          text={item.price ? `$${item.price}` : item.businessName}
+        />
       ))}
     </div>
   );
