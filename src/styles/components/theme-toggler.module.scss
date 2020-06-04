@@ -1,0 +1,46 @@
+.toggler {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 100;
+  bottom: 10%;
+  right: 5%;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 5rem;
+  background-color: var(--theme-white);
+  box-shadow: 2px 2px 6px var(--theme-shadow-primary);
+  outline: none;
+  cursor: pointer;
+  transition: transform 800ms ease-in-out;
+
+  &:hover {
+    transition: transform 800ms ease-in-out;
+    animation: bounce 1000ms infinite ease-in-out;
+  }
+
+  &__moon {
+    fill: black;
+    margin-top: 0.3rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    outline: none;
+  }
+  &__sun {
+    @extend .toggler__moon;
+    fill: white;
+  }
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

@@ -13,5 +13,35 @@
       text-transform: uppercase;
       margin: 3.3rem auto 2.4rem auto;
     }
+    & .index__heading {
+      color: var(--color-white);
+      background-color: var(--color-primary);
+      padding: 1.3rem 5.5rem;
+      border-radius: 3px;
+      position: relative;
+      z-index: 5;
+    }
+    & .index__stores {
+      background-color: var(--theme-off-white);
+      height: 33rem;
+      display: flex;
+      align-items: center;
+      border-top: 1px solid var(--theme-white);
+      border-bottom: 1px solid var(--theme-white);
+      margin-top: -6rem;
+      position: relative;
+
+      &__view_all {
+        position: absolute;
+        cursor: pointer;
+        bottom: 8%;
+        left: 50%;
+        transform: translateX(-50%);
+        color: var(--theme-primary);
+        text-decoration: underline;
+        font-size: var(--font-m);
+        font-weight: 800;
+      }
+    }
   }
 }

@@ -18,6 +18,9 @@ const ProductSchema = new Schema({
     type: String,
     default: undefined,
   },
+  images: {
+    type: Array,
+  },
   tags: {
     type: Array,
     required: true,
@@ -37,8 +40,8 @@ const ProductSchema = new Schema({
 ProductSchema.index({ tags: "text" });
 
 ProductSchema.methods.toJSON = function () {
-  const { _id, name, price, image, tags, store, inStock } = this;
-  return { _id, name, price, image, tags, store, inStock };
+  const { _id, name, price, image, images, tags, store, inStock } = this;
+  return { _id, name, price, image, images, tags, store, inStock };
 };
 
 ProductSchema.statics.findPartial = findPartial;

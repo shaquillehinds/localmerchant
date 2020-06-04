@@ -28,6 +28,10 @@ const StoreSchema = new Schema({
     unique: true,
     trim: true,
   },
+  image: {
+    type: String,
+    default: undefined,
+  },
   email: {
     type: String,
     require: true,
@@ -102,13 +106,26 @@ StoreSchema.methods.toJSON = function () {
     lastName,
     businessName,
     businessURL,
+    image,
     email,
     phone,
     industry,
     address,
     coord,
   } = this;
-  return { _id, firstName, lastName, businessName, businessURL, email, phone, industry, address, coord };
+  return {
+    _id,
+    firstName,
+    lastName,
+    businessName,
+    businessURL,
+    image,
+    email,
+    phone,
+    industry,
+    address,
+    coord,
+  };
 };
 
 //Creates and saves a new JSONWebToken from Store id and returns said token

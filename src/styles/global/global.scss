@@ -3,6 +3,8 @@
   --theme-primary: #fff;
   --theme-white: #382f47;
   --theme-bg-white: #221c2b;
+  --theme-off-white: #221c2b;
+  --theme-shadow-primary: rgba(112, 234, 255, 0.644);
 }
 * {
   box-sizing: border-box;
@@ -15,6 +17,16 @@ html {
 }
 body {
   font-family: "Lato", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  &::-webkit-scrollbar {
+    height: 0.5rem;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: var(--theme-white);
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--theme-primary);
+    box-shadow: 0px 0px 15px var(--theme-shadow-primary);
+  }
 }
 a {
   color: var(--color-black);

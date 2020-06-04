@@ -3,10 +3,13 @@
   //colors
   --color-primary: #382f47;
   --theme-primary: #382f47;
+  --transparent-primary: rgba(56, 47, 71, 0.9);
   --color-primary-light: #473c5a;
   --theme-primary-light: #473c5a;
+  --transparent-primary-light: rgba(71, 60, 90, 0.9);
   --color-secondary: #beedff;
   --theme-secondary: #beedff;
+  --transparent-secondary: rgba(190, 237, 255, 0.9);
   --color-secondary-dark: #579db7;
   --color-tertiary: #8abd7b;
   --color-heart: #ff1717;
@@ -14,9 +17,13 @@
   --theme-black: #000;
   --color-white: #fff;
   --theme-white: #fff;
+  --theme-off-white: #f3f3f3;
   --theme-bg-white: #fff;
   --color-grey: #ccc;
   --theme-grey: #ccc;
+
+  //shadows
+  --theme-shadow-primary: rgba(126, 94, 211, 0.644);
 
   //font-sizes
   --font-xxl: 3.5rem;

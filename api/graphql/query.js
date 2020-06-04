@@ -2,16 +2,8 @@ const Store = require("../models/StoreModel");
 const Product = require("../models/ProductModel");
 const Featured = require("../models/FeaturedModel");
 const mongoose = require("mongoose");
-const { StoreType, ProductType, StoreFields } = require("./types");
-const {
-  GraphQLSchema,
-  GraphQLObjectType,
-  GraphQLInputObjectType,
-  GraphQLString,
-  GraphQLFloat,
-  GraphQLInt,
-  GraphQLList,
-} = require("graphql");
+const { StoreType, ProductType, FeaturedType } = require("./types");
+const { GraphQLObjectType, GraphQLString, GraphQLList } = require("graphql");
 
 const RootQueryType = new GraphQLObjectType({
   name: "Query",
@@ -77,47 +69,16 @@ const RootQueryType = new GraphQLObjectType({
       },
     },
     featured: {
-      type: new GraphQLList(ProductType),
-      description: "Get Featured Products",
+      type: new GraphQLList(FeaturedType),
+      description: "Get Featured Items",
       args: { category: { type: GraphQLString } },
       resolve: async (parent, { category }) => {
-        const featured = await Featured.findOne({ category }).populate("products").exec();
-        return featured.products;
-      },
-    },
-    weeklyViews: {
-      type: new GraphQLList(
-        new GraphQLObjectType({
-          name: "weeklyViews",
-          fields: () => ({ views: { type: GraphQLInt }, product: { type: ProductType } }),
-        })
-      ),
-      description: "Get Top Products",
-      resolve: async (parent, args) => {
-        // const weeklyViews = await Featured.findOne(
-        //   { category: "weekly_trends" },
-        //   { weeklyViews: 1, weeklyViews: { $slice: [0, 10] } },
-        //   { sort: { "weeklyViews.views": -1 } }
-        // )
-        //   .populate({ path: "weeklyViews.product" })
-        //   .exec();
-        const weeklyViews = await Featured.aggregate([
-          { $match: { category: "weekly_trends" } },
-          { $unwind: "$weeklyViews" },
-          { $sort: { "weeklyViews.views": -1 } },
-          { $limit: 10 },
-          { $project: { views: "$weeklyViews.views", product: "$weeklyViews.product" } },
-          {
-            $lookup: {
-              from: "products",
-              localField: "product",
-              foreignField: "_id",
-              as: "product",
-            },
-          },
-          { $unwind: "$product" },
-        ]);
-        return weeklyViews;
+        if (category === "stores") {
+          const stores = await Featured.findOne({ category }).populate("stores").exec();
+          return stores.stores;
+        }
+        const featured = await Featured.findOne({ category }).populate("items").exec();
+        return featured.items;
       },
     },
   }),

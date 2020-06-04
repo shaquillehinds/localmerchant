@@ -2,10 +2,16 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const FeaturedSchema = new Schema({
-  products: [
+  items: [
     {
       type: Schema.Types.ObjectId,
       ref: "Product",
+    },
+  ],
+  stores: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Store",
     },
   ],
   category: {
@@ -25,8 +31,8 @@ const FeaturedSchema = new Schema({
 });
 
 FeaturedSchema.methods.toJSON = function () {
-  const { weeklyViews, products, category } = this;
-  return { weeklyViews, products, category };
+  const { weeklyViews, items, stores, category } = this;
+  return { weeklyViews, items, stores, category };
 };
 
 const Featured = mongoose.model("Featured", FeaturedSchema);

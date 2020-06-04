@@ -1,0 +1,20 @@
+.footer {
+  margin-top: 2rem;
+  width: 100%;
+  height: 5rem;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  display: flex;
+  text-transform: uppercase;
+  justify-content: space-around;
+  align-items: center;
+
+  &__links {
+    display: flex;
+
+    p {
+      margin-left: 3rem;
+      cursor: pointer;
+    }
+  }
+}

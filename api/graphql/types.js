@@ -8,10 +8,12 @@ const {
 } = require("graphql");
 
 const StoreFields = {
+  _id: { type: GraphQLString },
   firstName: { type: GraphQLString },
   lastName: { type: GraphQLString },
   businessName: { type: GraphQLString },
   businessURL: { type: GraphQLString },
+  image: { type: GraphQLString },
   email: { type: GraphQLString },
   phone: { type: GraphQLInt },
   industry: { type: GraphQLString },
@@ -47,8 +49,19 @@ const ProductType = new GraphQLObjectType({
   }),
 });
 
+const FeaturedType = new GraphQLObjectType({
+  name: "featured",
+  fields: () => ({
+    _id: { type: GraphQLString },
+    image: { type: GraphQLString },
+    price: { type: GraphQLFloat },
+    businessName: { type: GraphQLString },
+  }),
+});
+
 module.exports = {
   StoreFields,
   StoreType,
   ProductType,
+  FeaturedType,
 };
