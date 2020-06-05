@@ -13,7 +13,7 @@ const io = socketIO(server, { path: "/api/chat" });
 app.prepare().then(() => {
   express.get("*", (req, res) => handle(req, res));
 
-  io.on("connect", async (socket) => connect(socket));
+  io.on("connect", async (socket) => connect(socket, io));
 
   const clearWeeklyViews = new Schedule(async () => {
     if (new Date().getDate() === 7) {
@@ -34,7 +34,10 @@ app.prepare().then(() => {
       { $project: { products: "$products" } },
     ]);
     const products = topTen.map((top) => top.products);
-    await Featured.findOneAndUpdate({ category: "weekly_trends" }, { products });
+    await Featured.findOneAndUpdate(
+      { category: "weekly_trends" },
+      { products }
+    );
   }, 60000);
   updateTrends.start();
 
