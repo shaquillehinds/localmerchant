@@ -3,10 +3,22 @@ import { useRouter } from "next/router";
 import io from "socket.io-client";
 
 const Chat = (props) => {
-  let socket = io({ path: "/api/chat", query: { store: props.id } });
-  const [state, setState] = useState({ message: "" });
+  const [state, setState] = useState({ message: "", socket: undefined, name: "" });
+
   useEffect(() => {
     console.log(props.id);
+
+    const socket = io({
+      path: "/api/chat",
+      query: { store: props.id },
+      transportOptions: {
+        polling: {
+          extraHeaders: {
+            token: localStorage.getItem("JWT"),
+          },
+        },
+      },
+    });
 
     socket.on("status", (status) => {
       if (status.message) {
@@ -15,28 +27,28 @@ const Chat = (props) => {
         console.log(status);
       }
     });
-    socket.on("message", ({ name, message }) =>
-      console.log(`${name}: ${message}`)
-    );
+    socket.on("message", ({ name, message }) => console.log(`${name}: ${message}`));
+
+    socket.on("Name", (name) => {
+      setState((prev) => ({ ...prev, name }));
+    });
+
+    setState((prev) => ({ ...prev, socket }));
   }, []);
   const sendMessage = (e) => {
     e.preventDefault();
-    socket.emit("message", { name: "Henry", message: state.message });
-    setState(() => ({ message: "" }));
+    state.socket.emit("message", { name: state.name, message: state.message });
+    setState((prev) => ({ ...prev, message: "" }));
   };
   const updateMessageState = (e) => {
     e.persist();
-    setState(() => ({ message: e.target.value }));
+    setState((prev) => ({ ...prev, message: e.target.value }));
   };
   return (
     <div>
       <p>{props.id}</p>
       <form onSubmit={sendMessage}>
-        <input
-          onChange={updateMessageState}
-          name="message"
-          value={state.message}
-        />
+        <input onChange={updateMessageState} name="message" value={state.message} />
         <button>Send</button>
       </form>
     </div>

@@ -4,12 +4,11 @@ const upload = multer();
 const Customer = require("../models/CustomerModel");
 
 //create a new customer
-router.post("/customer", upload.array(), async (req, res) => {
+router.post("/", upload.array(), async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    const customer = new Customer({ name, email, password });
-    const saved = await customer.save();
-    res.status(201).send(saved);
+    const customer = new Customer(req.body);
+    const token = await customer.generateAuthToken();
+    res.status(201).send({ token });
   } catch (e) {
     res.status(500).send(e);
   }

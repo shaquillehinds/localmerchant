@@ -1,40 +1,83 @@
-const router = require("express").Router();
-const { server } = require("../app.js");
 const jwt = require("jsonwebtoken");
-const { authGraphQL } = require("../middleware/auth");
-const socketIO = require("socket.io");
 const Chat = require("../models/ChatModel");
 const Store = require("../models/StoreModel");
+const Customer = require("../models/CustomerModel");
 
 const connect = async (socket, io) => {
-  let customer;
-  if (socket.handshake.headers.token) {
-    customer = jwt.verify(
-      socket.handshake.headers.token,
-      process.env.JWT_SECRET
-    );
-  }
-  const collection = await Store.findOne({
-    businessURL: socket.handshake.query.store,
-  });
-  let store;
-  if (collection) {
-    console.log(collection);
-    store = collection._id;
-  }
-  let chat = await Chat.findOne(
-    { customer, store },
-    { messages: { $slice: -100 } }
-  );
-  if (!chat && customer) {
-    chat = new Chat({ customer, store, messages: [] });
-  }
   //create function to send status
   sendStatus = (s) => {
     socket.emit("status", s);
   };
+
+  // check to see if customer is logged in by getting their JWT token and verifying
+  if (socket.handshake.headers.token) {
+    var tokenID = jwt.verify(socket.handshake.headers.token, process.env.JWT_SECRET)._id;
+    if (!tokenID) {
+      sendStatus("Unverified User, Please Sign In. Disconnected");
+      socket.disconnect();
+    }
+  }
+
+  if (socket.handshake.query.store) {
+    //finds the store they want to communicate with
+    const storeDoc = await Store.findOne({
+      businessURL: socket.handshake.query.store,
+    });
+    //Get the store id if it exists
+    if (storeDoc) {
+      console.log(storeDoc._id);
+      var store = storeDoc._id;
+    }
+  } else if (socket.handshake.query.customer) {
+    //finds the customer the store wants to communicate with
+    const clientDoc = await Customer.findOne({
+      userName: socket.handshake.query.customer,
+    });
+    //Get the customer id if it exist
+    if (clientDoc) {
+      console.log(clientDoc._id);
+      var customer = clientDoc._id;
+    }
+  }
+
+  if (!store && !customer) {
+    // if no store or customer, then send status and disconnect
+    sendStatus("The store or customer you're looking for doesn't exist. Disconnected");
+    socket.disconnect();
+  } else if (!store) {
+    //if query was not store then signed in person is store
+    var store = tokenID;
+    const exists = await Store.findById(store);
+    if (!exists) {
+      sendStatus("Invalid Request. Only a store can message a customer. Disconnected");
+      socket.disconnect();
+    }
+    socket.emit("Name", exists.businessName);
+  } else if (!customer) {
+    // if query was not customer then signed in person is customer
+    var customer = tokenID;
+    const exists = await Customer.findById(customer);
+    if (!exists) {
+      sendStatus("Invalid Request. Only a customer can message a store. Disconnected");
+      socket.disconnect();
+    }
+    socket.emit("Name", exists.firstName);
+  }
+
+  //Get the previous messages if they exists
+  let chat = await Chat.findOne({ customer, store }, { messages: { $slice: -100 } });
+  console.log(chat);
+  //if this is a new chat then create new docment in chat collection
+  if (!chat && customer) {
+    chat = new Chat({ customer, store, messages: [] });
+    console.log(chat);
+  }
+  //create room from chat id and then join
+  const room = chat._id;
+  socket.join(room);
+
   sendStatus("Connection established");
-  console.log("connected");
+  console.log(`Connected to ${socket.id} in room ${room}`);
   if (chat) {
     socket.emit("messages", chat.messages);
   }
@@ -49,7 +92,7 @@ const connect = async (socket, io) => {
       if (chat) {
         chat.messages.push(`${name}: ${message}`);
       }
-      io.emit("message", { name, message });
+      io.to(room).emit("message", { name, message });
       sendStatus({ message: "Message sent", clear: true });
     }
   });
