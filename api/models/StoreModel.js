@@ -74,6 +74,7 @@ const StoreSchema = new Schema({
     default: "Bronze",
     trim: true,
   },
+  chats: [{ type: Schema.Types.ObjectId, ref: "Chat" }],
   tokens: [
     {
       token: {
@@ -112,6 +113,7 @@ StoreSchema.methods.toJSON = function () {
     industry,
     address,
     coord,
+    chats,
   } = this;
   return {
     _id,
@@ -125,6 +127,7 @@ StoreSchema.methods.toJSON = function () {
     industry,
     address,
     coord,
+    chats,
   };
 };
 

@@ -1,5 +1,5 @@
 const next = require("next");
-const express = require("./api/app");
+const { app: express, server } = require("./api/app");
 const Featured = require("./api/models/FeaturedModel");
 const Schedule = require("./utility/functions");
 
@@ -35,5 +35,5 @@ app.prepare().then(() => {
 
   const PORT = process.env.PORT;
 
-  express.listen(PORT, () => console.log(`Server is up on port ${PORT}`));
+  server.listen(PORT, () => console.log(`Server is up on port ${PORT}`));
 });

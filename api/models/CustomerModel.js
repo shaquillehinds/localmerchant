@@ -22,11 +22,12 @@ const CustomerSchema = new Schema({
   watchlist: {
     type: [Schema.Types.ObjectId],
   },
+  chats: [{ type: Schema.Types.ObjectId, ref: "Chat" }],
 });
 
 CustomerSchema.methods.toJSON = function () {
-  const { _id, name, email } = this;
-  return { _id, name, email };
+  const { _id, name, email, watchlist, chats } = this;
+  return { _id, name, email, watchlist, chats };
 };
 
 const Customer = mongoose.model("Customer", CustomerSchema);
