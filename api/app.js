@@ -27,6 +27,6 @@ app.use("/api/store", storeRouter);
 app.use("/api/product", productRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/customer", customerRouter);
-app.use("/api/chat", chatRouter);
+// app.use("/api/chat", chatRouter);
 
 module.exports = { app, server };
