@@ -8,7 +8,9 @@ const upload = multer();
 router.get("/:businessURL/products", async (req, res) => {
   const businessURL = req.params.businessURL;
   try {
-    const store = await Store.findOne({ businessURL }).populate("products", { __v: 0 }).exec();
+    const store = await Store.findOne({ businessURL })
+      .populate("products", { __v: 0 })
+      .exec();
     res.send(store.products);
   } catch (e) {
     console.log(e);
@@ -26,7 +28,10 @@ router
     if (req.query.search) {
       const businessName = req.query.search;
       try {
-        const results = await Store.find({ $text: { $search: businessName } }, { tags: 0 })
+        const results = await Store.find(
+          { $text: { $search: businessName } },
+          { tags: 0 }
+        )
           .limit(limit)
           .skip(skip);
         return res.send(results);
@@ -41,9 +46,12 @@ router
       res.status(500).send(e);
     }
   })
-  .post(upload.array(), async (req, res) => {
+  .post(upload.array("image"), async (req, res) => {
     try {
-      req.body.businessURL = req.body.businessName.replace(/\s/g, "").toLowerCase();
+      req.body.businessURL = req.body.businessName
+        .replace(/\s/g, "")
+        .toLowerCase();
+      req.body.image = req.files[0].location;
       const store = new Store(req.body);
       const token = await store.generateAuthToken();
       // s stands for saved
@@ -67,12 +75,47 @@ router.post("/login", upload.array(), async (req, res) => {
 
 router.post("/logout", auth, upload.array(), async (req, res) => {
   try {
-    const tokens = req.user.tokens.filter((token) => token.token !== req.user.token);
+    const tokens = req.user.tokens.filter(
+      (token) => token.token !== req.user.token
+    );
     req.user.tokens = tokens;
     const user = await req.user.save();
     res.send(user);
   } catch (e) {
     res.status(500).send(e);
+  }
+});
+
+router.patch("/", auth, upload.array(), async (req, res) => {
+  const updates = Object.keys(req.body.updates);
+  const allowedUpdates = [
+    firstName,
+    lastName,
+    businessName,
+    businessURL,
+    email,
+    phone,
+    image,
+    industry,
+    address,
+    password,
+    coord,
+  ];
+  const valid = updates.every((update) => allowedUpdates.includes(update));
+  if (!valid) {
+    return res.status(400).send("Invalid update request");
+  }
+  try {
+    updates.forEach((update) => (req.user[update] = req.body.updates[update]));
+    if (req.files[0]) {
+      if (req.files[0].location) {
+        req.user.image = req.files[0].location;
+      }
+    }
+    await req.user.save();
+    res.status(202).send(req.user);
+  } catch (e) {
+    res.status(400).send(e);
   }
 });
 

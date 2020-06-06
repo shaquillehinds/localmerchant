@@ -8,13 +8,21 @@ const upload = require("../middleware/upload");
 //create a new product
 router
   .route("/")
-  .post(upload.array("image", 6), auth, async (req, res) => {
+  .post(auth, upload.array("image", 6), async (req, res) => {
     try {
       const { name, price, tags, description = "" } = req.body;
       const store = req.user._id;
       const images = req.files.map((image) => image.location);
       const image = images[0];
-      const product = new Product({ name, price, tags, store, image, images, description });
+      const product = new Product({
+        name,
+        price,
+        tags,
+        store,
+        image,
+        images,
+        description,
+      });
       const saved = await product.save();
       res.status(201).send(saved);
     } catch (e) {
@@ -30,7 +38,10 @@ router
     req.query.limit ? (limit = req.query.limit) : (limit = 25);
     req.query.skip ? (skip = req.query.skip) : (skip = 0);
     try {
-      const results = await Product.find({ $text: { $search: tag } }, { tags: 0 })
+      const results = await Product.find(
+        { $text: { $search: tag } },
+        { tags: 0 }
+      )
         .limit(limit)
         .skip(skip);
       res.send(results);
@@ -50,10 +61,43 @@ router.get("/search", async (req, res) => {
   }
 });
 
+router.patch("/:id", auth, upload.array(), async (req, res) => {
+  const _id = req.query.id;
+  const product = await Product.findById(_id);
+  const updates = Object.keys(req.body.updates);
+  const allowedUpdates = [
+    name,
+    price,
+    image,
+    images,
+    tags,
+    description,
+    inStock,
+  ];
+  const valid = updates.every((update) => allowedUpdates.includes(update));
+  if (!valid) {
+    return res.status(400).send("Invalid update request");
+  }
+  try {
+    updates.forEach((update) => (product[update] = req.body.updates[update]));
+    if (req.files[0]) {
+      if (req.files[0].location) {
+        product.image = req.files[0].location;
+      }
+    }
+    await product.save();
+    res.status(202).send(req.user);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
 router
   .route("/featured")
   .get(async (req, res) => {
-    const featured = await Featured.find().populate("products", { tags: 0, store: 0 }).exec();
+    const featured = await Featured.find()
+      .populate("products", { tags: 0, store: 0 })
+      .exec();
     const allArrays = featured.map((category) => category.products);
     let all = [];
     allArrays.forEach((array) => {
@@ -91,14 +135,18 @@ router
         const saved = await featured.save();
         return res.send(saved.products);
       } else if (update === "remove") {
-        const newList = featured.products.filter((prod) => id !== prod._id.toString());
+        const newList = featured.products.filter(
+          (prod) => id !== prod._id.toString()
+        );
         featured.products = newList;
         const saved = await featured.save();
         return res.send(saved.products);
       }
       throw new Error();
     } catch (e) {
-      return res.status(400).send("Unable to fullfil request. Please check parameters.");
+      return res
+        .status(400)
+        .send("Unable to fullfil request. Please check parameters.");
     }
   });
 
