@@ -1,9 +1,12 @@
 const Store = require("../models/StoreModel");
+const Customer = require("../models/CustomerModel");
+const Admin = require("../models/AdminModel");
 const Product = require("../models/ProductModel");
 const Featured = require("../models/FeaturedModel");
 const mongoose = require("mongoose");
-const { StoreType, ProductType, FeaturedType } = require("./types");
-const { GraphQLObjectType, GraphQLString, GraphQLList } = require("graphql");
+const jwt = require("jsonwebtoken");
+const { StoreType, CustomerType, ProductType, AdminType, FeaturedType } = require("./types");
+const { GraphQLObjectType, GraphQLString, GraphQLList, GraphQLInt } = require("graphql");
 
 const RootQueryType = new GraphQLObjectType({
   name: "Query",
@@ -12,60 +15,130 @@ const RootQueryType = new GraphQLObjectType({
     stores: {
       type: new GraphQLList(StoreType),
       description: "List of Stores",
-      args: { industry: { type: GraphQLString } },
-      resolve: async (parent, { industry }, { token }) => {
+      args: {
+        industry: { type: GraphQLString },
+        search: { type: GraphQLString },
+        businessName: { type: GraphQLString },
+        limit: { type: GraphQLInt },
+        skip: { type: GraphQLInt },
+      },
+      resolve: async (parent, { industry, search, businessName, limit = 25, skip = 0 }, context) => {
+        if (search) {
+          try {
+            return await Store.findPartial("businessName", search);
+          } catch (e) {
+            return e;
+          }
+        }
+        if (businessName) {
+          try {
+            return await Store.find(
+              { $text: { $search: businessName } },
+              { _id: 1, businessName: 1, businessURL: 1, image: 1 }
+            )
+              .skip(skip)
+              .limit(limit);
+          } catch (e) {
+            return e;
+          }
+        }
         let stores;
+        console.log(context.token);
         if (industry) {
           stores = await Store.find({ industry });
         } else {
           stores = await Store.find();
         }
-
         return stores;
       },
     },
     store: {
       type: StoreType,
       description: "Fetch a Store",
-      args: { _id: { type: GraphQLString } },
-      resolve: (parent, args) => {
+      args: { id: { type: GraphQLString }, businessURL: { type: GraphQLString } },
+      resolve: (parent, { id, businessURL }) => {
+        if (id) {
+          return Store.findById(id);
+        } else if (businessURL) {
+          return Store.findOne({ businessURL });
+        }
+      },
+    },
+    customer: {
+      type: CustomerType,
+      description: "Fetch a Customer",
+      args: { id: { type: GraphQLString } },
+      resolve: (parent, args, context) => {
         if (args.id) {
-          return Store.findById(args._id);
+          return Customer.findById(args.id);
+        }
+      },
+    },
+    admin: {
+      type: AdminType,
+      description: "Fetch admin",
+      args: { id: { type: GraphQLString } },
+      resolve: async (parent, args, context) => {
+        try {
+          const decoded = jwt.verify(context.token, process.env.JWT_SECRET);
+          if (!decoded._id) {
+            return "Unauthorized";
+          }
+          const admin = await Admin.findById(decoded._id);
+          if (args.id && admin) {
+            return Admin.findById(args.id);
+          }
+        } catch (e) {
+          return e;
         }
       },
     },
     products: {
       type: new GraphQLList(ProductType),
       description: "List of Products",
-      args: { store: { type: GraphQLString }, tag: { type: GraphQLString } },
-      resolve: (parent, { store, tag }) => {
-        if (store) {
-          return Product.find({ store }).populate("store");
+      args: {
+        store: { type: GraphQLString },
+        tag: { type: GraphQLString },
+        search: { type: GraphQLString },
+        limit: { type: GraphQLInt },
+        skip: { type: GraphQLInt },
+      },
+      resolve: async (parent, { store, tag, search, limit = 25, skip = 0 }) => {
+        if (search) {
+          try {
+            return await Product.findPartial("name", search);
+          } catch (e) {
+            return e;
+          }
+        } else if (store) {
+          return Product.find({ store }).populate("store").skip(skip).limit(limit);
         } else if (tag) {
-          return Product.find({ $text: { $search: tag } }, { tags: 0 });
+          return Product.find({ $text: { $search: tag } }, { tags: 0 })
+            .skip(skip)
+            .limit(limit);
         }
-        return Product.find().populate("store");
+        return Product.find().populate("store").skip(skip).limit(limit);
       },
     },
     product: {
       type: ProductType,
       description: "Get a Product",
-      args: { _id: { type: GraphQLString } },
+      args: { id: { type: GraphQLString } },
       resolve: (parent, args) => {
         (async () => {
           const item = await Featured.updateOne(
-            { category: "weekly_trends", "weeklyViews.product": new mongoose.Types.ObjectId(args._id) },
+            { category: "weekly_trends", "weeklyViews.product": new mongoose.Types.ObjectId(args.id) },
             { $inc: { "weeklyViews.$.views": 1 } }
           );
           if (item.n !== 1) {
             const newItem = await Featured.findOne({
               category: "weekly_trends",
             });
-            newItem.weeklyViews.push({ views: 1, product: args._id });
+            newItem.weeklyViews.push({ views: 1, product: args.id });
             newItem.save();
           }
         })();
-        return Product.findById(args._id).populate("store");
+        return Product.findById(args.id).populate("store");
       },
     },
     featured: {

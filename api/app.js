@@ -22,7 +22,7 @@ connect();
 //middleware
 app.use(cors());
 app.use(express.json());
-app.use("/graphql", authGraphQL, graphqlHTTP({ schema, graphiql: true }));
+app.use("/api/graphql", authGraphQL, graphqlHTTP({ schema, graphiql: true }));
 app.use("/api/store", storeRouter);
 app.use("/api/product", productRouter);
 app.use("/api/admin", adminRouter);

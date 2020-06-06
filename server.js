@@ -1,7 +1,7 @@
 const next = require("next");
 const { app: express, server } = require("./api/app");
 const socketIO = require("socket.io");
-const connect = require("./api/routers/chatRoute");
+const connect = require("./websocket/socket");
 const Featured = require("./api/models/FeaturedModel");
 const Schedule = require("./utility/functions");
 
@@ -34,10 +34,7 @@ app.prepare().then(() => {
       { $project: { products: "$products" } },
     ]);
     const products = topTen.map((top) => top.products);
-    await Featured.findOneAndUpdate(
-      { category: "weekly_trends" },
-      { products }
-    );
+    await Featured.findOneAndUpdate({ category: "weekly_trends" }, { products });
   }, 60000);
   updateTrends.start();
 

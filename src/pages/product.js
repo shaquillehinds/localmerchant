@@ -8,7 +8,7 @@ const Product = () => {
   const router = useRouter();
   useEffect(() => {
     (async () => {
-      const products = await searchProducts("product");
+      const products = await searchProducts();
       setState((prev) => ({ ...prev, products }));
     })();
   }, [router.query]);

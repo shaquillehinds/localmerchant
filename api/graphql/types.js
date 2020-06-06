@@ -36,12 +36,50 @@ const StoreType = new GraphQLObjectType({
   }),
 });
 
+const CustomerType = new GraphQLObjectType({
+  name: "Customer",
+  fields: () => ({
+    _id: { type: GraphQLString },
+    userName: { type: GraphQLString },
+    firstName: { type: GraphQLString },
+    lastName: { type: GraphQLString },
+    email: { type: GraphQLString },
+    phone: { type: GraphQLInt },
+    watchlist: { type: new GraphQLList(GraphQLString) },
+    address: { type: GraphQLString },
+    coord: {
+      type: new GraphQLObjectType({
+        name: "coordc",
+        fields: () => ({
+          lat: { type: GraphQLFloat },
+          long: { type: GraphQLFloat },
+        }),
+      }),
+    },
+  }),
+});
+
+const AdminType = new GraphQLObjectType({
+  name: "Admin",
+  fields: () => ({
+    _id: { type: GraphQLString },
+    userName: { type: GraphQLString },
+    firstName: { type: GraphQLString },
+    lastName: { type: GraphQLString },
+    email: { type: GraphQLString },
+    phone: { type: GraphQLInt },
+    address: { type: GraphQLString },
+    rank: { type: GraphQLString },
+  }),
+});
+
 const ProductType = new GraphQLObjectType({
   name: "products",
   fields: () => ({
     _id: { type: GraphQLString },
     name: { type: GraphQLString },
     image: { type: GraphQLString },
+    images: { type: new GraphQLList(GraphQLString) },
     price: { type: GraphQLFloat },
     tags: { type: new GraphQLList(GraphQLString) },
     store: { type: StoreType },
@@ -62,6 +100,8 @@ const FeaturedType = new GraphQLObjectType({
 module.exports = {
   StoreFields,
   StoreType,
+  CustomerType,
+  AdminType,
   ProductType,
   FeaturedType,
 };

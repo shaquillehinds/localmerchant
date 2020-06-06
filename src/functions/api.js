@@ -1,12 +1,59 @@
-const searchProducts = async (searchBy) => {
-  const search = window.location.search;
+import fetch from "isomorphic-unfetch";
+import Qs from "qs";
+
+const graphqlFetch = async (query) => {
+  const json = await fetch(`${process.env.APP_URL}/api/graphql`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      query: query,
+    }),
+  });
+  const res = (await json.json()).data;
+  return res;
+};
+
+const tagSearchQuery = (search) => `
+    query{
+      products (tag: "${search}") {
+        _id
+        name
+        image
+        inStock
+        price
+      }
+    }
+  `;
+
+const searchProducts = async () => {
+  const query = window.location.search;
+  const { search } = Qs.parse(query, { ignoreQueryPrefix: true });
   try {
-    const res = await fetch(`api/${searchBy}${search}`);
-    const products = await res.json();
-    return products;
+    return (await graphqlFetch(tagSearchQuery(search)))["products"];
   } catch (e) {
     console.error(e);
   }
 };
 
-export { searchProducts };
+const businessNameQuery = (search) => `
+    query{
+      stores (businessName: "${search}") {
+        _id
+        image
+        businessName
+        businessURL
+      }
+    }
+  `;
+
+const searchStores = async () => {
+  const query = window.location.search;
+  const { search } = Qs.parse(query, { ignoreQueryPrefix: true });
+  try {
+    return (await graphqlFetch(businessNameQuery(search)))["stores"];
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export { searchProducts, searchStores, graphqlFetch };

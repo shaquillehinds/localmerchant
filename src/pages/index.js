@@ -1,6 +1,6 @@
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import fetch from "isomorphic-unfetch";
+import { graphqlFetch } from "../functions/api";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import styles from "../styles/pages/index.module.scss";
@@ -33,18 +33,6 @@ const WEEKLY_TRENDS_QUERY = `
     }
   }
 `;
-
-const graphqlFetch = async (query) => {
-  const json = await fetch(`${process.env.APP_URL}/graphql`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      query: query,
-    }),
-  });
-  const res = (await json.json()).data;
-  return res;
-};
 
 const Index = (props) => {
   const [state, setState] = useState({ featuredItems: [], trendItems: [], featuredStores: [] });

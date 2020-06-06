@@ -24,9 +24,7 @@ router.post("/login", upload.array(), async (req, res) => {
 });
 router.post("/logout", authCustomer, async (req, res) => {
   try {
-    const tokens = req.user.tokens.filter(
-      (token) => token.token !== req.user.token
-    );
+    const tokens = req.user.tokens.filter((token) => token.token !== req.user.token);
     req.user.tokens = tokens;
     const user = await req.user.save();
     res.send(user);
@@ -36,16 +34,7 @@ router.post("/logout", authCustomer, async (req, res) => {
 });
 router.patch("/", authCustomer, async (req, res) => {
   const updates = Object.keys(req.body.updates);
-  const allowedUpdates = [
-    userName,
-    firstName,
-    lastName,
-    password,
-    address,
-    phone,
-    email,
-    coord,
-  ];
+  const allowedUpdates = [userName, firstName, lastName, password, address, phone, email, coord];
   const valid = updates.forEvery((update) => allowedUpdates.includes(update));
   if (!valid) {
     return res.status(400).send("Invalid update request");
@@ -58,4 +47,13 @@ router.patch("/", authCustomer, async (req, res) => {
     res.status(500).send(e);
   }
 });
+router.delete("/", authCustomer, async (req, res) => {
+  try {
+    const user = await Customer.findByIdAndDelete(req.user._id);
+    res.send(user);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
 module.exports = router;

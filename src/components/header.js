@@ -3,8 +3,8 @@ import { useEffect } from "react";
 import SearchBar from "./elements/SearchBar";
 import Hamburger from "./elements/Hambuger";
 import styles from "../styles/components/header.module.scss";
-import RightNav from "../components/elements/RightNav";
-import CategoryNav from "../components/CategoryNav";
+import RightNav from "./elements/RightNav";
+import CategoryNav from "./CategoryNav";
 
 const Header = () => {
   // useEffect(()=>{

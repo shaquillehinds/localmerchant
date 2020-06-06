@@ -4,64 +4,21 @@ const { auth } = require("../middleware/auth");
 const multer = require("multer");
 const upload = multer();
 
-//get merchant products
-router.get("/:businessURL/products", async (req, res) => {
-  const businessURL = req.params.businessURL;
+//get stores, post a new store
+router.post("/", upload.array("image"), async (req, res) => {
   try {
-    const store = await Store.findOne({ businessURL })
-      .populate("products", { __v: 0 })
-      .exec();
-    res.send(store.products);
+    req.body.businessURL = req.body.businessName.replace(/\s/g, "").toLowerCase();
+    req.body.image = req.files[0].location;
+    const store = new Store(req.body);
+    const token = await store.generateAuthToken();
+    // s stands for saved
+    await store.save();
+    res.status(201).send({ token });
   } catch (e) {
     console.log(e);
     res.status(500).send(e);
   }
 });
-
-//get stores, post a new store
-router
-  .route("/")
-  .get(async (req, res) => {
-    let limit, skip;
-    req.query.limit ? (limit = req.query.limit) : (limit = 25);
-    req.query.skip ? (skip = req.query.skip) : (skip = 0);
-    if (req.query.search) {
-      const businessName = req.query.search;
-      try {
-        const results = await Store.find(
-          { $text: { $search: businessName } },
-          { tags: 0 }
-        )
-          .limit(limit)
-          .skip(skip);
-        return res.send(results);
-      } catch (e) {
-        return res.status(400).send(e);
-      }
-    }
-    try {
-      const stores = await Store.find().limit(limit).skip(skip);
-      res.send(stores);
-    } catch (e) {
-      res.status(500).send(e);
-    }
-  })
-  .post(upload.array("image"), async (req, res) => {
-    try {
-      req.body.businessURL = req.body.businessName
-        .replace(/\s/g, "")
-        .toLowerCase();
-      req.body.image = req.files[0].location;
-      const store = new Store(req.body);
-      const token = await store.generateAuthToken();
-      // s stands for saved
-      await store.save();
-      res.status(201).send({ token });
-    } catch (e) {
-      console.log(e);
-      res.status(500).send(e);
-    }
-  });
 
 router.post("/login", upload.array(), async (req, res) => {
   try {
@@ -75,9 +32,7 @@ router.post("/login", upload.array(), async (req, res) => {
 
 router.post("/logout", auth, upload.array(), async (req, res) => {
   try {
-    const tokens = req.user.tokens.filter(
-      (token) => token.token !== req.user.token
-    );
+    const tokens = req.user.tokens.filter((token) => token.token !== req.user.token);
     req.user.tokens = tokens;
     const user = await req.user.save();
     res.send(user);
@@ -119,13 +74,12 @@ router.patch("/", auth, upload.array(), async (req, res) => {
   }
 });
 
-router.get("/search", async (req, res) => {
-  const name = req.query.name;
+router.delete("/", auth, async (req, res) => {
   try {
-    const results = await Store.findPartial("businessName", name);
-    res.send(results);
+    const user = await Store.findByIdAndDelete(req.user._id);
+    res.send(user);
   } catch (e) {
-    res.status(400);
+    res.status(400).send(e);
   }
 });
 

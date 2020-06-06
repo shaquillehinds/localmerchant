@@ -7,11 +7,21 @@ const jwt = require("jsonwebtoken");
 const Schema = mongoose.Schema;
 
 const AdminSchema = new Schema({
-  name: {
+  userName: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+  },
+  firstName: {
     type: String,
     required: true,
     trim: true,
-    unique: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+    trim: true,
   },
   email: {
     type: String,
@@ -24,6 +34,14 @@ const AdminSchema = new Schema({
     required: true,
     minlength: 7,
     trim: true,
+  },
+  address: {
+    type: String,
+    trim: true,
+  },
+  phone: {
+    type: Number,
+    minlength: 7,
   },
   rank: {
     type: String,
@@ -44,8 +62,8 @@ AdminSchema.pre("save", hashPassword);
 
 //configures the JSON response to only send certain fields
 AdminSchema.methods.toJSON = function () {
-  const { name } = this;
-  return { name };
+  const { _id, userName, firstName, lastName, email, address, phone } = this;
+  return { _id, userName, firstName, lastName, email, address, phone };
 };
 
 //Creates and saves a new JSONWebToken from Admin id and returns said token
