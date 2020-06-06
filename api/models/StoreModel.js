@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const { generateAuthToken } = require("./methods&statics/methods");
 const { findPartial } = require("./methods&statics/statics");
+const { findAndLogin } = require("./methods&statics/statics");
 const { hashPassword } = require("./middleware/middleware");
 const jwt = require("jsonwebtoken");
 const Schema = mongoose.Schema;
@@ -62,6 +63,7 @@ const StoreSchema = new Schema({
   },
   phone: {
     type: Number,
+    minlength: 7,
     required: true,
   },
   industry: {
@@ -74,7 +76,6 @@ const StoreSchema = new Schema({
     default: "Bronze",
     trim: true,
   },
-  chats: [{ type: Schema.Types.ObjectId, ref: "Chat" }],
   tokens: [
     {
       token: {
@@ -113,7 +114,6 @@ StoreSchema.methods.toJSON = function () {
     industry,
     address,
     coord,
-    chats,
   } = this;
   return {
     _id,
@@ -127,12 +127,13 @@ StoreSchema.methods.toJSON = function () {
     industry,
     address,
     coord,
-    chats,
   };
 };
 
 //Creates and saves a new JSONWebToken from Store id and returns said token
 StoreSchema.methods.generateAuthToken = generateAuthToken;
+
+StoreSchema.statics.findAndLogin = findAndLogin;
 
 const Store = mongoose.model("Store", StoreSchema);
 

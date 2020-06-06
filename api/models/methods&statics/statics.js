@@ -4,6 +4,7 @@ const findAndLogin = async function (email, password) {
   try {
     const found = await this.findOne({ email });
     const isValid = await bcrypt.compare(password, found.password);
+
     if (!isValid) {
       throw new Error();
     }

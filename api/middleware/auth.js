@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const Store = require("../models/StoreModel");
 const Admin = require("../models/AdminModel");
+const Customer = require("../models/CustomerModel");
 
 const auth = async (req, res, next) => {
   if (!req.headers.authorization) {
@@ -47,6 +48,32 @@ const authAdmin = async (req, res, next) => {
   }
 };
 
+const authCustomer = async (req, res, next) => {
+  if (!req.headers.authorization) {
+    return res.status(401).send("Please Authenticate");
+  }
+  const token = req.headers.authorization.replace("Bearer ", "");
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  if (!decoded) {
+    return res.status(401).send("Please Authenticate");
+  }
+  const _id = decoded._id;
+  const admin = await Admin.findOne({ _id, "tokens.token": token });
+  if (admin) {
+    req.user = admin;
+    req.token = token;
+    return next();
+  }
+  try {
+    const store = await Customer.findById({ _id, "tokens.token": token });
+    req.user = store;
+    req.token = token;
+    return next();
+  } catch {
+    res.status(401).send("Please Authenticate");
+  }
+};
+
 const authGraphQL = async (req, res, next) => {
   if (req.header.authorization) {
     req.token = req.header.authorization.replace("Bearer ", "");
@@ -56,4 +83,4 @@ const authGraphQL = async (req, res, next) => {
   next();
 };
 
-module.exports = { auth, authAdmin, authGraphQL };
+module.exports = { auth, authCustomer, authAdmin, authGraphQL };

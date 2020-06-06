@@ -7,10 +7,11 @@ const Chat = (props) => {
 
   useEffect(() => {
     console.log(props.id);
+    const isStore = localStorage.getItem("Store");
 
     const socket = io({
       path: "/api/chat",
-      query: { store: props.id },
+      query: isStore ? { customer: props.id } : { store: props.id },
       transportOptions: {
         polling: {
           extraHeaders: {
@@ -28,6 +29,8 @@ const Chat = (props) => {
       }
     });
     socket.on("message", ({ name, message }) => console.log(`${name}: ${message}`));
+
+    socket.on("messages", (messages) => messages.forEach((message) => console.log(message)));
 
     socket.on("Name", (name) => {
       setState((prev) => ({ ...prev, name }));

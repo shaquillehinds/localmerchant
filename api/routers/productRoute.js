@@ -10,11 +10,11 @@ router
   .route("/")
   .post(upload.array("image", 6), auth, async (req, res) => {
     try {
-      const { name, price, tags } = req.body;
+      const { name, price, tags, description = "" } = req.body;
       const store = req.user._id;
-      const image = req.files[0].location;
-      console.log(image);
-      const product = new Product({ name, price, tags, store, image });
+      const images = req.files.map((image) => image.location);
+      const image = images[0];
+      const product = new Product({ name, price, tags, store, image, images, description });
       const saved = await product.save();
       res.status(201).send(saved);
     } catch (e) {

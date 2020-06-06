@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const Store = require("../models/StoreModel");
-const jwt = require("jsonwebtoken");
+const { auth } = require("../middleware/auth");
 const multer = require("multer");
 const upload = multer();
 
@@ -54,6 +54,27 @@ router
       res.status(500).send(e);
     }
   });
+
+router.post("/login", upload.array(), async (req, res) => {
+  try {
+    console.log(req.body);
+    const token = await Store.findAndLogin(req.body.email, req.body.password);
+    res.send(token);
+  } catch (e) {
+    return res.status(400).send(e);
+  }
+});
+
+router.post("/logout", auth, upload.array(), async (req, res) => {
+  try {
+    const tokens = req.user.tokens.filter((token) => token.token !== req.user.token);
+    req.user.tokens = tokens;
+    const user = await req.user.save();
+    res.send(user);
+  } catch (e) {
+    res.status(500).send(e);
+  }
+});
 
 router.get("/search", async (req, res) => {
   const name = req.query.name;

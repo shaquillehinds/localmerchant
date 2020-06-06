@@ -32,10 +32,27 @@ const CustomerSchema = new Schema({
     minlength: 7,
     trim: true,
   },
+  address: {
+    type: String,
+    trim: true,
+  },
+  phone: {
+    type: Number,
+    minlength: 7,
+  },
+  coord: {
+    lat: {
+      type: Number,
+      trim: true,
+    },
+    long: {
+      type: Number,
+      trim: true,
+    },
+  },
   watchlist: {
     type: [Schema.Types.ObjectId],
   },
-  chats: [{ type: Schema.Types.ObjectId, ref: "Chat" }],
   tokens: [
     {
       token: {
@@ -47,8 +64,8 @@ const CustomerSchema = new Schema({
 });
 
 CustomerSchema.methods.toJSON = function () {
-  const { _id, userName, firstName, lastName, email, watchlist, chats } = this;
-  return { _id, userName, firstName, lastName, email, watchlist, chats };
+  const { _id, userName, firstName, lastName, email, address, phone, coord, watchlist } = this;
+  return { _id, userName, firstName, lastName, email, address, phone, coord, watchlist };
 };
 
 CustomerSchema.methods.generateAuthToken = generateAuthToken;

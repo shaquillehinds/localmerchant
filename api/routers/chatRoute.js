@@ -14,7 +14,7 @@ const connect = async (socket, io) => {
     var tokenID = jwt.verify(socket.handshake.headers.token, process.env.JWT_SECRET)._id;
     if (!tokenID) {
       sendStatus("Unverified User, Please Sign In. Disconnected");
-      socket.disconnect();
+      return socket.disconnect();
     }
   }
 
@@ -25,7 +25,6 @@ const connect = async (socket, io) => {
     });
     //Get the store id if it exists
     if (storeDoc) {
-      console.log(storeDoc._id);
       var store = storeDoc._id;
     }
   } else if (socket.handshake.query.customer) {
@@ -35,7 +34,6 @@ const connect = async (socket, io) => {
     });
     //Get the customer id if it exist
     if (clientDoc) {
-      console.log(clientDoc._id);
       var customer = clientDoc._id;
     }
   }
@@ -43,14 +41,14 @@ const connect = async (socket, io) => {
   if (!store && !customer) {
     // if no store or customer, then send status and disconnect
     sendStatus("The store or customer you're looking for doesn't exist. Disconnected");
-    socket.disconnect();
+    return socket.disconnect();
   } else if (!store) {
     //if query was not store then signed in person is store
     var store = tokenID;
     const exists = await Store.findById(store);
     if (!exists) {
       sendStatus("Invalid Request. Only a store can message a customer. Disconnected");
-      socket.disconnect();
+      return socket.disconnect();
     }
     socket.emit("Name", exists.businessName);
   } else if (!customer) {
@@ -59,25 +57,23 @@ const connect = async (socket, io) => {
     const exists = await Customer.findById(customer);
     if (!exists) {
       sendStatus("Invalid Request. Only a customer can message a store. Disconnected");
-      socket.disconnect();
+      return socket.disconnect();
     }
     socket.emit("Name", exists.firstName);
   }
 
   //Get the previous messages if they exists
   let chat = await Chat.findOne({ customer, store }, { messages: { $slice: -100 } });
-  console.log(chat);
+
   //if this is a new chat then create new docment in chat collection
   if (!chat && customer) {
     chat = new Chat({ customer, store, messages: [] });
-    console.log(chat);
   }
   //create room from chat id and then join
   const room = chat._id;
   socket.join(room);
 
   sendStatus("Connection established");
-  console.log(`Connected to ${socket.id} in room ${room}`);
   if (chat) {
     socket.emit("messages", chat.messages);
   }
@@ -88,19 +84,14 @@ const connect = async (socket, io) => {
       // Send error status
       sendStatus("Please enter a name and message");
     } else {
-      // add message to collection
-      if (chat) {
-        chat.messages.push(`${name}: ${message}`);
-      }
+      // add message to document
+      chat.messages.push(`${name}: ${message}`);
+      //save document to collection
+      chat.save();
+      //send message to room
       io.to(room).emit("message", { name, message });
       sendStatus({ message: "Message sent", clear: true });
     }
-  });
-  socket.on("clear", (data) => {
-    if (chat) {
-      chat.messages = [];
-    }
-    socket.emit("cleared");
   });
 };
 

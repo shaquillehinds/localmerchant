@@ -1,35 +1,24 @@
 const router = require("express").Router();
-const jwt = require("jsonwebtoken");
 const Admin = require("../models/AdminModel");
+const { authAdmin } = require("../middleware/auth");
 const emailSuperToken = require("../mail/emailSuperToken");
 const multer = require("multer");
 const upload = multer();
 
-router
-  .route("/login")
-  .get(async (req, res) => {
-    if (req.query.token) {
-      const valid = jwt.verify(req.query.token, process.env.JWT_SECRET);
-      if (valid) {
-        return res.send(req.query.token);
-      }
-    }
-    res.status(400).send();
-  })
-  .post(upload.array(), async (req, res) => {
-    const { email, password } = req.body;
-    const response = await Admin.findAndLogin(email, password);
-    if (response.token instanceof Error) {
-      return res.status(400).send("Unable to login.");
-    }
-    if (response.rank) {
-      const url = `${process.env.APP_URL}/api/admin/login?token=${response.token}`;
-      const info = await emailSuperToken(url);
-      console.log(info.messageId);
-      return res.send("Email Sent");
-    }
-    res.send(response.token);
-  });
+router.post("login", upload.array(), async (req, res) => {
+  const { email, password } = req.body;
+  const response = await Admin.findAndLogin(email, password);
+  if (response.token instanceof Error) {
+    return res.status(400).send("Unable to login.");
+  }
+  if (response.rank) {
+    const url = `${process.env.APP_URL}/api/admin/login?token=${response.token}`;
+    const info = await emailSuperToken(url);
+    console.log(info.messageId);
+    return res.send("Email Sent");
+  }
+  res.send(response.token);
+});
 
 router.post("/", upload.array(), async (req, res) => {
   const newAdmin = new Admin(req.body);
@@ -40,11 +29,25 @@ router.post("/", upload.array(), async (req, res) => {
       await emailSuperToken(url);
       return res.send("Email sent");
     }
-    const { _id, name, rank } = newAdmin;
+    const { _id, name, email, rank } = newAdmin;
     await newAdmin.save();
-    res.status(201).send({ _id, name, rank, token });
+    await emailSuperToken(
+      `A new admin tried to register. _id:${_id}, name: ${name}, email: ${email}, rank: ${rank}, JWT:${token}`
+    );
+    res.status(201).send(`Email sent to super admin, if you're approved you will recieve an email.`);
   } catch (e) {
     console.log(e);
+    res.status(500).send(e);
+  }
+});
+
+router.post("/logout", authAdmin, async (req, res) => {
+  try {
+    const tokens = req.user.tokens.filter((token) => token.token !== req.user.token);
+    req.user.tokens = tokens;
+    const user = await req.user.save();
+    res.send(user);
+  } catch (e) {
     res.status(500).send(e);
   }
 });
