@@ -51,6 +51,11 @@ const StoreSchema = new Schema({
     required: true,
     trim: true,
   },
+  parish: {
+    type: String,
+    required: true,
+    trim: true,
+  },
   coord: {
     lat: {
       type: Number,

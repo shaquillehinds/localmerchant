@@ -18,6 +18,7 @@ const StoreFields = {
   phone: { type: GraphQLInt },
   industry: { type: GraphQLString },
   address: { type: GraphQLString },
+  parish: { type: GraphQLString },
 };
 
 const StoreType = new GraphQLObjectType({
