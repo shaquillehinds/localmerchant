@@ -35,9 +35,13 @@
     box-shadow: 2px 2px 7px var(--theme-shadow-dark);
   }
 
-  &_checkbox {
-    &_label {
-      color: var(--theme-black);
+  &_input {
+    &_checkbox {
+      cursor: pointer;
+      &_label {
+        color: var(--theme-black);
+        cursor: pointer;
+      }
     }
   }
 

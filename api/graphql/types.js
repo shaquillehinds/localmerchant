@@ -11,8 +11,8 @@ const StoreFields = {
   _id: { type: GraphQLString },
   firstName: { type: GraphQLString },
   lastName: { type: GraphQLString },
-  businessName: { type: GraphQLString },
-  businessURL: { type: GraphQLString },
+  storeName: { type: GraphQLString },
+  storeURL: { type: GraphQLString },
   image: { type: GraphQLString },
   email: { type: GraphQLString },
   phone: { type: GraphQLInt },
@@ -94,7 +94,7 @@ const FeaturedType = new GraphQLObjectType({
     _id: { type: GraphQLString },
     image: { type: GraphQLString },
     price: { type: GraphQLFloat },
-    businessName: { type: GraphQLString },
+    storeName: { type: GraphQLString },
   }),
 });
 

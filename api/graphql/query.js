@@ -5,8 +5,19 @@ const Product = require("../models/ProductModel");
 const Featured = require("../models/FeaturedModel");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const { StoreType, CustomerType, ProductType, AdminType, FeaturedType } = require("./types");
-const { GraphQLObjectType, GraphQLString, GraphQLList, GraphQLInt } = require("graphql");
+const {
+  StoreType,
+  CustomerType,
+  ProductType,
+  AdminType,
+  FeaturedType,
+} = require("./types");
+const {
+  GraphQLObjectType,
+  GraphQLString,
+  GraphQLList,
+  GraphQLInt,
+} = require("graphql");
 
 const RootQueryType = new GraphQLObjectType({
   name: "Query",
@@ -18,23 +29,27 @@ const RootQueryType = new GraphQLObjectType({
       args: {
         industry: { type: GraphQLString },
         search: { type: GraphQLString },
-        businessName: { type: GraphQLString },
+        storeName: { type: GraphQLString },
         limit: { type: GraphQLInt },
         skip: { type: GraphQLInt },
       },
-      resolve: async (parent, { industry, search, businessName, limit = 25, skip = 0 }, context) => {
+      resolve: async (
+        parent,
+        { industry, search, storeName, limit = 25, skip = 0 },
+        context
+      ) => {
         if (search) {
           try {
-            return await Store.findPartial("businessName", search);
+            return await Store.findPartial("storeName", search);
           } catch (e) {
             return e;
           }
         }
-        if (businessName) {
+        if (storeName) {
           try {
             return await Store.find(
-              { $text: { $search: businessName } },
-              { _id: 1, businessName: 1, businessURL: 1, image: 1 }
+              { $text: { $search: storeName } },
+              { _id: 1, storeName: 1, storeURL: 1, image: 1 }
             )
               .skip(skip)
               .limit(limit);
@@ -55,12 +70,12 @@ const RootQueryType = new GraphQLObjectType({
     store: {
       type: StoreType,
       description: "Fetch a Store",
-      args: { id: { type: GraphQLString }, businessURL: { type: GraphQLString } },
-      resolve: (parent, { id, businessURL }) => {
+      args: { id: { type: GraphQLString }, storeURL: { type: GraphQLString } },
+      resolve: (parent, { id, storeURL }) => {
         if (id) {
           return Store.findById(id);
-        } else if (businessURL) {
-          return Store.findOne({ businessURL });
+        } else if (storeURL) {
+          return Store.findOne({ storeURL });
         }
       },
     },
@@ -111,7 +126,10 @@ const RootQueryType = new GraphQLObjectType({
             return e;
           }
         } else if (store) {
-          return Product.find({ store }).populate("store").skip(skip).limit(limit);
+          return Product.find({ store })
+            .populate("store")
+            .skip(skip)
+            .limit(limit);
         } else if (tag) {
           return Product.find({ $text: { $search: tag } }, { tags: 0 })
             .skip(skip)
@@ -127,7 +145,10 @@ const RootQueryType = new GraphQLObjectType({
       resolve: (parent, args) => {
         (async () => {
           const item = await Featured.updateOne(
-            { category: "weekly_trends", "weeklyViews.product": new mongoose.Types.ObjectId(args.id) },
+            {
+              category: "weekly_trends",
+              "weeklyViews.product": new mongoose.Types.ObjectId(args.id),
+            },
             { $inc: { "weeklyViews.$.views": 1 } }
           );
           if (item.n !== 1) {
@@ -147,10 +168,14 @@ const RootQueryType = new GraphQLObjectType({
       args: { category: { type: GraphQLString } },
       resolve: async (parent, { category }) => {
         if (category === "stores") {
-          const stores = await Featured.findOne({ category }).populate("stores").exec();
+          const stores = await Featured.findOne({ category })
+            .populate("stores")
+            .exec();
           return stores.stores;
         }
-        const featured = await Featured.findOne({ category }).populate("items").exec();
+        const featured = await Featured.findOne({ category })
+          .populate("items")
+          .exec();
         return featured.items;
       },
     },

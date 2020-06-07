@@ -7,7 +7,7 @@ const upload = multer();
 //get stores, post a new store
 router.post("/", upload.array("image"), async (req, res) => {
   try {
-    req.body.businessURL = req.body.businessName.replace(/\s/g, "").toLowerCase();
+    req.body.storeURL = req.body.storeName.replace(/\s/g, "").toLowerCase();
     req.body.image = req.files[0].location;
     const store = new Store(req.body);
     const token = await store.generateAuthToken();
@@ -32,7 +32,9 @@ router.post("/login", upload.array(), async (req, res) => {
 
 router.post("/logout", auth, upload.array(), async (req, res) => {
   try {
-    const tokens = req.user.tokens.filter((token) => token.token !== req.user.token);
+    const tokens = req.user.tokens.filter(
+      (token) => token.token !== req.user.token
+    );
     req.user.tokens = tokens;
     const user = await req.user.save();
     res.send(user);
@@ -46,8 +48,8 @@ router.patch("/", auth, upload.array(), async (req, res) => {
   const allowedUpdates = [
     firstName,
     lastName,
-    businessName,
-    businessURL,
+    storeName,
+    storeURL,
     email,
     phone,
     image,

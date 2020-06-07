@@ -18,13 +18,13 @@ const StoreSchema = new Schema({
     required: true,
     trim: true,
   },
-  businessName: {
+  storeName: {
     type: String,
     required: true,
     unique: true,
     trim: true,
   },
-  businessURL: {
+  storeURL: {
     type: String,
     unique: true,
     trim: true,
@@ -91,7 +91,7 @@ const StoreSchema = new Schema({
   ],
 });
 
-StoreSchema.index({ businessName: "text" });
+StoreSchema.index({ storeName: "text" });
 
 StoreSchema.virtual("products", {
   ref: "Product",
@@ -111,8 +111,8 @@ StoreSchema.methods.toJSON = function () {
     _id,
     firstName,
     lastName,
-    businessName,
-    businessURL,
+    storeName,
+    storeURL,
     image,
     email,
     phone,
@@ -124,8 +124,8 @@ StoreSchema.methods.toJSON = function () {
     _id,
     firstName,
     lastName,
-    businessName,
-    businessURL,
+    storeName,
+    storeURL,
     image,
     email,
     phone,
