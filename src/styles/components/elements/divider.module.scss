@@ -1,0 +1,19 @@
+.horizontal {
+  width: 50%;
+  min-width: 30rem;
+  max-width: 36rem;
+  margin: 0 auto;
+  font-size: var(--font-m);
+  display: flex;
+  align-items: center;
+  &_or {
+    text-transform: uppercase;
+    color: var(--theme-black);
+  }
+  &_line {
+    width: 100%;
+  }
+  p {
+    margin: 3rem;
+  }
+}

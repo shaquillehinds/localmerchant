@@ -17,21 +17,27 @@
   &_wide {
     @extend .form;
     width: 90%;
-    height: 50vh;
+    height: 70vh;
+    min-height: 30rem;
+    padding-top: 1rem;
+  }
+
+  &_option {
+    &:disabled {
+      display: none;
+    }
   }
 
   &_select {
     border: none;
+    background-color: var(--theme-white);
+    color: var(--theme-black);
     box-shadow: 2px 2px 7px var(--theme-shadow-dark);
   }
 
-  &_label {
-    &_checkbox {
-      align-self: center;
-
-      @include respond(phone) {
-        font-size: var(--font-m);
-      }
+  &_checkbox {
+    &_label {
+      color: var(--theme-black);
     }
   }
 
@@ -40,7 +46,12 @@
     border-bottom: solid 2px var(--theme-primary);
     line-height: 1.5;
     outline: none;
-    // width: 100%;
+    background-color: var(--theme-white);
+    color: var(--theme-black);
+
+    &::placeholder {
+      color: var(--theme-grey);
+    }
 
     &_narrow {
       @extend .form_input;

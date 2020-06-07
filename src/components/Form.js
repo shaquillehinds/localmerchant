@@ -35,7 +35,7 @@ const Form = ({ mode, type }) => {
                 name="show"
                 id="show"
               />
-              <label className={styles.form_label_checkbox} htmlFor="show">
+              <label className={styles.form_checkbox_label} htmlFor="show">
                 Show Password
               </label>
             </span>
@@ -76,8 +76,12 @@ const Form = ({ mode, type }) => {
                 type="text"
                 className={styles.form_input_narrow}
               />
-              <select className={styles.form_select} required>
-                <option defaultValue disabled value="">
+              <select
+                defaultValue="Industry"
+                className={styles.form_select}
+                required
+              >
+                <option className={styles.form_option} disabled>
                   Industry
                 </option>
                 <option value="Automotive">Automotive</option>
@@ -92,8 +96,12 @@ const Form = ({ mode, type }) => {
                 type="text"
                 className={styles.form_input_narrow}
               />
-              <select className={styles.form_select} required>
-                <option defaultValue disabled value="">
+              <select
+                defaultValue="Parish"
+                className={styles.form_select}
+                required
+              >
+                <option className={styles.form_option} disabled>
                   Parish
                 </option>
                 <option value="St.James">St.James</option>
@@ -117,7 +125,7 @@ const Form = ({ mode, type }) => {
                 name="show"
                 id="show"
               />
-              <label className={styles.form_label_checkbox} htmlFor="show">
+              <label className={styles.form_checkbox_label} htmlFor="show">
                 Show Password
               </label>
             </span>

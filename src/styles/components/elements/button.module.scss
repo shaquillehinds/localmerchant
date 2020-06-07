@@ -3,16 +3,32 @@
   border-radius: 3px;
   box-shadow: 1px 1px 5px var(--theme-shadow-dark);
   width: fit-content;
+  background-color: var(--theme-white);
+  color: var(--theme-primary);
   align-self: center;
   cursor: pointer;
+  transition: background-color 200ms ease-in-out, color 200ms ease-in-out,
+    box-shadow 200ms ease-in-out;
 
   &_large {
     @extend .btn;
     padding: 0.8rem 2rem;
+
+    &:hover {
+      background-color: var(--theme-primary);
+      color: var(--theme-white);
+      box-shadow: 2px 2px 8px var(--theme-shadow-secondary);
+    }
+
     &_primary {
       @extend .btn_large;
       background-color: var(--theme-primary);
       color: var(--theme-white);
+      &:hover {
+        background-color: var(--theme-white);
+        color: var(--theme-primary);
+        box-shadow: 2px 2px 8px var(--theme-shadow-primary);
+      }
     }
   }
   &_primary {

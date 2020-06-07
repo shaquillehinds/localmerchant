@@ -3,6 +3,17 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background-color: var(--theme-bg-white);
+
+  &_goback {
+    text-align: center;
+    font-size: var(--font-m);
+    font-weight: 600;
+    color: var(--theme-primary);
+    cursor: pointer;
+    margin: 1rem 0;
+    text-decoration: underline;
+  }
 
   &_as {
     display: flex;
@@ -14,8 +25,34 @@
     letter-spacing: 1px;
     font-weight: 800;
     text-transform: uppercase;
+    &_card {
+      min-height: 15rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 90%;
+      max-width: 36rem;
+      padding: 1rem 0;
+      margin: 0 auto;
+      box-shadow: 1px 1px 5px var(--theme-shadow-dark);
+      background-color: var(--theme-white);
+      color: var(--theme-primary);
+
+      &_wrapper {
+        padding-top: 2rem;
+      }
+
+      &_signup {
+        @extend .login_as_card;
+        background-color: var(--theme-primary);
+        color: var(--theme-white);
+        box-shadow: 2px 2px 8px var(--theme-shadow-dark);
+      }
+    }
     &_label {
       text-align: center;
+      text-transform: uppercase;
+      font-weight: 700;
       font-size: var(--font-m);
     }
   }
