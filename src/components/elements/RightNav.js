@@ -4,10 +4,10 @@ import Link from "next/link";
 const RightNav = () => {
   return (
     <div className={styles.nav_items__container}>
-      <Link href="/">
-        <a className={styles.nav_items__signup}>SignUp</a>
+      <Link href="/login">
+        <a className={styles.nav_items__signup}>Login</a>
       </Link>
-      <Link href="/">
+      <Link href="/login">
         <svg
           className={styles.nav_items__user}
           xmlns="http://www.w3.org/2000/svg"

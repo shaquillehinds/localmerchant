@@ -1,0 +1,23 @@
+.btn {
+  padding: 0.8rem 3.6rem;
+  border-radius: 3px;
+  box-shadow: 1px 1px 5px var(--theme-shadow-dark);
+  width: fit-content;
+  align-self: center;
+  cursor: pointer;
+
+  &_large {
+    @extend .btn;
+    padding: 0.8rem 2rem;
+    &_primary {
+      @extend .btn_large;
+      background-color: var(--theme-primary);
+      color: var(--theme-white);
+    }
+  }
+  &_primary {
+    @extend .btn;
+    background-color: var(--theme-primary);
+    color: var(--theme-white);
+  }
+}

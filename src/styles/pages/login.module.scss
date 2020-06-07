@@ -1,0 +1,45 @@
+.login {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  &_as {
+    display: flex;
+    width: 78%;
+    max-width: 45rem;
+    justify-content: space-around;
+    margin: 0 auto;
+    font-size: var(--font-m);
+    letter-spacing: 1px;
+    font-weight: 800;
+    text-transform: uppercase;
+    &_label {
+      text-align: center;
+      font-size: var(--font-m);
+    }
+  }
+
+  &_options {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    font-size: var(--font-m);
+    margin-bottom: -2rem;
+    &_wide {
+      @extend .login_options;
+      flex-direction: row;
+      align-items: center;
+      width: 27rem;
+      margin: 0 auto -2rem auto;
+    }
+  }
+  &_option {
+    text-transform: uppercase;
+    margin: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}

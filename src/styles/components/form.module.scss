@@ -1,4 +1,64 @@
+@import "../global/mixins";
+
 .form {
   background-color: var(--theme-white);
-  box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.3);
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+  width: 78%;
+  max-width: 45rem;
+  border-radius: 2px;
+  min-height: 23rem;
+  height: 40vh;
+  margin: 0 auto;
+  padding: 0.5rem 3rem;
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+
+  &_wide {
+    @extend .form;
+    width: 90%;
+    height: 50vh;
+  }
+
+  &_select {
+    border: none;
+    box-shadow: 2px 2px 7px var(--theme-shadow-dark);
+  }
+
+  &_label {
+    &_checkbox {
+      align-self: center;
+
+      @include respond(phone) {
+        font-size: var(--font-m);
+      }
+    }
+  }
+
+  &_input {
+    border: none;
+    border-bottom: solid 2px var(--theme-primary);
+    line-height: 1.5;
+    outline: none;
+    // width: 100%;
+
+    &_narrow {
+      @extend .form_input;
+      width: 45%;
+    }
+
+    &_checkbox {
+      @extend .form_input;
+      margin: 1rem;
+    }
+
+    &_wrapper {
+      display: flex;
+      justify-content: space-between;
+      &_col {
+        @extend .form_input_wrapper;
+        flex-direction: column;
+      }
+    }
+  }
 }
