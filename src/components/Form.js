@@ -3,7 +3,7 @@ import button from "../styles/components/elements/button.module.scss";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import validator from "validator";
-import axios from "axios";
+import { validateAll, inputValidate } from "../functions/formValidation";
 
 const Form = ({ mode, type }) => {
   const router = useRouter();
@@ -27,181 +27,6 @@ const Form = ({ mode, type }) => {
       setState((prev) => ({ ...prev, inputType: "text" }));
     } else {
       setState((prev) => ({ ...prev, inputType: "password" }));
-    }
-  };
-  const sanitize = (obj) => {
-    const input = document.querySelectorAll("[type]");
-    // console.log(input);
-  };
-  const inputValidate = (input, condition) => {
-    if (condition) {
-      input.style.borderBottom = "solid 2px green";
-      return true;
-    } else if (input.value) {
-      input.style.borderBottom = "solid 2px red";
-      return false;
-    } else {
-      input.removeAttribute("style");
-      return false;
-    }
-  };
-  const validateAll = async (states) => {
-    const names = ["userName", "storeName", "firstName", "lastName"];
-    const isValid = states.every((stateName) => {
-      if (stateName === "email") {
-        if (!validator.isEmail(state[stateName])) {
-          setState((prev) => ({
-            ...prev,
-            tip: { email: "Enter Valid Email" },
-          }));
-          return false;
-        }
-        return true;
-      } else if (names.includes(stateName)) {
-        if (!(state[stateName].length > 2)) {
-          let tip = {};
-          tip[stateName] = "*Required";
-          setState((prev) => ({ ...prev, tip }));
-          return false;
-        }
-        return true;
-      } else if (stateName === "password" || stateName === "address") {
-        if (!(state[stateName].length > 6)) {
-          let tip = {};
-          stateName === "password"
-            ? (tip[stateName] = "7 character or more")
-            : (tip[stateName] = "*required");
-          setState((prev) => ({ ...prev, tip }));
-          return false;
-        }
-        return true;
-      } else if (stateName === "phone") {
-        if (!validator.isMobilePhone(state[stateName])) {
-          setState((prev) => ({
-            ...prev,
-            tip: { phone: "Numbers only! 7 digits +" },
-          }));
-          return false;
-        }
-        return true;
-      } else if (stateName === "industry") {
-        if (
-          !(state[stateName].length !== 0 && state[stateName] !== "Industry")
-        ) {
-          setState((prev) => ({
-            ...prev,
-            tip: { industry: "*Required" },
-          }));
-          return false;
-        }
-        return true;
-      } else if (stateName === "parish") {
-        if (!(state[stateName].length !== 0 && state[stateName] !== "Parish")) {
-          setState((prev) => ({
-            ...prev,
-            tip: { parish: "*Required" },
-          }));
-          return false;
-        }
-        return true;
-      }
-    });
-    console.log(isValid);
-    if (!isValid) {
-      return null;
-    }
-    if (mode === "login") {
-      try {
-        const res = await axios({
-          url: `/api/${type}/login`,
-          method: "post",
-          data: {
-            email: state.email,
-            password: state.password,
-          },
-        });
-        if (res.data) {
-          localStorage.setItem("JWT", res.data);
-          router.push("/");
-        }
-      } catch (e) {
-        setState((prev) => ({
-          ...prev,
-          tip: { email: "Invalid Email or Password" },
-        }));
-      }
-    } else {
-      if (type === "customer") {
-        try {
-          const res = await axios({
-            url: `/api/customer`,
-            method: "post",
-            data: {
-              firstName: state.firstName,
-              lastName: state.lastName,
-              userName: state.userName,
-              email: state.email,
-              password: state.password,
-            },
-          });
-          if (res.data.userName) {
-            setState((prev) => ({
-              ...prev,
-              tip: { userName: res.data.userName },
-            }));
-          } else if (res.data.email) {
-            setState((prev) => ({
-              ...prev,
-              tip: { email: res.data.email },
-            }));
-          } else if (res.data.token) {
-            localStorage.setItem("JWT", res.data.token);
-            router.push("/");
-          }
-        } catch (e) {
-          setState((prev) => ({
-            ...prev,
-            tip: { email: "Invalid Email or Password" },
-          }));
-        }
-      } else {
-        try {
-          const res = await axios({
-            url: `/api/store`,
-            method: "post",
-            data: {
-              firstName: state.firstName,
-              lastName: state.lastName,
-              storeName: state.storeName,
-              address: state.address,
-              phone: state.phone,
-              industry: state.industry,
-              parish: state.parish,
-              email: state.email,
-              password: state.password,
-            },
-          });
-          if (res.data.storeName) {
-            setState((prev) => ({
-              ...prev,
-              tip: { storeName: res.data.storeName },
-            }));
-          } else if (res.data.email) {
-            setState((prev) => ({
-              ...prev,
-              tip: { email: res.data.email },
-            }));
-          } else if (res.data.token) {
-            localStorage.setItem("JWT", res.data.token);
-            router.push("/");
-          }
-        } catch (e) {
-          setState((prev) => ({
-            ...prev,
-            tip: { email: "Invalid Email or Password" },
-          }));
-        }
-      }
     }
   };
 
@@ -266,23 +91,30 @@ const Form = ({ mode, type }) => {
     inputValidate(input, input.value.length !== 0 && input !== "parish");
     setState((prev) => ({ ...prev, parish: input.value }));
   };
+  const removeTip = (e) => {
+    if (Object.keys(state.tip).length > 0) {
+      console.log("here");
+      return setState((prev) => ({ ...prev, tip: {} }));
+    }
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
+    e.persist();
     if (mode === "login") {
-      const states = ["email", "password"];
-      validateAll(states);
+      const fields = ["email", "password"];
+      validateAll(fields, state, mode, type, setState);
     } else {
       if (type === "customer") {
-        const states = [
+        const fields = [
           "userName",
           "email",
           "password",
           "firstName",
           "lastName",
         ];
-        validateAll(states);
+        validateAll(fields, state, mode, type, setState);
       } else {
-        const states = [
+        const fields = [
           "storeName",
           "address",
           "phone",
@@ -293,14 +125,18 @@ const Form = ({ mode, type }) => {
           "firstName",
           "lastName",
         ];
-        validateAll(states);
+        validateAll(fields, state, mode, type, setState);
       }
     }
   };
   return (
     <div>
       {mode === "login" ? (
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form
+          onKeyDown={removeTip}
+          onSubmit={handleSubmit}
+          className={styles.form}
+        >
           <span data-tip={state.tip.email} className={styles.form_input_tip}>
             <input
               placeholder="Email"
@@ -346,7 +182,11 @@ const Form = ({ mode, type }) => {
           <button className={button.btn_primary}>Login</button>
         </form>
       ) : (
-        <form onSubmit={handleSubmit} className={styles.form_wide}>
+        <form
+          onKeyDown={removeTip}
+          onSubmit={handleSubmit}
+          className={styles.form_wide}
+        >
           <span className={styles.form_input_wrapper}>
             <span
               data-tip={state.tip.firstName}
@@ -421,7 +261,6 @@ const Form = ({ mode, type }) => {
               >
                 <select
                   defaultValue="Industry"
-                  // value={state.industry}
                   onChange={handleIndustry}
                   className={styles.form_select}
                   required
@@ -455,7 +294,6 @@ const Form = ({ mode, type }) => {
               >
                 <select
                   defaultValue="Parish"
-                  // value={state.parish}
                   onChange={handleParish}
                   className={styles.form_select}
                   required

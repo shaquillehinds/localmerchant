@@ -33,6 +33,11 @@
     background-color: var(--theme-white);
     color: var(--theme-black);
     box-shadow: 2px 2px 7px var(--theme-shadow-dark);
+    padding: 0.6rem;
+    outline-color: var(--theme-primary);
+    @include respond(tablet) {
+      font-size: var(--font-m);
+    }
   }
 
   &_input {
@@ -43,6 +48,9 @@
     background-color: var(--theme-white);
     padding: 0.3rem;
     color: var(--theme-black);
+    @include respond(tablet) {
+      font-size: var(--font-m);
+    }
 
     &_tip {
       display: block;
@@ -103,7 +111,12 @@
       margin: 1rem;
       &_label {
         color: var(--theme-black);
+        font-size: 1.3rem;
         cursor: pointer;
+
+        @include respond(phone) {
+          font-size: var(--font-m);
+        }
       }
     }
 
