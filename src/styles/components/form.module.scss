@@ -36,35 +36,80 @@
   }
 
   &_input {
-    &_checkbox {
-      cursor: pointer;
-      &_label {
-        color: var(--theme-black);
-        cursor: pointer;
-      }
-    }
-  }
-
-  &_input {
     border: none;
     border-bottom: solid 2px var(--theme-primary);
     line-height: 1.5;
     outline: none;
     background-color: var(--theme-white);
+    padding: 0.3rem;
     color: var(--theme-black);
 
+    &_tip {
+      display: block;
+      &_narrow {
+        width: 45%;
+        & > .form_input {
+          width: 100%;
+        }
+
+        &::after {
+          content: attr(data-tip);
+          // background-color: #ff0000;
+          box-shadow: 2px 2px 9px rgba(238, 44, 44, 0.562);
+          display: block;
+          position: absolute;
+          background-color: var(--color-white);
+          text-align: center;
+          font-size: 1.2rem;
+          font-weight: 600;
+          color: #ff4b4b;
+          border-radius: 3px;
+          width: auto;
+          padding: 0.3rem 0.3rem;
+        }
+      }
+
+      & > .form_input {
+        width: 100%;
+      }
+
+      &::after {
+        content: attr(data-tip);
+        // background-color: #ff0000;
+        box-shadow: 2px 2px 9px rgba(238, 44, 44, 0.562);
+        display: block;
+        position: absolute;
+        background-color: var(--color-white);
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #ff4b4b;
+        border-radius: 3px;
+        width: auto;
+        padding: 0.3rem 0.3rem;
+      }
+    }
+
+    &:focus {
+      box-shadow: 2px 2px 7px var(--theme-shadow-dark);
+    }
     &::placeholder {
       color: var(--theme-grey);
+    }
+
+    &_checkbox {
+      cursor: pointer;
+      @extend .form_input;
+      margin: 1rem;
+      &_label {
+        color: var(--theme-black);
+        cursor: pointer;
+      }
     }
 
     &_narrow {
       @extend .form_input;
       width: 45%;
-    }
-
-    &_checkbox {
-      @extend .form_input;
-      margin: 1rem;
     }
 
     &_wrapper {

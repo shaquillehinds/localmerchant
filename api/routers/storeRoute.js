@@ -8,23 +8,30 @@ const upload = multer();
 router.post("/", upload.array("image"), async (req, res) => {
   try {
     req.body.storeURL = req.body.storeName.replace(/\s/g, "").toLowerCase();
-    req.body.image = req.files[0].location;
+    const nameExists = await Store.findOne({ storeName: req.body.storeName });
+    if (nameExists) {
+      return res.send({ storeName: "Store name already exists." });
+    }
+    const emailExists = await Store.findOne({ email: req.body.email });
+    if (emailExists) {
+      return res.send({ email: "This email is already in use." });
+    }
     const store = new Store(req.body);
     const token = await store.generateAuthToken();
-    // s stands for saved
-    await store.save();
-    res.status(201).send({ token });
+    return res.status(201).send({ token });
   } catch (e) {
     console.log(e);
-    res.status(500).send(e);
+    return res.status(400).send(e);
   }
 });
 
 router.post("/login", upload.array(), async (req, res) => {
   try {
-    console.log(req.body);
     const token = await Store.findAndLogin(req.body.email, req.body.password);
-    res.send(token);
+    if (typeof token === "string") {
+      return res.send(token);
+    }
+    return res.status(400).send();
   } catch (e) {
     return res.status(400).send(e);
   }

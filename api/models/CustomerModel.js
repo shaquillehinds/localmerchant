@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { generateAuthToken } = require("../models/methods&statics/methods");
+const { findAndLogin } = require("../models/methods&statics/statics");
 const { hashPassword } = require("./middleware/middleware");
 const Schema = mongoose.Schema;
 
@@ -64,11 +65,33 @@ const CustomerSchema = new Schema({
 });
 
 CustomerSchema.methods.toJSON = function () {
-  const { _id, userName, firstName, lastName, email, address, phone, coord, watchlist } = this;
-  return { _id, userName, firstName, lastName, email, address, phone, coord, watchlist };
+  const {
+    _id,
+    userName,
+    firstName,
+    lastName,
+    email,
+    address,
+    phone,
+    coord,
+    watchlist,
+  } = this;
+  return {
+    _id,
+    userName,
+    firstName,
+    lastName,
+    email,
+    address,
+    phone,
+    coord,
+    watchlist,
+  };
 };
 
 CustomerSchema.methods.generateAuthToken = generateAuthToken;
+
+CustomerSchema.statics.findAndLogin = findAndLogin;
 
 CustomerSchema.pre("save", hashPassword);
 

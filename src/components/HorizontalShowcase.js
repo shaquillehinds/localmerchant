@@ -9,8 +9,14 @@ const HorizontalShowcase = ({ displayItems }) => {
           <DisplayItem
             key={item._id + `${Math.random()}`}
             img={item.image}
-            text={item.price ? `$${item.price}` : item.businessName ? `View Store` : "Unknown"}
-            businessName={item.businessName ? item.businessName : undefined}
+            text={
+              item.price
+                ? `$${item.price}`
+                : item.storeName
+                ? `View Store`
+                : "Unknown"
+            }
+            storeName={item.storeName ? item.storeName : undefined}
           />
           <div className={styles.horizontal_showcase__spacing}></div>
         </div>

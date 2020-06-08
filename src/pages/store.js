@@ -17,7 +17,7 @@ const Store = () => {
       <Header />
       {state.stores.map((store) => (
         <div key={store._id}>
-          <p>Name: {store.businessName}</p>
+          <p>Name: {store.storeName}</p>
           <p>Address: {store.address}</p>
           <p>Phone: {store.phone}</p>
         </div>

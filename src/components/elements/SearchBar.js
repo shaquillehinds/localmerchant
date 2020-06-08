@@ -6,13 +6,17 @@ import styles from "../../styles/components/elements/search-bar.module.scss";
 const searchQuery = (searchBy, value) => `query {
   ${searchBy} (search: "${value}"){
     _id
-    ${searchBy == "stores" ? "businessName" : "name"}
-    ${searchBy == "stores" ? "businessURL" : ""}
+    ${searchBy == "stores" ? "storeName" : "name"}
+    ${searchBy == "stores" ? "storeURL" : ""}
   }
 }`;
 
 export default () => {
-  const [state, setState] = useState({ searchBy: "item", results: [], notWaiting: true });
+  const [state, setState] = useState({
+    searchBy: "item",
+    results: [],
+    notWaiting: true,
+  });
   const router = useRouter();
   const changeSearchMode = (e) => {
     e.persist();
@@ -27,9 +31,13 @@ export default () => {
       setState((prev) => ({ ...prev, notWaiting: false }));
       setTimeout(async () => {
         let searchBy;
-        state.searchBy === "item" ? (searchBy = "products") : (searchBy = "stores");
+        state.searchBy === "item"
+          ? (searchBy = "products")
+          : (searchBy = "stores");
         // console.log(searchQuery(searchBy, e.target.value));
-        const results = (await graphqlFetch(searchQuery(searchBy, e.target.value)))[searchBy];
+        const results = (
+          await graphqlFetch(searchQuery(searchBy, e.target.value))
+        )[searchBy];
         setState((prev) => ({ ...prev, results }));
         setState((prev) => ({ ...prev, notWaiting: true }));
       }, 500);
@@ -50,8 +58,8 @@ export default () => {
   const handleSuggestionClick = (info) => {
     if (info.name) {
       router.push(`/product?search=${info.name}`);
-    } else if (info.businessName) {
-      router.push(`/store/${info.businessName}`);
+    } else if (info.storeName) {
+      router.push(`/store/${info.storeName}`);
     } else {
       console.log("error");
     }
@@ -94,7 +102,7 @@ export default () => {
               key={result._id}
               className={styles.searchBar__result}
             >
-              {result.name ? result.name : result.businessName}
+              {result.name ? result.name : result.storeName}
             </div>
           );
         })}

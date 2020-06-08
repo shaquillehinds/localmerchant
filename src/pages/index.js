@@ -21,7 +21,7 @@ const FEATURED_STORES_QUERY = `
 query{
   featured(category: "stores"){
     image
-    businessName
+    storeName
   }
 }`;
 
@@ -35,7 +35,11 @@ const WEEKLY_TRENDS_QUERY = `
 `;
 
 const Index = (props) => {
-  const [state, setState] = useState({ featuredItems: [], trendItems: [], featuredStores: [] });
+  const [state, setState] = useState({
+    featuredItems: [],
+    trendItems: [],
+    featuredStores: [],
+  });
   useEffect(() => {
     setState((prev) => ({ ...prev, featuredItems: props.featuredItems }));
     setState((prev) => ({ ...prev, trendItems: props.trendItems }));

@@ -7,34 +7,59 @@ const { authCustomer } = require("../middleware/auth");
 //create a new customer
 router.post("/", upload.array(), async (req, res) => {
   try {
+    const nameExists = await Customer.findOne({ userName: req.body.userName });
+    if (nameExists) {
+      return res.send({ userName: "Username already exists." });
+    }
+    const emailExists = await Customer.findOne({ email: req.body.email });
+    if (emailExists) {
+      return res.send({ email: "This email is already in use." });
+    }
     const customer = new Customer(req.body);
     const token = await customer.generateAuthToken();
-    res.status(201).send({ token });
+    return res.status(201).send({ token });
   } catch (e) {
-    res.status(500).send(e);
+    return res.status(400).send(e);
   }
 });
 router.post("/login", upload.array(), async (req, res) => {
   try {
-    const token = await Customer.findAndLogin();
-    res.send(token.token);
+    const token = await Customer.findAndLogin(
+      req.body.email,
+      req.body.password
+    );
+    if (typeof token === "string") {
+      return res.send(token);
+    }
+    return res.status(400).send();
   } catch (e) {
-    res.send(400).send(e);
+    return res.status(400).send(e);
   }
 });
 router.post("/logout", authCustomer, async (req, res) => {
   try {
-    const tokens = req.user.tokens.filter((token) => token.token !== req.user.token);
+    const tokens = req.user.tokens.filter(
+      (token) => token.token !== req.user.token
+    );
     req.user.tokens = tokens;
     const user = await req.user.save();
-    res.send(user);
+    return res.send(user);
   } catch (e) {
-    res.status(500).send(e);
+    return res.status(500).send(e);
   }
 });
 router.patch("/", authCustomer, async (req, res) => {
   const updates = Object.keys(req.body.updates);
-  const allowedUpdates = [userName, firstName, lastName, password, address, phone, email, coord];
+  const allowedUpdates = [
+    userName,
+    firstName,
+    lastName,
+    password,
+    address,
+    phone,
+    email,
+    coord,
+  ];
   const valid = updates.forEvery((update) => allowedUpdates.includes(update));
   if (!valid) {
     return res.status(400).send("Invalid update request");
@@ -42,17 +67,17 @@ router.patch("/", authCustomer, async (req, res) => {
   try {
     updates.forEach((update) => (req.user[update] = req.body.updates[update]));
     await req.user.save();
-    res.send(202).send(req.user);
+    return res.send(202).send(req.user);
   } catch (e) {
-    res.status(500).send(e);
+    return res.status(500).send(e);
   }
 });
 router.delete("/", authCustomer, async (req, res) => {
   try {
     const user = await Customer.findByIdAndDelete(req.user._id);
-    res.send(user);
+    return res.send(user);
   } catch (e) {
-    res.status(400).send(e);
+    return res.status(400).send(e);
   }
 });
 
