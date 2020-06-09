@@ -48,10 +48,42 @@
     background-color: var(--theme-white);
     padding: 0.3rem;
     color: var(--theme-black);
+    transition: box-shadow 200ms ease-in-out;
     @include respond(tablet) {
       font-size: var(--font-m);
     }
-
+    &_upload {
+      width: 100%;
+      position: relative;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      &_button {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 10rem;
+        padding-top: 0.5rem;
+        height: 3rem;
+        background-color: var(--color-white);
+        box-shadow: 2px 2px 5px var(--theme-shadow-dark);
+        z-index: 5;
+        cursor: pointer;
+        text-align: center;
+        font-size: var(--font-m);
+        &:hover {
+          box-shadow: 1px 1px 5px var(--theme-shadow-primary);
+        }
+      }
+      &_label {
+        position: relative;
+        display: inline-block;
+        width: 8rem;
+        margin: 0 2rem;
+      }
+    }
     &_tip {
       display: block;
       &_narrow {

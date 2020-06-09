@@ -8,6 +8,8 @@
   text-transform: uppercase;
   justify-content: space-around;
   align-items: center;
+  position: relative;
+  bottom: 0;
 
   &__links {
     display: flex;

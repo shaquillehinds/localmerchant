@@ -15,7 +15,7 @@ const s3 = new aws.S3();
 const upload = multer({
   limits: { fileSize: 2000000 },
   fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(jpe?g|png)$/)) {
+    if (!file.originalname.match(/\.(jpe?g|png)$/i)) {
       cb(new Error("Please upload an image file. (JPG, JPEG or PNG)"));
     }
     cb(undefined, true);

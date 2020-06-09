@@ -36,4 +36,10 @@
     background-color: var(--theme-primary);
     color: var(--theme-white);
   }
+  &_link {
+    @extend .btn;
+    background: none;
+    box-shadow: none;
+    text-decoration: underline;
+  }
 }

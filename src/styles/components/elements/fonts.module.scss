@@ -1,0 +1,36 @@
+.heading {
+  &_container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+  }
+  &_text {
+    font-size: var(--font-l);
+    font-weight: 1000;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 5;
+    padding: 1.3rem 5.5rem;
+    border-radius: 3px;
+    &_normal {
+      @extend .heading_text;
+      color: var(--theme-primary);
+      margin: 3.3rem auto 2.4rem auto;
+    }
+    &_inverted {
+      @extend .heading_text;
+      color: var(--color-white);
+      background-color: var(--color-primary);
+    }
+  }
+}
+.text {
+  &_m {
+    font-size: var(--font-m);
+    color: var(--theme-primary);
+    &_grey {
+      @extend .text_m;
+      color: var(--color-grey);
+    }
+  }
+}
