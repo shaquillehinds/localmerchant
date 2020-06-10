@@ -17,6 +17,7 @@ router.post("/", upload.array(), async (req, res) => {
     }
     const customer = new Customer(req.body);
     const token = await customer.generateAuthToken();
+    req.session.token = token;
     return res.status(201).send({ token });
   } catch (e) {
     return res.status(400).send(e);
@@ -24,11 +25,9 @@ router.post("/", upload.array(), async (req, res) => {
 });
 router.post("/login", upload.array(), async (req, res) => {
   try {
-    const token = await Customer.findAndLogin(
-      req.body.email,
-      req.body.password
-    );
+    const token = await Customer.findAndLogin(req.body.email, req.body.password, req.session.token);
     if (typeof token === "string") {
+      req.session.token = token;
       return res.send(token);
     }
     return res.status(400).send();
@@ -38,9 +37,7 @@ router.post("/login", upload.array(), async (req, res) => {
 });
 router.post("/logout", authCustomer, async (req, res) => {
   try {
-    const tokens = req.user.tokens.filter(
-      (token) => token.token !== req.user.token
-    );
+    const tokens = req.user.tokens.filter((token) => token.token !== req.user.token);
     req.user.tokens = tokens;
     const user = await req.user.save();
     return res.send(user);
@@ -50,16 +47,7 @@ router.post("/logout", authCustomer, async (req, res) => {
 });
 router.patch("/", authCustomer, async (req, res) => {
   const updates = Object.keys(req.body.updates);
-  const allowedUpdates = [
-    userName,
-    firstName,
-    lastName,
-    password,
-    address,
-    phone,
-    email,
-    coord,
-  ];
+  const allowedUpdates = [userName, firstName, lastName, password, address, phone, email, coord];
   const valid = updates.forEvery((update) => allowedUpdates.includes(update));
   if (!valid) {
     return res.status(400).send("Invalid update request");

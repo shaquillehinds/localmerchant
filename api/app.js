@@ -10,17 +10,36 @@ const adminRouter = require("./routers/adminRoute");
 const customerRouter = require("./routers/customerRoute");
 const Dotenv = require("dotenv");
 const cors = require("cors");
+const session = require("express-session");
+const MongoStore = require("connect-mongo")(session);
+const mongoose = require("mongoose");
 
 //configure application
 const app = express();
 const server = http.createServer(app);
 Dotenv.config();
 const connect = require("./db/mongoose");
-connect();
+const connection = connect();
+const sessionStore = new MongoStore({
+  mongooseConnection: mongoose.connection,
+  collection: "session",
+});
 
 //middleware
 app.use(cors());
 app.use(express.json());
+app.use(
+  session({
+    secret: process.env.JWT_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    store: sessionStore,
+    cookie: {
+      maxAge: 60000 * 60 * 24 * 7,
+    },
+  })
+);
+
 app.use("/api/graphql", authGraphQL, graphqlHTTP({ schema, graphiql: true }));
 app.use("/api/store", storeRouter);
 app.use("/api/product", productRouter);

@@ -5,19 +5,8 @@ const Product = require("../models/ProductModel");
 const Featured = require("../models/FeaturedModel");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const {
-  StoreType,
-  CustomerType,
-  ProductType,
-  AdminType,
-  FeaturedType,
-} = require("./types");
-const {
-  GraphQLObjectType,
-  GraphQLString,
-  GraphQLList,
-  GraphQLInt,
-} = require("graphql");
+const { StoreType, CustomerType, ProductType, AdminType, FeaturedType } = require("./types");
+const { GraphQLObjectType, GraphQLString, GraphQLList, GraphQLInt } = require("graphql");
 
 const RootQueryType = new GraphQLObjectType({
   name: "Query",
@@ -33,11 +22,7 @@ const RootQueryType = new GraphQLObjectType({
         limit: { type: GraphQLInt },
         skip: { type: GraphQLInt },
       },
-      resolve: async (
-        parent,
-        { industry, search, storeName, limit = 25, skip = 0 },
-        context
-      ) => {
+      resolve: async (parent, { industry, search, storeName, limit = 25, skip = 0 }, context) => {
         if (search) {
           try {
             return await Store.findPartial("storeName", search);
@@ -95,7 +80,10 @@ const RootQueryType = new GraphQLObjectType({
       args: { id: { type: GraphQLString } },
       resolve: async (parent, args, context) => {
         try {
-          const decoded = jwt.verify(context.token, process.env.JWT_SECRET);
+          const decoded = jwt.verify(context.token, process.env.JWT_SECRET, (err, decoded) => {
+            if (err) return false;
+            return decoded;
+          });
           if (!decoded._id) {
             return "Unauthorized";
           }
@@ -126,10 +114,7 @@ const RootQueryType = new GraphQLObjectType({
             return e;
           }
         } else if (store) {
-          return Product.find({ store })
-            .populate("store")
-            .skip(skip)
-            .limit(limit);
+          return Product.find({ store }).populate("store").skip(skip).limit(limit);
         } else if (tag) {
           return Product.find({ $text: { $search: tag } }, { tags: 0 })
             .skip(skip)
@@ -168,14 +153,10 @@ const RootQueryType = new GraphQLObjectType({
       args: { category: { type: GraphQLString } },
       resolve: async (parent, { category }) => {
         if (category === "stores") {
-          const stores = await Featured.findOne({ category })
-            .populate("stores")
-            .exec();
+          const stores = await Featured.findOne({ category }).populate("stores").exec();
           return stores.stores;
         }
-        const featured = await Featured.findOne({ category })
-          .populate("items")
-          .exec();
+        const featured = await Featured.findOne({ category }).populate("items").exec();
         return featured.items;
       },
     },

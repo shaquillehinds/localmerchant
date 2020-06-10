@@ -3,6 +3,7 @@ const Store = require("../models/StoreModel");
 const { auth } = require("../middleware/auth");
 const multer = require("multer");
 const upload = multer();
+const jwt = require("jsonwebtoken");
 
 //get stores, post a new store
 router.post("/", upload.array("image"), async (req, res) => {
@@ -18,6 +19,7 @@ router.post("/", upload.array("image"), async (req, res) => {
     }
     const store = new Store(req.body);
     const token = await store.generateAuthToken();
+    req.session.token = token;
     return res.status(201).send({ token });
   } catch (e) {
     console.log(e);
@@ -27,8 +29,9 @@ router.post("/", upload.array("image"), async (req, res) => {
 
 router.post("/login", upload.array(), async (req, res) => {
   try {
-    const token = await Store.findAndLogin(req.body.email, req.body.password);
+    const token = await Store.findAndLogin(req.body.email, req.body.password, req.session.token);
     if (typeof token === "string") {
+      req.session.token = token;
       return res.send(token);
     }
     return res.status(400).send();
@@ -39,9 +42,7 @@ router.post("/login", upload.array(), async (req, res) => {
 
 router.post("/logout", auth, upload.array(), async (req, res) => {
   try {
-    const tokens = req.user.tokens.filter(
-      (token) => token.token !== req.user.token
-    );
+    const tokens = req.user.tokens.filter((token) => token.token !== req.user.token);
     req.user.tokens = tokens;
     const user = await req.user.save();
     res.send(user);

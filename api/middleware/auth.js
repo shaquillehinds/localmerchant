@@ -8,7 +8,10 @@ const auth = async (req, res, next) => {
     return res.status(401).send("Please Authenticate");
   }
   const token = req.headers.authorization.replace("Bearer ", "");
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const decoded = jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) return false;
+    return decoded;
+  });
   if (!decoded) {
     return res.status(401).send("Please Authenticate");
   }
@@ -35,7 +38,10 @@ const authAdmin = async (req, res, next) => {
   }
   const token = req.headers.authorization.replace("Bearer ", "");
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) return false;
+      return decoded;
+    });
     if (!decoded) {
       throw new Error();
     }
@@ -53,7 +59,10 @@ const authCustomer = async (req, res, next) => {
     return res.status(401).send("Please Authenticate");
   }
   const token = req.headers.authorization.replace("Bearer ", "");
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const decoded = jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) return false;
+    return decoded;
+  });
   if (!decoded) {
     return res.status(401).send("Please Authenticate");
   }
