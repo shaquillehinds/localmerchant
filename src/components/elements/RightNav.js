@@ -1,11 +1,19 @@
 import styles from "../../styles/components/elements/right-nav.module.scss";
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import cookies from "browser-cookies";
 
 const RightNav = () => {
+  const [state, setState] = useState({ loggedIn: false });
+  useEffect(() => {
+    if (cookies.get("loggedIn") === "yes") {
+      setState((prev) => ({ ...prev, loggedIn: true }));
+    }
+  }, []);
   return (
     <div className={styles.nav_items__container}>
       <Link href="/login">
-        <a className={styles.nav_items__signup}>Login</a>
+        <a className={styles.nav_items__signup}>{state.loggedIn ? "Profile" : "Login"}</a>
       </Link>
       <Link href="/login">
         <svg

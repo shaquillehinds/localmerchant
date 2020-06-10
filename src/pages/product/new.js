@@ -7,8 +7,9 @@ import button from "../../styles/components/elements/button.module.scss";
 import Link from "next/link";
 import numeral from "numeral";
 import { inputValidate } from "../../functions/formValidation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import cookies from "browser-cookies";
 
 const New = () => {
   const [state, setState] = useState({
@@ -18,7 +19,14 @@ const New = () => {
     images: [],
     description: "",
     loading: false,
+    customer: false,
   });
+  useEffect(() => {
+    const customer = cookies.get("customer");
+    if (customer === "yes") {
+      location.href = "/";
+    }
+  }, []);
   const tagsHandler = (value) => {
     if (value.length > 2) {
       return value

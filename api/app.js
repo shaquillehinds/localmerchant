@@ -10,6 +10,7 @@ const adminRouter = require("./routers/adminRoute");
 const customerRouter = require("./routers/customerRoute");
 const Dotenv = require("dotenv");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
 const mongoose = require("mongoose");
@@ -39,11 +40,24 @@ app.use(
     },
   })
 );
-
+app.use(cookieParser(process.env.JWT_SECRET));
 app.use("/api/graphql", authGraphQL, graphqlHTTP({ schema, graphiql: true }));
 app.use("/api/store", storeRouter);
 app.use("/api/product", productRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/customer", customerRouter);
+app.use((req, res, next) => {
+  if (req.session.token) {
+    res.cookie("loggedIn", "yes");
+  } else {
+    res.cookie("loggedIn", "no");
+  }
+  if (req.session.customer) {
+    res.cookie("customer", "yes");
+  } else {
+    res.cookie("customer", "no");
+  }
+  next();
+});
 
 module.exports = { app, server };

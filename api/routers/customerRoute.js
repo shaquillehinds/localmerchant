@@ -18,6 +18,7 @@ router.post("/", upload.array(), async (req, res) => {
     const customer = new Customer(req.body);
     const token = await customer.generateAuthToken();
     req.session.token = token;
+    req.session.customer = "yes";
     return res.status(201).send({ token });
   } catch (e) {
     return res.status(400).send(e);
@@ -28,6 +29,7 @@ router.post("/login", upload.array(), async (req, res) => {
     const token = await Customer.findAndLogin(req.body.email, req.body.password, req.session.token);
     if (typeof token === "string") {
       req.session.token = token;
+      req.session.customer = "yes";
       return res.send(token);
     }
     return res.status(400).send();
@@ -39,6 +41,7 @@ router.post("/logout", authCustomer, async (req, res) => {
   try {
     const tokens = req.user.tokens.filter((token) => token.token !== req.user.token);
     req.user.tokens = tokens;
+    delete req.session.customer;
     const user = await req.user.save();
     return res.send(user);
   } catch (e) {

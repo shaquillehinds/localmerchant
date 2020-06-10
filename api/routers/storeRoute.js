@@ -3,7 +3,6 @@ const Store = require("../models/StoreModel");
 const { auth } = require("../middleware/auth");
 const multer = require("multer");
 const upload = multer();
-const jwt = require("jsonwebtoken");
 
 //get stores, post a new store
 router.post("/", upload.array("image"), async (req, res) => {
@@ -32,6 +31,7 @@ router.post("/login", upload.array(), async (req, res) => {
     const token = await Store.findAndLogin(req.body.email, req.body.password, req.session.token);
     if (typeof token === "string") {
       req.session.token = token;
+      if (req.session.customer) delete req.session.customer;
       return res.send(token);
     }
     return res.status(400).send();

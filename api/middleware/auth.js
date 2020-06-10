@@ -28,7 +28,7 @@ const auth = async (req, res, next) => {
     req.token = token;
     return next();
   } catch {
-    res.status(401).send("Please Authenticate");
+    return res.status(401).send("Please Authenticate");
   }
 };
 
@@ -50,7 +50,7 @@ const authAdmin = async (req, res, next) => {
     req.token = token;
     return next();
   } catch (e) {
-    res.status(401).send("Please Authenticate");
+    return res.status(401).send("Please Authenticate");
   }
 };
 
@@ -79,7 +79,7 @@ const authCustomer = async (req, res, next) => {
     req.token = token;
     return next();
   } catch {
-    res.status(401).send("Please Authenticate");
+    return res.status(401).send("Please Authenticate");
   }
 };
 

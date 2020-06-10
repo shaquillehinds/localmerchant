@@ -32,6 +32,7 @@ router.post("login", upload.array(), async (req, res) => {
   if (response.token instanceof Error) {
     return res.status(400).send("Unable to login.");
   }
+  if (req.session.customer) delete req.session.customer;
   if (response.rank) {
     const url = `${process.env.APP_URL}/api/admin/login?token=${response.token}`;
     const info = await emailSuperToken(url);
