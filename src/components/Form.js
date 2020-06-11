@@ -1,12 +1,10 @@
 import styles from "../styles/components/form.module.scss";
 import button from "../styles/components/elements/button.module.scss";
 import { useState } from "react";
-import { useRouter } from "next/router";
 import validator from "validator";
 import { validateAll, inputValidate } from "../functions/formValidation";
 
 const Form = ({ mode, type }) => {
-  const router = useRouter();
   const [state, setState] = useState({
     inputType: "password",
     email: "",
@@ -73,10 +71,7 @@ const Form = ({ mode, type }) => {
   const handlePhone = (e) => {
     e.persist();
     const input = e.target;
-    inputValidate(
-      input,
-      validator.isMobilePhone(input.value) && input.value.length >= 7
-    );
+    inputValidate(input, validator.isMobilePhone(input.value) && input.value.length >= 7);
     setState((prev) => ({ ...prev, phone: input.value }));
   };
   const handleIndustry = (e) => {
@@ -105,13 +100,7 @@ const Form = ({ mode, type }) => {
       validateAll(fields, state, mode, type, setState);
     } else {
       if (type === "customer") {
-        const fields = [
-          "userName",
-          "email",
-          "password",
-          "firstName",
-          "lastName",
-        ];
+        const fields = ["userName", "email", "password", "firstName", "lastName"];
         validateAll(fields, state, mode, type, setState);
       } else {
         const fields = [
@@ -132,11 +121,7 @@ const Form = ({ mode, type }) => {
   return (
     <div>
       {mode === "login" ? (
-        <form
-          onKeyDown={removeTip}
-          onSubmit={handleSubmit}
-          className={styles.form}
-        >
+        <form onKeyDown={removeTip} onSubmit={handleSubmit} className={styles.form}>
           <span data-tip={state.tip.email} className={styles.form_input_tip}>
             <input
               placeholder="Email"
@@ -147,10 +132,7 @@ const Form = ({ mode, type }) => {
             />
           </span>
           <span className={styles.form_input_wrapper_col}>
-            <span
-              data-tip={state.tip.password}
-              className={styles.form_input_tip}
-            >
+            <span data-tip={state.tip.password} className={styles.form_input_tip}>
               <input
                 placeholder="Password"
                 value={state.password}
@@ -160,20 +142,9 @@ const Form = ({ mode, type }) => {
                 className={styles.form_input}
               />
             </span>
-            <span
-              className={styles.form_input_checkbox_wrapper}
-              onClick={showPassword}
-            >
-              <input
-                className={styles.form_input_checkbox}
-                type="checkbox"
-                name="show"
-                id="show"
-              />
-              <label
-                className={styles.form_input_checkbox_label}
-                htmlFor="show"
-              >
+            <span className={styles.form_input_checkbox_wrapper} onClick={showPassword}>
+              <input className={styles.form_input_checkbox} type="checkbox" name="show" id="show" />
+              <label className={styles.form_input_checkbox_label} htmlFor="show">
                 Show Password
               </label>
             </span>
@@ -182,16 +153,9 @@ const Form = ({ mode, type }) => {
           <button className={button.btn_primary}>Login</button>
         </form>
       ) : (
-        <form
-          onKeyDown={removeTip}
-          onSubmit={handleSubmit}
-          className={styles.form_wide}
-        >
+        <form onKeyDown={removeTip} onSubmit={handleSubmit} className={styles.form_wide}>
           <span className={styles.form_input_wrapper}>
-            <span
-              data-tip={state.tip.firstName}
-              className={styles.form_input_tip_narrow}
-            >
+            <span data-tip={state.tip.firstName} className={styles.form_input_tip_narrow}>
               <input
                 placeholder="First Name"
                 value={state.firstName}
@@ -200,10 +164,7 @@ const Form = ({ mode, type }) => {
                 className={styles.form_input_narrow}
               />
             </span>
-            <span
-              data-tip={state.tip.lastName}
-              className={styles.form_input_tip_narrow}
-            >
+            <span data-tip={state.tip.lastName} className={styles.form_input_tip_narrow}>
               <input
                 placeholder="Last Name"
                 value={state.lastName}
@@ -215,9 +176,7 @@ const Form = ({ mode, type }) => {
           </span>
           <span className={styles.form_input_wrapper}>
             <span
-              data-tip={
-                state.tip.userName ? state.tip.userName : state.tip.storeName
-              }
+              data-tip={state.tip.userName ? state.tip.userName : state.tip.storeName}
               className={styles.form_input_tip_narrow}
             >
               <input
@@ -228,10 +187,7 @@ const Form = ({ mode, type }) => {
                 className={styles.form_input_narrow}
               />
             </span>
-            <span
-              data-tip={state.tip.email}
-              className={styles.form_input_tip_narrow}
-            >
+            <span data-tip={state.tip.email} className={styles.form_input_tip_narrow}>
               <input
                 placeholder="Email"
                 type="text"
@@ -243,10 +199,7 @@ const Form = ({ mode, type }) => {
           </span>
           {type === "customer" ? null : (
             <span className={styles.form_input_wrapper}>
-              <span
-                data-tip={state.tip.phone}
-                className={styles.form_input_tip_narrow}
-              >
+              <span data-tip={state.tip.phone} className={styles.form_input_tip_narrow}>
                 <input
                   placeholder="Phone #"
                   value={state.phone}
@@ -255,10 +208,7 @@ const Form = ({ mode, type }) => {
                   className={styles.form_input_narrow}
                 />
               </span>
-              <span
-                data-tip={state.tip.industry}
-                className={styles.form_input_tip}
-              >
+              <span data-tip={state.tip.industry} className={styles.form_input_tip}>
                 <select
                   defaultValue="Industry"
                   onChange={handleIndustry}
@@ -276,10 +226,7 @@ const Form = ({ mode, type }) => {
           )}
           {type === "customer" ? null : (
             <span className={styles.form_input_wrapper}>
-              <span
-                data-tip={state.tip.address}
-                className={styles.form_input_tip_narrow}
-              >
+              <span data-tip={state.tip.address} className={styles.form_input_tip_narrow}>
                 <input
                   placeholder="Address"
                   value={state.address}
@@ -288,10 +235,7 @@ const Form = ({ mode, type }) => {
                   className={styles.form_input_narrow}
                 />
               </span>
-              <span
-                data-tip={state.tip.parish}
-                className={styles.form_input_tip}
-              >
+              <span data-tip={state.tip.parish} className={styles.form_input_tip}>
                 <select
                   defaultValue="Parish"
                   onChange={handleParish}
@@ -309,10 +253,7 @@ const Form = ({ mode, type }) => {
             </span>
           )}
           <span className={styles.form_input_wrapper_col}>
-            <span
-              data-tip={state.tip.password}
-              className={styles.form_input_tip}
-            >
+            <span data-tip={state.tip.password} className={styles.form_input_tip}>
               <input
                 placeholder="Password"
                 value={state.password}
@@ -322,10 +263,7 @@ const Form = ({ mode, type }) => {
                 className={styles.form_input}
               />
             </span>
-            <span
-              className={styles.form_input_checkbox_wrapper}
-              onClick={showPassword}
-            >
+            <span className={styles.form_input_checkbox_wrapper} onClick={showPassword}>
               <input
                 className={styles.form_input_checkbox}
                 type="checkbox"
@@ -333,10 +271,7 @@ const Form = ({ mode, type }) => {
                 name="show"
                 id="show"
               />
-              <label
-                className={styles.form_input_checkbox_label}
-                htmlFor="show"
-              >
+              <label className={styles.form_input_checkbox_label} htmlFor="show">
                 Show Password
               </label>
             </span>

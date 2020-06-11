@@ -8,6 +8,7 @@ const storeRouter = require("./routers/storeRoute");
 const productRouter = require("./routers/productRoute");
 const adminRouter = require("./routers/adminRoute");
 const customerRouter = require("./routers/customerRoute");
+const paymentRouter = require("./routers/paymentRoute");
 const Dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -18,7 +19,9 @@ const mongoose = require("mongoose");
 //configure application
 const app = express();
 const server = http.createServer(app);
-Dotenv.config();
+if (process.env.NODE_ENV !== "production") {
+  Dotenv.config();
+}
 const connect = require("./db/mongoose");
 const connection = connect();
 const sessionStore = new MongoStore({
@@ -46,6 +49,7 @@ app.use("/api/store", storeRouter);
 app.use("/api/product", productRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/customer", customerRouter);
+app.use("/api/payment", paymentRouter);
 app.use((req, res, next) => {
   if (req.session.token) {
     res.cookie("loggedIn", "yes");

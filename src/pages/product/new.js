@@ -1,6 +1,7 @@
 import styles from "../../styles/components/form.module.scss";
 import font from "../../styles/components/elements/fonts.module.scss";
 import loaders from "../../styles/components/elements/loaders.module.scss";
+import page from "../../styles/components/elements/page.module.scss";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import button from "../../styles/components/elements/button.module.scss";
@@ -109,14 +110,7 @@ const New = () => {
       </div>
 
       {state.loading ? (
-        <div
-          style={{
-            minHeight: 70 + "vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+        <div className={page.setup}>
           <div className={loaders.ring__loader}></div>
         </div>
       ) : (

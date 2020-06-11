@@ -23,3 +23,85 @@
     transform: rotate(360deg);
   }
 }
+/***********************************Completed Loader****************************************/
+$circle-length: 151px;
+$check-length: 36px;
+
+@keyframes scaleAnimation {
+  0% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes drawCircle {
+  0% {
+    stroke-dashoffset: $circle-length;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes drawCheck {
+  0% {
+    stroke-dashoffset: $check-length;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.successAnimationCircle {
+  stroke-dasharray: $circle-length $circle-length;
+  stroke: var(--color-primary);
+  fill: var(--color-white);
+}
+
+.successAnimationCheck {
+  stroke-dasharray: $check-length $check-length;
+  stroke: var(--color-primary);
+}
+
+.successAnimationResult {
+  fill: var(--color-primary);
+  opacity: 0;
+}
+
+.successAnimation_animated {
+  animation: scaleAnimation 1s ease-out 0s 1 both;
+
+  .successAnimationCircle {
+    animation: drawCircle 1s cubic-bezier(0.77, 0, 0.175, 1) 0s 1 both, fadeOut 0.3s linear 0.9s 1 both;
+  }
+
+  .successAnimationCheck {
+    animation: drawCheck 1s cubic-bezier(0.77, 0, 0.175, 1) 0s 1 both, fadeOut 0.3s linear 0.9s 1 both;
+  }
+
+  .successAnimationResult {
+    animation: fadeIn 0.3s linear 0.9s both;
+  }
+}

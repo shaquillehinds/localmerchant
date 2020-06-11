@@ -85,7 +85,16 @@ const StoreSchema = new Schema({
     {
       token: {
         type: String,
-        required: true,
+      },
+    },
+  ],
+  purchaseTokens: [
+    {
+      type: {
+        type: String,
+      },
+      quantity: {
+        type: Number,
       },
     },
   ],
