@@ -10,10 +10,12 @@ const CheckoutForm = ({ type, quantity, payHandler }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    const submitButton = event.target.elements.submitButton;
+    submitButton.setAttribute("disabled", true);
     if (!stripe || !elements) {
       // Stripe.js has not loaded yet. Make sure to disable
       // form submission until Stripe.js has loaded.
+      submitButton.removeAttribute("disabled");
       return;
     }
 
@@ -25,7 +27,13 @@ const CheckoutForm = ({ type, quantity, payHandler }) => {
 
     if (error) {
       console.log("[error]", error);
+      submitButton.removeAttribute("disabled");
     } else {
+      const confirmed = confirm("Confirm you want to make this purchase.");
+      if (!confirmed) {
+        submitButton.removeAttribute("disabled");
+        return null;
+      }
       console.log("[PaymentMethod]", paymentMethod);
       payHandler("processing");
       try {
@@ -37,9 +45,11 @@ const CheckoutForm = ({ type, quantity, payHandler }) => {
         });
         console.log(data);
         payHandler("success");
+        submitButton.removeAttribute("disabled");
       } catch (e) {
         payHandler("error");
         console.log(e);
+        submitButton.removeAttribute("disabled");
       }
     }
   };
@@ -54,7 +64,7 @@ const CheckoutForm = ({ type, quantity, payHandler }) => {
         />
       </div>
       <CardElement />
-      <button className={button.btn_primary} type="submit" disabled={!stripe}>
+      <button id="submitButton" className={button.btn_primary} type="submit" disabled={!stripe}>
         Pay
       </button>
     </form>

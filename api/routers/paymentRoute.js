@@ -5,7 +5,7 @@ const { auth } = require("../middleware/auth");
 router.post("/", auth, async (req, res) => {
   const { id, type, quantity = 1 } = req.body;
   let amount;
-  type === "FPT" ? (amount = 1000) : (amount = 500);
+  type === "FPT" ? (amount = 1500) : type === "FST" ? (amount = 2000) : (amount = 500);
   amount *= quantity;
   try {
     const payment = await stripe.paymentIntents.create({
