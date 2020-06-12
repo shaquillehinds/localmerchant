@@ -1,0 +1,31 @@
+.account_nav {
+  &_wrapper {
+    padding: 3rem 1.5rem;
+    width: 84%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: solid 1px var(--theme-primary);
+    margin: 0 auto;
+    max-width: 45rem;
+  }
+  &_item {
+    list-style: none;
+    &:not(:last-child) {
+      margin-right: 2.5rem;
+    }
+  }
+  &_link {
+    color: var(--theme-primary);
+    font-size: 1.25rem;
+    padding: 0.5rem 1rem 0.6rem 1rem;
+    border-radius: 6px;
+    &_active {
+      @extend .account_nav_link;
+      box-shadow: 1px 2px 5px var(--theme-shadow-dark);
+      background-color: var(--color-white);
+      color: var(--color-tertiary);
+      font-weight: 700;
+    }
+  }
+}

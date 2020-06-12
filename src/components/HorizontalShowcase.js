@@ -5,17 +5,13 @@ const HorizontalShowcase = ({ displayItems }) => {
   return (
     <div className={styles.horizontal_showcase}>
       {displayItems.map((item) => (
-        <div className={styles.horizontal_showcase__item_wrapper}>
+        <div
+          key={item._id ? item._id + `${Math.random()}` : Math.random()}
+          className={styles.horizontal_showcase__item_wrapper}
+        >
           <DisplayItem
-            key={item._id + `${Math.random()}`}
             img={item.image}
-            text={
-              item.price
-                ? `$${item.price}`
-                : item.storeName
-                ? `View Store`
-                : "Unknown"
-            }
+            text={item.price ? `$${item.price}` : item.storeName ? `View Store` : "Unknown"}
             storeName={item.storeName ? item.storeName : undefined}
           />
           <div className={styles.horizontal_showcase__spacing}></div>

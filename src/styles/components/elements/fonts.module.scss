@@ -14,9 +14,9 @@
     z-index: 5;
     padding: 1.3rem 5.5rem;
     border-radius: 3px;
+    color: var(--theme-primary);
     &_normal {
       @extend .heading_text;
-      color: var(--theme-primary);
       margin: 3.3rem auto 2.4rem auto;
     }
     &_inverted {
