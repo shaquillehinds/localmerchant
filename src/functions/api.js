@@ -1,16 +1,39 @@
 import fetch from "isomorphic-unfetch";
 import Qs from "qs";
 
+const graphqlRenderedFetch = async (query) => {
+  try {
+    const JWT = localStorage.getItem("JWT");
+    if (JWT) {
+      const json = await fetch(`${process.env.APP_URL}/api/graphql`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${JWT}` },
+        body: JSON.stringify({
+          query: query,
+        }),
+      });
+      const res = (await json.json()).data;
+      return res;
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 const graphqlFetch = async (query) => {
-  const json = await fetch(`${process.env.APP_URL}/api/graphql`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      query: query,
-    }),
-  });
-  const res = (await json.json()).data;
-  return res;
+  try {
+    const json = await fetch(`${process.env.APP_URL}/api/graphql`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: query,
+      }),
+    });
+    const res = (await json.json()).data;
+    return res;
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 const tagSearchQuery = (search) => `
@@ -56,4 +79,4 @@ const searchStores = async () => {
   }
 };
 
-export { searchProducts, searchStores, graphqlFetch };
+export { searchProducts, searchStores, graphqlFetch, graphqlRenderedFetch };

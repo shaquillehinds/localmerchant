@@ -7,98 +7,103 @@ const { hashPassword } = require("./middleware/middleware");
 const jwt = require("jsonwebtoken");
 const Schema = mongoose.Schema;
 
-const StoreSchema = new Schema({
-  firstName: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  lastName: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  storeName: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-  },
-  storeURL: {
-    type: String,
-    unique: true,
-    trim: true,
-  },
-  image: {
-    type: String,
-    default: undefined,
-  },
-  email: {
-    type: String,
-    require: true,
-    unique: true,
-    trim: true,
-    lowercase: true,
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 7,
-    trim: true,
-  },
-  address: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  parish: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  coord: {
-    lat: {
-      type: Number,
+const StoreSchema = new Schema(
+  {
+    firstName: {
+      type: String,
+      required: true,
       trim: true,
     },
-    long: {
-      type: Number,
+    lastName: {
+      type: String,
+      required: true,
       trim: true,
     },
-  },
-  phone: {
-    type: Number,
-    minlength: 7,
-    required: true,
-  },
-  industry: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  rank: {
-    type: String,
-    default: "Bronze",
-    trim: true,
-  },
-  tokens: [
-    {
-      token: {
-        type: String,
-      },
+    storeName: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
     },
-  ],
-  purchaseTokens: [
-    {
-      type: {
-        type: String,
-      },
-      quantity: {
+    storeURL: {
+      type: String,
+      unique: true,
+      trim: true,
+    },
+    image: {
+      type: String,
+      default: undefined,
+    },
+    email: {
+      type: String,
+      require: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      minlength: 7,
+      trim: true,
+    },
+    address: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    parish: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    coord: {
+      lat: {
         type: Number,
+        trim: true,
+      },
+      long: {
+        type: Number,
+        trim: true,
       },
     },
-  ],
-});
+    phone: {
+      type: Number,
+      minlength: 7,
+      required: true,
+    },
+    industry: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    rank: {
+      type: String,
+      default: "Bronze",
+      trim: true,
+    },
+    tokens: [
+      {
+        token: {
+          type: String,
+        },
+      },
+    ],
+    purchaseTokens: [
+      {
+        type: {
+          type: String,
+        },
+        quantity: {
+          type: Number,
+        },
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
 
 StoreSchema.index({ storeName: "text" });
 
@@ -128,6 +133,7 @@ StoreSchema.methods.toJSON = function () {
     industry,
     address,
     coord,
+    purchaseTokens,
   } = this;
   return {
     _id,
@@ -141,6 +147,7 @@ StoreSchema.methods.toJSON = function () {
     industry,
     address,
     coord,
+    purchaseTokens,
   };
 };
 

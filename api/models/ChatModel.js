@@ -2,7 +2,19 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const ChatSchema = new Schema({
-  messages: [{ type: String }],
+  messages: [
+    {
+      message: {
+        type: String,
+      },
+      createdAt: {
+        type: Number,
+      },
+      owner: {
+        type: Schema.Types.ObjectId,
+      },
+    },
+  ],
   store: {
     type: Schema.Types.ObjectId,
     ref: "Store",

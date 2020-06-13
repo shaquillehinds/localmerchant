@@ -4,17 +4,26 @@ import { useState, useEffect } from "react";
 import cookies from "browser-cookies";
 
 const RightNav = () => {
-  const [state, setState] = useState({ loggedIn: false });
+  const [state, setState] = useState({ loggedIn: false, user: "customer" });
   useEffect(() => {
     if (cookies.get("loggedIn") === "yes") {
       setState((prev) => ({ ...prev, loggedIn: true }));
     }
+    if (cookies.get("customer") === "no") {
+      setState((prev) => ({ ...prev, user: "store" }));
+    }
   }, []);
   return (
     <div className={styles.nav_items__container}>
-      <Link href="/login">
-        <a className={styles.nav_items__signup}>{state.loggedIn ? "Profile" : "Login"}</a>
-      </Link>
+      {state.loggedIn ? (
+        <Link href={`/${state.user}/account`}>
+          <a className={styles.nav_items__signup}>Account</a>
+        </Link>
+      ) : (
+        <Link href="/login">
+          <a className={styles.nav_items__signup}>Login</a>
+        </Link>
+      )}
       <Link href="/login">
         <svg
           className={styles.nav_items__user}

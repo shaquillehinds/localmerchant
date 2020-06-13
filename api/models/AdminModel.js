@@ -6,56 +6,61 @@ const { hashPassword } = require("./middleware/middleware");
 const jwt = require("jsonwebtoken");
 const Schema = mongoose.Schema;
 
-const AdminSchema = new Schema({
-  userName: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-  },
-  firstName: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  lastName: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  email: {
-    type: String,
-    require: true,
-    unique: true,
-    trim: true,
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 7,
-    trim: true,
-  },
-  address: {
-    type: String,
-    trim: true,
-  },
-  phone: {
-    type: Number,
-    minlength: 7,
-  },
-  rank: {
-    type: String,
-    default: "admin",
-  },
-  tokens: [
-    {
-      token: {
-        type: String,
-        required: true,
-      },
+const AdminSchema = new Schema(
+  {
+    userName: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
     },
-  ],
-});
+    firstName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      require: true,
+      unique: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      minlength: 7,
+      trim: true,
+    },
+    address: {
+      type: String,
+      trim: true,
+    },
+    phone: {
+      type: Number,
+      minlength: 7,
+    },
+    rank: {
+      type: String,
+      default: "admin",
+    },
+    tokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
 
 //hash password before saving if modified or new
 AdminSchema.pre("save", hashPassword);

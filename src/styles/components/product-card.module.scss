@@ -1,0 +1,115 @@
+.product_cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+.product_card {
+  &_wrapper {
+    display: grid;
+    overflow: hidden;
+    background-color: var(--theme-white);
+    border-radius: 9px;
+    min-height: 15rem;
+    max-height: 25rem;
+    width: 30rem;
+    box-shadow: 2px 2px 12px var(--theme-shadow-dark);
+    margin: 2.5rem;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "image name"
+      "image name"
+      "price store";
+
+    &_private {
+      @extend .product_card_wrapper;
+      grid-template-areas:
+        "image name"
+        "image name"
+        "price store"
+        "edit boost";
+    }
+  }
+  &_image {
+    grid-area: image;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 0;
+    img {
+      height: 10rem;
+      width: 10rem;
+      object-fit: contain;
+    }
+  }
+  &_name {
+    grid-area: name;
+  }
+  &_price {
+    grid-area: price;
+  }
+  &_store {
+    grid-area: store;
+  }
+  &_edit {
+    grid-area: edit;
+  }
+  &_boost {
+    grid-area: boost;
+  }
+  &_button {
+    height: 4.2rem;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-white);
+    font-size: var(--font-l);
+    cursor: pointer;
+
+    &_edit {
+      @extend .product_card_button;
+      background-color: var(--color-secondary-dark);
+      p {
+        pointer-events: none;
+      }
+    }
+    &_boost {
+      @extend .product_card_button;
+      background-color: var(--color-primary);
+      p {
+        pointer-events: none;
+      }
+    }
+  }
+
+  &_item {
+    display: flex;
+    justify-content: space-around;
+    height: 100%;
+    align-items: center;
+    flex-direction: column;
+    padding: 1rem 0.5rem;
+
+    &_title {
+      color: var(--theme-grey);
+      font-size: var(--font-s);
+    }
+
+    &_name {
+      font-weight: 800;
+      font-size: var(--font-m);
+      text-align: center;
+      color: var(--theme-primary);
+    }
+    &_price {
+      font-weight: 800;
+      font-size: var(--font-l);
+      color: var(--theme-primary);
+    }
+    &_store {
+      font-size: var(--font-m);
+      font-weight: 600;
+      color: var(--theme-primary);
+    }
+  }
+}

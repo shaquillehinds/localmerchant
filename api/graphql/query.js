@@ -6,7 +6,7 @@ const Featured = require("../models/FeaturedModel");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const { StoreType, CustomerType, ProductType, AdminType, FeaturedType } = require("./types");
-const { GraphQLObjectType, GraphQLString, GraphQLList, GraphQLInt } = require("graphql");
+const { GraphQLObjectType, GraphQLString, GraphQLList, GraphQLInt, GraphQLBoolean } = require("graphql");
 
 const RootQueryType = new GraphQLObjectType({
   name: "Query",
@@ -100,13 +100,18 @@ const RootQueryType = new GraphQLObjectType({
       type: new GraphQLList(ProductType),
       description: "List of Products",
       args: {
+        private: { type: GraphQLBoolean },
         store: { type: GraphQLString },
         tag: { type: GraphQLString },
         search: { type: GraphQLString },
         limit: { type: GraphQLInt },
         skip: { type: GraphQLInt },
       },
-      resolve: async (parent, { store, tag, search, limit = 25, skip = 0 }) => {
+      resolve: async (
+        parent,
+        { store, tag, search, limit = 25, skip = 0, private = false },
+        { token }
+      ) => {
         if (search) {
           try {
             return await Product.findPartial("name", search);
@@ -114,11 +119,19 @@ const RootQueryType = new GraphQLObjectType({
             return e;
           }
         } else if (store) {
-          return Product.find({ store }).populate("store").skip(skip).limit(limit);
+          return await Product.find({ store }).populate("store").skip(skip).limit(limit);
         } else if (tag) {
-          return Product.find({ $text: { $search: tag } }, { tags: 0 })
+          return await Product.find({ $text: { $search: tag } }, { tags: 0 })
             .skip(skip)
             .limit(limit);
+        }
+        if (token && private) {
+          const store = jwt.verify(token, process.env.JWT_SECRET, (error, decrypted) => {
+            if (error) return false;
+            return decrypted._id;
+          });
+          console.log(store);
+          return await Product.find({ store }).populate("store").skip(skip).limit(limit);
         }
         return Product.find().populate("store").skip(skip).limit(limit);
       },

@@ -2,44 +2,49 @@ const mongoose = require("mongoose");
 const { findPartial } = require("./methods&statics/statics");
 const Schema = mongoose.Schema;
 
-const ProductSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-    minlength: 2,
+const ProductSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+    },
+    price: {
+      type: Number,
+      trim: true,
+      required: true,
+    },
+    description: {
+      type: String,
+      default: "",
+    },
+    image: {
+      type: String,
+      required: true,
+    },
+    images: {
+      type: Array,
+    },
+    tags: {
+      type: Array,
+      required: true,
+      trim: true,
+    },
+    inStock: {
+      type: Boolean,
+      default: true,
+    },
+    store: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "Store",
+    },
   },
-  price: {
-    type: Number,
-    trim: true,
-    required: true,
-  },
-  description: {
-    type: String,
-    default: "",
-  },
-  image: {
-    type: String,
-    required: true,
-  },
-  images: {
-    type: Array,
-  },
-  tags: {
-    type: Array,
-    required: true,
-    trim: true,
-  },
-  inStock: {
-    type: Boolean,
-    default: true,
-  },
-  store: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: "Store",
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 ProductSchema.index({ tags: "text" });
 

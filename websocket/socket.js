@@ -11,7 +11,10 @@ const connect = async (socket, io) => {
 
   // check to see if customer is logged in by getting their JWT token and verifying
   if (socket.handshake.headers.token) {
-    var tokenID = jwt.verify(socket.handshake.headers.token, process.env.JWT_SECRET)._id;
+    var tokenID = jwt.verify(socket.handshake.headers.token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) return false;
+      return decoded._id;
+    });
     if (!tokenID) {
       sendStatus("Unverified User, Please Sign In. Disconnected");
       return socket.disconnect();
@@ -26,6 +29,7 @@ const connect = async (socket, io) => {
     //Get the store id if it exists
     if (storeDoc) {
       var store = storeDoc._id;
+      socket.emit("otherName", storeDoc.storeName);
     }
   } else if (socket.handshake.query.customer) {
     //finds the customer the store wants to communicate with
@@ -35,6 +39,7 @@ const connect = async (socket, io) => {
     //Get the customer id if it exist
     if (clientDoc) {
       var customer = clientDoc._id;
+      socket.emit("otherName", clientDoc.firstName);
     }
   }
 
@@ -50,7 +55,8 @@ const connect = async (socket, io) => {
       sendStatus("Invalid Request. Only a store can message a customer. Disconnected");
       return socket.disconnect();
     }
-    socket.emit("Name", exists.businessName);
+    socket.emit("name", exists.businessName);
+    socket.emit("owner", exists._id);
   } else if (!customer) {
     // if query was not customer then signed in person is customer
     var customer = tokenID;
@@ -59,7 +65,8 @@ const connect = async (socket, io) => {
       sendStatus("Invalid Request. Only a customer can message a store. Disconnected");
       return socket.disconnect();
     }
-    socket.emit("Name", exists.firstName);
+    socket.emit("name", exists.firstName);
+    socket.emit("owner", exists._id);
   }
 
   //Get the previous messages if they exists
@@ -78,18 +85,20 @@ const connect = async (socket, io) => {
     socket.emit("messages", chat.messages);
   }
   // handle input events
-  socket.on("message", ({ name, message }) => {
-    //check for name and message
-    if (name == "" || message == "") {
+  socket.on("message", ({ owner, message }) => {
+    //check for owner and message
+    if (owner == "" || message == "") {
       // Send error status
-      sendStatus("Please enter a name and message");
+      sendStatus("User must be valid and messages cannot be empty.");
     } else {
+      // get time message is sent
+      const createdAt = new Date().getTime();
       // add message to document
-      chat.messages.push(`${name}: ${message}`);
+      chat.messages.push({ owner, message, createdAt });
       //save document to collection
       chat.save();
       //send message to room
-      io.to(room).emit("message", { name, message });
+      io.to(room).emit("message", { message, createdAt });
       sendStatus({ message: "Message sent", clear: true });
     }
   });

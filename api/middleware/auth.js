@@ -84,8 +84,8 @@ const authCustomer = async (req, res, next) => {
 };
 
 const authGraphQL = async (req, res, next) => {
-  if (req.header.authorization) {
-    req.token = req.header.authorization.replace("Bearer ", "");
+  if (req.headers.authorization) {
+    req.token = req.headers.authorization.replace("Bearer ", "");
     return next();
   }
   req.token = false;

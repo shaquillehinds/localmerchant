@@ -1,17 +1,25 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import io from "socket.io-client";
+import moment from "moment";
+import cookies from "browser-cookies";
 
 const Chat = (props) => {
-  const [state, setState] = useState({ message: "", socket: undefined, name: "" });
+  const [state, setState] = useState({
+    message: "",
+    socket: undefined,
+    name: "",
+    owner: "",
+    otherName: "",
+  });
 
   useEffect(() => {
     console.log(props.id);
-    const isStore = localStorage.getItem("Store");
+    const isCustomer = cookies.get("customer");
 
     const socket = io({
       path: "/api/chat",
-      query: isStore ? { customer: props.id } : { store: props.id },
+      query: isCustomer === "yes" ? { store: props.id } : { customer: props.id },
       transportOptions: {
         polling: {
           extraHeaders: {
@@ -28,11 +36,25 @@ const Chat = (props) => {
         console.log(status);
       }
     });
-    socket.on("message", ({ name, message }) => console.log(`${name}: ${message}`));
+    socket.on("message", ({ createdAt, message }) =>
+      console.log(`${message} - ${moment(createdAt).format("h:mm a")}`)
+    );
 
-    socket.on("messages", (messages) => messages.forEach((message) => console.log(message)));
+    socket.on("otherName", (otherName) => {
+      setState((prev) => ({ ...prev, otherName }));
+    });
 
-    socket.on("Name", (name) => {
+    socket.on("owner", (owner) => {
+      setState((prev) => ({ ...prev, owner }));
+    });
+
+    socket.on("messages", (messages) =>
+      messages.forEach((message) =>
+        console.log(`${message.message} - ${moment(message.createdAt).format("h:mm a")}`)
+      )
+    );
+
+    socket.on("name", (name) => {
       setState((prev) => ({ ...prev, name }));
     });
 
@@ -40,7 +62,7 @@ const Chat = (props) => {
   }, []);
   const sendMessage = (e) => {
     e.preventDefault();
-    state.socket.emit("message", { name: state.name, message: state.message });
+    state.socket.emit("message", { owner: state.owner, message: state.message });
     setState((prev) => ({ ...prev, message: "" }));
   };
   const updateMessageState = (e) => {
