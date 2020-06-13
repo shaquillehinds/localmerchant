@@ -34,7 +34,7 @@ const RootQueryType = new GraphQLObjectType({
           try {
             return await Store.find(
               { $text: { $search: storeName } },
-              { _id: 1, storeName: 1, storeURL: 1, image: 1 }
+              { _id: 1, storeName: 1, storeURL: 1, image: 1, address: 1, phone: 1, parish: 1 }
             )
               .skip(skip)
               .limit(limit);
@@ -130,7 +130,6 @@ const RootQueryType = new GraphQLObjectType({
             if (error) return false;
             return decrypted._id;
           });
-          console.log(store);
           return await Product.find({ store }).populate("store").skip(skip).limit(limit);
         }
         return Product.find().populate("store").skip(skip).limit(limit);

@@ -24,7 +24,7 @@ const connect = async (socket, io) => {
   if (socket.handshake.query.store) {
     //finds the store they want to communicate with
     const storeDoc = await Store.findOne({
-      businessURL: socket.handshake.query.store,
+      storeURL: socket.handshake.query.store,
     });
     //Get the store id if it exists
     if (storeDoc) {

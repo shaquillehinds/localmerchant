@@ -58,13 +58,16 @@ const searchProducts = async () => {
   }
 };
 
-const businessNameQuery = (search) => `
+const storeNameQuery = (search) => `
     query{
-      stores (businessName: "${search}") {
+      stores (storeName: "${search}") {
         _id
         image
-        businessName
-        businessURL
+        storeName
+        storeURL
+        address
+        phone
+        parish
       }
     }
   `;
@@ -73,7 +76,7 @@ const searchStores = async () => {
   const query = window.location.search;
   const { search } = Qs.parse(query, { ignoreQueryPrefix: true });
   try {
-    return (await graphqlFetch(businessNameQuery(search)))["stores"];
+    return (await graphqlFetch(storeNameQuery(search)))["stores"];
   } catch (e) {
     console.error(e);
   }

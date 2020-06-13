@@ -220,6 +220,8 @@ const Form = ({ mode, type }) => {
                   </option>
                   <option value="Automotive">Automotive</option>
                   <option value="Beauty">Beauty</option>
+                  <option value="Electronics">Electronics</option>
+                  <option value="Jewelry">Jewelry</option>
                 </select>
               </span>
             </span>
@@ -248,6 +250,8 @@ const Form = ({ mode, type }) => {
                   <option value="St.James">St.James</option>
                   <option value="St.John">St.John</option>
                   <option value="St.Andrew">St.Andrew</option>
+                  <option value="St.Michael">St.Michael</option>
+                  <option value="Christ Church">Christ Church</option>
                 </select>
               </span>
             </span>

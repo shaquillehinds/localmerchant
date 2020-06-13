@@ -31,13 +31,9 @@ export default () => {
       setState((prev) => ({ ...prev, notWaiting: false }));
       setTimeout(async () => {
         let searchBy;
-        state.searchBy === "item"
-          ? (searchBy = "products")
-          : (searchBy = "stores");
+        state.searchBy === "item" ? (searchBy = "products") : (searchBy = "stores");
         // console.log(searchQuery(searchBy, e.target.value));
-        const results = (
-          await graphqlFetch(searchQuery(searchBy, e.target.value))
-        )[searchBy];
+        const results = (await graphqlFetch(searchQuery(searchBy, e.target.value)))[searchBy];
         setState((prev) => ({ ...prev, results }));
         setState((prev) => ({ ...prev, notWaiting: true }));
       }, 500);
@@ -59,7 +55,7 @@ export default () => {
     if (info.name) {
       router.push(`/product?search=${info.name}`);
     } else if (info.storeName) {
-      router.push(`/store/${info.storeName}`);
+      router.push(`/store/${info.storeURL}`);
     } else {
       console.log("error");
     }

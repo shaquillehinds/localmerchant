@@ -106,12 +106,13 @@ router
     if (req.query.product) {
       const tokenIndex = req.user.purchaseTokens.findIndex((token) => token.type === "FPT");
       if (tokenIndex != -1) {
-        if (req.user.purchaseTokens[tokenIndex].quantity > 1) {
+        if (req.user.purchaseTokens[tokenIndex].quantity > 0) {
           req.user.purchaseTokens[tokenIndex].quantity -= 1;
           try {
             const featuredProducts = await Featured.findOne({ category: "products" });
             featuredProducts.items.push(req.query.product);
             await featuredProducts.save();
+            req.user.save();
             return res.send("Product Added To Featured Items");
           } catch (e) {
             console.log(e);

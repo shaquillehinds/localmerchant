@@ -44,8 +44,8 @@ const findPartial = async function (field, characters, limit = 10) {
     return await this.find(search, { name: 1, _id: 1 }).limit(limit);
   }
   return await this.find(search, {
-    businessName: 1,
-    businessURL: 1,
+    storeName: 1,
+    storeURL: 1,
     _id: 1,
   }).limit(limit);
 };

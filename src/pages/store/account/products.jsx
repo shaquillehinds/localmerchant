@@ -44,6 +44,7 @@ const Products = () => {
         url,
         headers: { Authorization: `Bearer ${localStorage.getItem("JWT")}` },
       });
+      alert("Product Boosted");
     } catch (e) {
       console.log(e);
     }
@@ -90,7 +91,7 @@ const Products = () => {
                 name={product.name}
                 price={product.price}
                 storeName={product.store.storeName}
-                image={"https://images-na.ssl-images-amazon.com/images/I/61h6awrWALL._AC_SX466_.jpg"}
+                image={product.image}
               />
             );
           })}
