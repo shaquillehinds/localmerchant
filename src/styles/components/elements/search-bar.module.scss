@@ -131,6 +131,9 @@
     color: var(--color-black);
     cursor: pointer;
 
+    &_name {
+      pointer-events: none;
+    }
     @include respond(phone) {
       height: 4rem;
       padding: 1rem 2rem;

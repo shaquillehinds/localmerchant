@@ -1,5 +1,6 @@
 import styles from "../styles/components/product-card.module.scss";
-export const ProductCard = ({ id, image, name, price, storeName, mode, handleBoost }) => {
+import numeral from "numeral";
+export const ProductCard = ({ id, image, name, price, storeName, inStock, mode, handleBoost }) => {
   return (
     <div className={styles.product_card_wrapper_private}>
       <div className={styles.product_card_image}>
@@ -9,12 +10,17 @@ export const ProductCard = ({ id, image, name, price, storeName, mode, handleBoo
         <div className={styles.product_card_item}>
           <h5 className={styles.product_card_item_title}>Product Name</h5>
           <p className={styles.product_card_item_name}>{name}</p>
+          {inStock ? (
+            <p className={styles.product_card_item_instock}>In Stock</p>
+          ) : (
+            <p className={styles.product_card_item_outofstock}>Out of Stock</p>
+          )}
         </div>
       </div>
       <div className={styles.product_card_price}>
         <div className={styles.product_card_item}>
           <h5 className={styles.product_card_item_title}>Price</h5>
-          <p className={styles.product_card_item_price}>{"$" + price}</p>
+          <p className={styles.product_card_item_price}>{numeral(price / 100).format("$0,0[.]00")}</p>
         </div>
       </div>
       <div className={styles.product_card_store}>

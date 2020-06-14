@@ -16,6 +16,7 @@ export default () => {
     searchBy: "item",
     results: [],
     notWaiting: true,
+    timeout: undefined,
   });
   const router = useRouter();
   const changeSearchMode = (e) => {
@@ -53,17 +54,20 @@ export default () => {
   };
   const handleSuggestionClick = (info) => {
     if (info.name) {
+      state.timeout ? clearTimeout(state.timeout) : null;
       router.push(`/product?search=${info.name}`);
     } else if (info.storeName) {
+      state.timeout ? clearTimeout(state.timeout) : null;
       router.push(`/store/${info.storeURL}`);
     } else {
       console.log("error");
     }
   };
   const handleInputBlur = () => {
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       setState((prev) => ({ ...prev, results: [] }));
-    }, 100);
+    }, 300);
+    setState((prev) => ({ ...prev, timeout }));
   };
   return (
     <div className={styles.searchBar}>
@@ -98,7 +102,9 @@ export default () => {
               key={result._id}
               className={styles.searchBar__result}
             >
-              {result.name ? result.name : result.storeName}
+              <p className={styles.searchBar__result_name}>
+                {result.name ? result.name : result.storeName}
+              </p>
             </div>
           );
         })}

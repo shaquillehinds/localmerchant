@@ -18,6 +18,7 @@ const PRODUCTS_QUERY = `
       name
       price
       image
+      inStock
       store{
         storeName
       }
@@ -91,6 +92,7 @@ const Products = () => {
                 name={product.name}
                 price={product.price}
                 storeName={product.store.storeName}
+                inStock={product.inStock}
                 image={product.image}
               />
             );

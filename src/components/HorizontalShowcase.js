@@ -1,5 +1,6 @@
 import DisplayItem from "./DisplayItem";
 import styles from "../styles/components/horizontal-showcase.module.scss";
+import numeral from "numeral";
 
 const HorizontalShowcase = ({ displayItems }) => {
   return (
@@ -11,7 +12,13 @@ const HorizontalShowcase = ({ displayItems }) => {
         >
           <DisplayItem
             img={item.image}
-            text={item.price ? `$${item.price}` : item.storeName ? `View Store` : "Unknown"}
+            text={
+              item.price
+                ? `${numeral(item.price / 100).format("$0,0[.]00")}`
+                : item.storeName
+                ? `View Store`
+                : "Unknown"
+            }
             storeName={item.storeName ? item.storeName : undefined}
           />
           <div className={styles.horizontal_showcase__spacing}></div>

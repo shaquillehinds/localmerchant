@@ -1,0 +1,145 @@
+@import "../global/mixins.scss";
+.product {
+  &_wrapper {
+    display: grid;
+    width: 84%;
+    max-width: 54rem;
+    margin: 0 auto;
+    color: var(--theme-primary);
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "category-chain"
+      "images"
+      "info";
+
+    @include respond(tablet) {
+      grid-template-areas:
+        "images category-chain"
+        "images info";
+      max-width: 120rem;
+      grid-template-rows: 1fr 7fr;
+      margin-top: 1rem;
+    }
+    @include respond(laptop) {
+      max-width: 150rem;
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  &_chain {
+    grid-area: category-chain;
+    text-align: center;
+    padding: 2rem 0;
+    color: var(--theme-grey);
+    font-size: var(--font-m);
+
+    @include respond(tablet) {
+      text-align: left;
+    }
+    @include respond(laptop) {
+      font-size: var(--font-l);
+    }
+  }
+  &_images {
+    grid-area: images;
+  }
+  &_info {
+    grid-area: info;
+
+    &_name {
+      font-size: var(--font-l);
+      font-weight: 900;
+      margin-bottom: 2.1rem;
+
+      @include respond(tablet) {
+        font-size: var(--font-xl);
+      }
+      @include respond(laptop) {
+        font-size: var(--font-xxl);
+      }
+    }
+
+    &_instock {
+      font-size: var(--font-l);
+      font-weight: 700;
+      margin-bottom: 2.1rem;
+      color: var(--theme-tertiary);
+      @include respond(tablet) {
+        font-size: var(--font-xl);
+      }
+    }
+    &_outofstock {
+      @extend .product_info_instock;
+      color: var(--theme-heart);
+    }
+    &_details {
+      display: grid;
+      row-gap: 2rem;
+      //   grid-template-rows: 1fr 3fr;
+      margin-bottom: 2rem;
+      grid-template-areas:
+        "price store"
+        "description description"
+        "buttons buttons";
+
+      &_price {
+        grid-area: price;
+        font-size: var(--font-xl);
+        font-weight: 900;
+        @include respond(tablet) {
+          font-size: var(--font-xxl);
+        }
+      }
+      &_store {
+        grid-area: store;
+        font-size: var(--font-l);
+        font-weight: 700;
+        @include respond(tablet) {
+          font-size: var(--font-xl);
+        }
+        @include respond(laptop) {
+          font-size: var(--font-xxl);
+        }
+      }
+      &_description {
+        grid-area: description;
+        font-size: var(--font-m);
+        font-weight: 500;
+        @include respond(tablet) {
+          font-size: var(--font-l);
+        }
+        @include respond(laptop) {
+          font-size: var(--font-xl);
+        }
+      }
+      &_buttons {
+        grid-area: buttons;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+
+        @include respond(phone) {
+          flex-direction: row;
+        }
+
+        button {
+          margin: 1rem;
+          width: 25rem;
+          font-size: var(--font-l);
+          padding: 1.2rem 0;
+          letter-spacing: 1px;
+          border-radius: 7.5px;
+        }
+      }
+      &_title {
+        font-size: var(--font-s);
+        font-weight: 700;
+        @include respond(tablet) {
+          font-size: var(--font-m);
+        }
+        @include respond(laptop) {
+          font-size: var(--font-l);
+        }
+      }
+    }
+  }
+}

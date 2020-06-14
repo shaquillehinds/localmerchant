@@ -122,6 +122,7 @@ const RootQueryType = new GraphQLObjectType({
           return await Product.find({ store }).populate("store").skip(skip).limit(limit);
         } else if (tag) {
           return await Product.find({ $text: { $search: tag } }, { tags: 0 })
+            .populate("store")
             .skip(skip)
             .limit(limit);
         }

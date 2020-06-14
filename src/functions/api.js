@@ -44,6 +44,9 @@ const tagSearchQuery = (search) => `
         image
         inStock
         price
+        store {
+          storeName
+        }
       }
     }
   `;
@@ -51,6 +54,7 @@ const tagSearchQuery = (search) => `
 const searchProducts = async () => {
   const query = window.location.search;
   const { search } = Qs.parse(query, { ignoreQueryPrefix: true });
+  console.log(search);
   try {
     return (await graphqlFetch(tagSearchQuery(search)))["products"];
   } catch (e) {

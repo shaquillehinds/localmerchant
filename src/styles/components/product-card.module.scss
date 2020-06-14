@@ -15,6 +15,7 @@
     box-shadow: 2px 2px 12px var(--theme-shadow-dark);
     margin: 2.5rem;
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
     grid-template-areas:
       "image name"
       "image name"
@@ -100,6 +101,16 @@
       font-size: var(--font-m);
       text-align: center;
       color: var(--theme-primary);
+    }
+    &_instock {
+      font-weight: 800;
+      font-size: var(--font-m);
+      color: var(--theme-tertiary);
+    }
+    &_outofstock {
+      font-weight: 800;
+      font-size: var(--font-m);
+      color: var(--theme-heart);
     }
     &_price {
       font-weight: 800;
