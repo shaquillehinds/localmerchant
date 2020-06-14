@@ -1,0 +1,100 @@
+@import "../global/mixins.scss";
+
+.image_slide {
+  &_arrow {
+    position: absolute;
+    height: 8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    fill: var(--color-primary);
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 1rem 0.3rem;
+    cursor: pointer;
+    display: none;
+    path {
+      pointer-events: none;
+    }
+    @include respond(phone) {
+      display: block;
+      opacity: 0;
+      transition: opacity 200ms ease-in-out;
+    }
+    &_right {
+      @extend .image_slide_arrow;
+      right: 0;
+    }
+    &_left {
+      @extend .image_slide_arrow;
+      left: 0;
+    }
+  }
+  &_selector {
+    display: block;
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 1.5px solid var(--theme-primary);
+    border-radius: 5rem;
+    cursor: pointer;
+    &:not(:first-child) {
+      margin-left: 1.5rem;
+    }
+    &:first-child {
+      background-color: var(--theme-primary);
+    }
+    &_wrapper {
+      width: 100%;
+      height: 3rem;
+      margin: 2rem auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  &_wrapper {
+    margin: 0 auto;
+    overflow: hidden;
+    width: 100%;
+    max-width: 45rem;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+  &_image {
+    &_wrapper {
+      display: flex;
+      transition: transform 200ms ease-in-out;
+      position: relative;
+      &_outer {
+        width: 100%;
+        position: relative;
+
+        &:hover svg {
+          opacity: 1;
+        }
+      }
+    }
+
+    object-fit: contain;
+    width: 100%;
+
+    &_0 {
+      @extend .image_slide_image;
+    }
+    &_1 {
+      @extend .image_slide_image;
+    }
+    &_2 {
+      @extend .image_slide_image;
+    }
+    &_3 {
+      @extend .image_slide_image;
+    }
+    &_4 {
+      @extend .image_slide_image;
+    }
+    &_5 {
+      @extend .image_slide_image;
+    }
+  }
+}

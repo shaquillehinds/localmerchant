@@ -81,6 +81,7 @@ const ProductType = new GraphQLObjectType({
     name: { type: GraphQLString },
     image: { type: GraphQLString },
     images: { type: new GraphQLList(GraphQLString) },
+    description: { type: GraphQLString },
     price: { type: GraphQLFloat },
     tags: { type: new GraphQLList(GraphQLString) },
     store: { type: StoreType },
