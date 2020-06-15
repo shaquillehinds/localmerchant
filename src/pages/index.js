@@ -11,6 +11,7 @@ import ThemeToggler from "../components/ThemeToggler";
 const FEATURED_PRODUCTS_QUERY = `
   query {
     featured(category: "products"){
+      _id
       image
       price
     }
@@ -22,12 +23,14 @@ query{
   featured(category: "stores"){
     image
     storeName
+    storeURL
   }
 }`;
 
 const WEEKLY_TRENDS_QUERY = `
   query{
     featured(category: "weekly_trends"){
+      _id
       image
       price
     }

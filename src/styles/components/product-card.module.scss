@@ -40,6 +40,7 @@
       height: 10rem;
       width: 10rem;
       object-fit: contain;
+      cursor: pointer;
     }
   }
   &_name {
@@ -101,6 +102,7 @@
       font-size: var(--font-m);
       text-align: center;
       color: var(--theme-primary);
+      cursor: pointer;
     }
     &_instock {
       font-weight: 800;

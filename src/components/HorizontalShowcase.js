@@ -20,6 +20,8 @@ const HorizontalShowcase = ({ displayItems }) => {
                 : "Unknown"
             }
             storeName={item.storeName ? item.storeName : undefined}
+            id={item._id}
+            storeURL={item.storeURL}
           />
           <div className={styles.horizontal_showcase__spacing}></div>
         </div>

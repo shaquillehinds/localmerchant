@@ -1,15 +1,22 @@
 import styles from "../styles/components/product-card.module.scss";
 import numeral from "numeral";
+import Link from "next/link";
+import { useRouter } from "next/router";
+
 export const ProductCard = ({ id, image, name, price, storeName, inStock, mode, handleBoost }) => {
   return (
     <div className={styles.product_card_wrapper_private}>
       <div className={styles.product_card_image}>
-        <img src={image} />
+        <Link href={`/product/${id}`}>
+          <img src={image} />
+        </Link>
       </div>
       <div className={styles.product_card_name}>
         <div className={styles.product_card_item}>
           <h5 className={styles.product_card_item_title}>Product Name</h5>
-          <p className={styles.product_card_item_name}>{name}</p>
+          <Link href={`/product/${id}`}>
+            <p className={styles.product_card_item_name}>{name}</p>
+          </Link>
           {inStock ? (
             <p className={styles.product_card_item_instock}>In Stock</p>
           ) : (

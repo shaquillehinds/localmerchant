@@ -96,6 +96,7 @@ const FeaturedType = new GraphQLObjectType({
     image: { type: GraphQLString },
     price: { type: GraphQLFloat },
     storeName: { type: GraphQLString },
+    storeURL: { type: GraphQLString },
   }),
 });
 
