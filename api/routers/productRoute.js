@@ -4,15 +4,53 @@ const Featured = require("../models/FeaturedModel");
 const { auth } = require("../middleware/auth");
 const sharp = require("sharp");
 const upload = require("../middleware/upload");
+const mongoose = require("mongoose");
 
+// mongoose.connection.db.collection('categories')
+
+// function find (name, query, cb) {
+//   mongoose.connection.db.collection(name, function (err, collection) {
+//      collection.find(query).toArray(cb);
+//  });
+// }
+
+router.get("/categories", async (req, res) => {
+  const level = req.query.level || "one";
+  const category = req.query.category;
+  mongoose.connection.db.collection("categories", async (err, collection) => {
+    if (err) {
+      return res.send(err);
+    }
+    if (level === "seven") return res.send({});
+    if (category) {
+      try {
+        const test = await collection
+          .aggregate([
+            { $match: { level } },
+            { $unwind: `$categories.${category}` },
+            { $project: { category: `$categories.${category}` } },
+            { $group: { _id: "$_id", category: { $push: "$category" } } },
+          ])
+          .toArray();
+        if (test[0]) return res.send(test[0].category);
+        return res.send([]);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    const proj = await collection.findOne({ level });
+    if (proj.categories) return res.send(proj.categories);
+    return res.send([]);
+  });
+});
 //create a new product
 router.route("/").post(auth, upload.array("image", 6), async (req, res) => {
   try {
     const { name, price, description = "" } = req.body;
     const store = req.user._id;
     const tags = JSON.parse(req.body.tags);
-    tags.unshift(name);
-    while (tags.length > 10) {
+    tags.push(name);
+    while (tags.length > 18) {
       tags.pop();
     }
     const images = req.files.map((image) => image.location);
@@ -115,7 +153,6 @@ router
             req.user.save();
             return res.send("Product Added To Featured Items");
           } catch (e) {
-            console.log(e);
             return res.status(400).send(e);
           }
         }

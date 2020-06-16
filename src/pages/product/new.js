@@ -11,6 +11,7 @@ import { inputValidate } from "../../functions/formValidation";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import cookies from "browser-cookies";
+import SelectCategory from "../../components/SelectCategory";
 
 const New = () => {
   const [state, setState] = useState({
@@ -38,6 +39,9 @@ const New = () => {
       return [];
     }
   };
+  const categoryHandler = (tags) => {
+    setState((prev) => ({ ...prev, tags }));
+  };
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     const tags = tagsHandler(e.target.elements.tags.value);
@@ -56,7 +60,7 @@ const New = () => {
     const formData = new FormData();
     formData.append("name", state.name);
     formData.append("price", priceInCents);
-    formData.append("tags", JSON.stringify(tags));
+    formData.append("tags", JSON.stringify([...state.tags, ...tags]));
     formData.append("description", state.description);
     state.images.forEach((image) => formData.append("image", image));
     setState((prev) => ({ ...prev, loading: true }));
@@ -113,6 +117,8 @@ const New = () => {
         <div className={page.setup}>
           <div className={loaders.ring__loader}></div>
         </div>
+      ) : state.tags.length === 0 ? (
+        <SelectCategory categoryHandler={categoryHandler} />
       ) : (
         <form onSubmit={onSubmitHandler} className={styles.form_wide}>
           <input

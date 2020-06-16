@@ -1,0 +1,19 @@
+.categories {
+  &_wrapper {
+    margin-top: 3rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 1rem;
+    column-gap: 1rem;
+
+    @media (min-width: "27rem") {
+      grid-template-columns: 1fr 1fr;
+      column-gap: 3rem;
+    }
+
+    p {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
