@@ -5,7 +5,14 @@ const Product = require("../models/ProductModel");
 const Featured = require("../models/FeaturedModel");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const { StoreType, CustomerType, ProductType, AdminType, FeaturedType } = require("./types");
+const {
+  StoreType,
+  CustomerType,
+  ProductType,
+  AdminType,
+  FeaturedType,
+  CategoryType,
+} = require("./types");
 const { GraphQLObjectType, GraphQLString, GraphQLList, GraphQLInt, GraphQLBoolean } = require("graphql");
 
 const RootQueryType = new GraphQLObjectType({
@@ -56,7 +63,14 @@ const RootQueryType = new GraphQLObjectType({
       type: StoreType,
       description: "Fetch a Store",
       args: { id: { type: GraphQLString }, storeURL: { type: GraphQLString } },
-      resolve: (parent, { id, storeURL }) => {
+      resolve: (parent, { id, storeURL }, { token }) => {
+        if (token) {
+          const decoded = jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+            if (err) return false;
+            return decoded;
+          });
+          if (decoded) return Store.findById(decoded._id);
+        }
         if (id) {
           return Store.findById(id);
         } else if (storeURL) {
@@ -171,6 +185,34 @@ const RootQueryType = new GraphQLObjectType({
         }
         const featured = await Featured.findOne({ category }).populate("items").exec();
         return featured.items;
+      },
+    },
+    categories: {
+      type: CategoryType,
+      description: "Get Categories",
+      args: { level: { type: GraphQLString }, category: { type: GraphQLString } },
+      resolve: async (parent, { level, category }) => {
+        const collection = mongoose.connection.db.collection("categories");
+        if (level === "seven") return { subCategories: [] };
+        if (category) {
+          try {
+            const test = await collection
+              .aggregate([
+                { $match: { level } },
+                { $unwind: `$categories.${category}` },
+                { $project: { category: `$categories.${category}` } },
+                { $group: { _id: "$_id", category: { $push: "$category" } } },
+              ])
+              .toArray();
+            if (test[0]) return { subCategories: test[0].category };
+            return { subCategories: [] };
+          } catch (e) {
+            return e;
+          }
+        }
+        const proj = await collection.findOne({ level });
+        if (proj.categories) return { main: proj.categories };
+        return { subCategories: [] };
       },
     },
   }),

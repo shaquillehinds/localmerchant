@@ -21,7 +21,7 @@ router.get("/categories", async (req, res) => {
     if (err) {
       return res.send(err);
     }
-    if (level === "seven") return res.send({});
+    if (level === "seven") return res.status(200).send([]);
     if (category) {
       try {
         const test = await collection
@@ -32,15 +32,15 @@ router.get("/categories", async (req, res) => {
             { $group: { _id: "$_id", category: { $push: "$category" } } },
           ])
           .toArray();
-        if (test[0]) return res.send(test[0].category);
-        return res.send([]);
+        if (test[0]) return res.status(200).send(test[0].category);
+        return res.status(200).send([]);
       } catch (e) {
-        console.log(e);
+        res.send(e);
       }
     }
     const proj = await collection.findOne({ level });
-    if (proj.categories) return res.send(proj.categories);
-    return res.send([]);
+    if (proj.categories) return res.status(200).send(proj.categories);
+    return res.status(200).send([]);
   });
 });
 //create a new product
@@ -75,7 +75,7 @@ router.patch("/:id", auth, upload.array(), async (req, res) => {
   const _id = req.query.id;
   const product = await Product.findById(_id);
   const updates = Object.keys(req.body.updates);
-  const allowedUpdates = [name, price, tags, description, inStock];
+  const allowedUpdates = ["name", "price", "tags", "description", "inStock"];
   const valid = updates.every((update) => allowedUpdates.includes(update));
   if (!valid) {
     return res.status(400).send("Invalid update request");

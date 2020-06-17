@@ -52,9 +52,12 @@ const CustomerSchema = new Schema(
         trim: true,
       },
     },
-    watchlist: {
-      type: [Schema.Types.ObjectId],
-    },
+    watchlist: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
     tokens: [
       {
         token: {

@@ -82,6 +82,14 @@ const StoreSchema = new Schema(
       default: "Bronze",
       trim: true,
     },
+    categories: [
+      {
+        name: {
+          type: String,
+        },
+        category: [{ type: String }],
+      },
+    ],
     tokens: [
       {
         token: {

@@ -50,7 +50,17 @@ router.post("/logout", authCustomer, async (req, res) => {
 });
 router.patch("/", authCustomer, async (req, res) => {
   const updates = Object.keys(req.body.updates);
-  const allowedUpdates = [userName, firstName, lastName, password, address, phone, email, coord];
+  const allowedUpdates = [
+    "userName",
+    "firstName",
+    "lastName",
+    "password",
+    "address",
+    "phone",
+    "email",
+    "coord",
+    "watchlist",
+  ];
   const valid = updates.forEvery((update) => allowedUpdates.includes(update));
   if (!valid) {
     return res.status(400).send("Invalid update request");

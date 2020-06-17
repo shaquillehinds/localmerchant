@@ -15,6 +15,14 @@
     padding: 1.3rem 5.5rem;
     border-radius: 3px;
     color: var(--theme-primary);
+    &_m {
+      @extend .heading_text;
+      font-size: var(--font-m);
+    }
+    &_s {
+      @extend .heading_text;
+      font-size: var(--font-s);
+    }
     &_normal {
       @extend .heading_text;
       margin: 3.3rem auto 2.4rem auto;

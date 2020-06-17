@@ -22,6 +22,7 @@ const New = () => {
     description: "",
     loading: false,
     customer: false,
+    selectCategoryState: undefined,
   });
   useEffect(() => {
     const customer = cookies.get("customer");
@@ -39,8 +40,19 @@ const New = () => {
       return [];
     }
   };
-  const categoryHandler = (tags) => {
-    setState((prev) => ({ ...prev, tags }));
+  const categoryHandler = ({ state, tag }) => {
+    if (tag) {
+      return setState((prev) => ({
+        ...prev,
+        tags: [...state.tagTree, tag],
+        selectCategoryState: state,
+      }));
+    }
+    setState((prev) => ({
+      ...prev,
+      tags: [...state.tagTree],
+      selectCategoryState: state,
+    }));
   };
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -70,7 +82,6 @@ const New = () => {
       data: formData,
       headers: { Authorization: `Bearer ${localStorage.getItem("JWT")}` },
     });
-    console.log(data.data);
     setState((prev) => ({ ...prev, loading: false }));
   };
   const onPriceChange = (e) => {
@@ -105,20 +116,70 @@ const New = () => {
     inputValidate(e.target, e.target.value.length > 2);
     setState((prev) => ({ ...prev, description }));
   };
-
+  const goBackHandler = (e) => {
+    setState((prev) => ({ ...prev, tags: [] }));
+  };
+  const saveCategoryHandler = () => {
+    state.selectCategoryState.savedCategories.push({
+      name: state.tags[state.tags.length - 1],
+      category: state.tags,
+    });
+    // const updates = { categories: { name: state.tags[state.tags.length - 1], category: state.tags } };
+    const updates = { categories: state.selectCategoryState.savedCategories };
+    axios({
+      method: "PATCH",
+      url: "/api/store",
+      data: { updates },
+      headers: { Authorization: `Bearer ${localStorage.getItem("JWT")}` },
+    });
+  };
   return (
     <div>
       <Header />
       <div className={font.heading_container}>
-        <h1 className={font.heading_text_normal}>Add Product</h1>
+        <h1 className={font.heading_text_normal} style={{ marginBottom: "1rem" }}>
+          Add Product
+        </h1>
       </div>
 
+      {state.tags.length > 0 ? (
+        <div>
+          {!state.selectCategoryState.savedUsed ? (
+            <div className={font.heading_text_m} style={{ textAlign: "center", marginBottom: "1rem" }}>
+              <button onClick={saveCategoryHandler} className={button.btn} style={{ fontWeight: 600 }}>
+                Save Category
+              </button>
+            </div>
+          ) : null}
+          <div
+            className={font.heading_container}
+            style={{ flexDirection: "row", flexWrap: "wrap", marginBottom: "1rem" }}
+          >
+            {state.tags.map((tag) => (
+              <span
+                key={tag}
+                className={font.heading_text_s}
+                style={{ margin: 0, padding: 0, lineHeight: 2 }}
+              >
+                {tag}&nbsp; {">"} &nbsp;
+              </span>
+            ))}
+          </div>
+          <p
+            onClick={goBackHandler}
+            className={font.heading_text_m}
+            style={{ cursor: "pointer", textAlign: "center" }}
+          >
+            &#8592; Go Back
+          </p>
+        </div>
+      ) : null}
       {state.loading ? (
         <div className={page.setup}>
           <div className={loaders.ring__loader}></div>
         </div>
       ) : state.tags.length === 0 ? (
-        <SelectCategory categoryHandler={categoryHandler} />
+        <SelectCategory categoryHandler={categoryHandler} previousState={state.selectCategoryState} />
       ) : (
         <form onSubmit={onSubmitHandler} className={styles.form_wide}>
           <input

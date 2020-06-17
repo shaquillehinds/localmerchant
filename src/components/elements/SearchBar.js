@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { graphqlFetch } from "../../functions/api";
 import styles from "../../styles/components/elements/search-bar.module.scss";
@@ -19,6 +19,10 @@ export default () => {
     timeout: undefined,
   });
   const router = useRouter();
+  useEffect(() => {
+    setState((prev) => ({ ...prev, results: [] }));
+  }, [router.query]);
+
   const changeSearchMode = (e) => {
     e.persist();
     setState((prev) => ({ ...prev, searchBy: e.target.value }));
@@ -33,7 +37,6 @@ export default () => {
       setTimeout(async () => {
         let searchBy;
         state.searchBy === "item" ? (searchBy = "products") : (searchBy = "stores");
-        // console.log(searchQuery(searchBy, e.target.value));
         const results = (await graphqlFetch(searchQuery(searchBy, e.target.value)))[searchBy];
         setState((prev) => ({ ...prev, results }));
         setState((prev) => ({ ...prev, notWaiting: true }));

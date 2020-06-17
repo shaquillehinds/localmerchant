@@ -52,19 +52,21 @@ router.post("/logout", auth, upload.array(), async (req, res) => {
 });
 
 router.patch("/", auth, upload.array(), async (req, res) => {
+  console.log(req.body);
   const updates = Object.keys(req.body.updates);
   const allowedUpdates = [
-    firstName,
-    lastName,
-    storeName,
-    storeURL,
-    email,
-    phone,
-    image,
-    industry,
-    address,
-    password,
-    coord,
+    "firstName",
+    "lastName",
+    "storeName",
+    "storeURL",
+    "email",
+    "phone",
+    "image",
+    "industry",
+    "address",
+    "password",
+    "categories",
+    "coord",
   ];
   const valid = updates.every((update) => allowedUpdates.includes(update));
   if (!valid) {
@@ -72,7 +74,7 @@ router.patch("/", auth, upload.array(), async (req, res) => {
   }
   try {
     updates.forEach((update) => (req.user[update] = req.body.updates[update]));
-    if (req.files[0]) {
+    if (req.files) {
       if (req.files[0].location) {
         req.user.image = req.files[0].location;
       }
@@ -80,6 +82,7 @@ router.patch("/", auth, upload.array(), async (req, res) => {
     await req.user.save();
     res.status(202).send(req.user);
   } catch (e) {
+    console.log(e);
     res.status(400).send(e);
   }
 });

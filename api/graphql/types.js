@@ -7,6 +7,8 @@ const {
   GraphQLBoolean,
 } = require("graphql");
 
+const { GraphQLJSONObject } = require("graphql-type-json");
+
 const StoreFields = {
   _id: { type: GraphQLString },
   firstName: { type: GraphQLString },
@@ -19,6 +21,17 @@ const StoreFields = {
   industry: { type: GraphQLString },
   address: { type: GraphQLString },
   parish: { type: GraphQLString },
+  categories: {
+    type: new GraphQLList(
+      new GraphQLObjectType({
+        name: "Categories",
+        fields: () => ({
+          name: { type: GraphQLString },
+          category: { type: new GraphQLList(GraphQLString) },
+        }),
+      })
+    ),
+  },
 };
 
 const StoreType = new GraphQLObjectType({
@@ -74,6 +87,16 @@ const AdminType = new GraphQLObjectType({
   }),
 });
 
+const CategoryType = new GraphQLObjectType({
+  name: "Product_Categories",
+  fields: () => ({
+    main: {
+      type: GraphQLJSONObject,
+    },
+    subCategories: { type: new GraphQLList(GraphQLString) },
+  }),
+});
+
 const ProductType = new GraphQLObjectType({
   name: "products",
   fields: () => ({
@@ -107,4 +130,5 @@ module.exports = {
   AdminType,
   ProductType,
   FeaturedType,
+  CategoryType,
 };
