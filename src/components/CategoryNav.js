@@ -1,5 +1,6 @@
 import styles from "../styles/components/category-nav.module.scss";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import axios from "axios";
 const CategoryNav = () => {
   const [state, setState] = useState({
@@ -18,7 +19,9 @@ const CategoryNav = () => {
       setState((prev) => ({ initialObject, categories: Object.keys(initialObject), level: 1 }));
     })();
   }, []);
+  const router = useRouter();
   const closeCategoryNav = () => {
+    setState((prev) => ({ ...prev, categories: Object.keys(prev.initialObject), level: 1 }));
     document.querySelector("#category_nav_wrapper").setAttribute("data-categories", "close");
     document
       .querySelector("#category_nav_wrapper")
@@ -29,6 +32,8 @@ const CategoryNav = () => {
     if (state.level === 1) {
       return setState((prev) => ({ ...prev, level: 2, categories: prev.initialObject[selected] }));
     }
+    closeCategoryNav();
+    router.push(`/product?category=${selected}`);
   };
   const handleMainMenuClick = () => {
     if (state.level === 2) {

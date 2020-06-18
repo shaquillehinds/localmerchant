@@ -72,7 +72,7 @@ const New = () => {
     const formData = new FormData();
     formData.append("name", state.name);
     formData.append("price", priceInCents);
-    formData.append("tags", JSON.stringify([...state.tags, ...tags]));
+    formData.append("tags", JSON.stringify([...state.tags, state.name, ...tags]));
     formData.append("description", state.description);
     state.images.forEach((image) => formData.append("image", image));
     setState((prev) => ({ ...prev, loading: true }));

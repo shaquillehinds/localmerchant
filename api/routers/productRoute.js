@@ -49,7 +49,6 @@ router.route("/").post(auth, upload.array("image", 6), async (req, res) => {
     const { name, price, description = "" } = req.body;
     const store = req.user._id;
     const tags = JSON.parse(req.body.tags);
-    tags.push(name);
     while (tags.length > 18) {
       tags.pop();
     }

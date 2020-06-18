@@ -43,7 +43,7 @@ const Form = ({ mode, type }) => {
   const handleName = (e) => {
     e.persist();
     const input = e.target;
-    inputValidate(input, input.value.length > 2);
+    inputValidate(input, input.value.length > 2 && !input.value.match(/[^0-9a-z\s_-]/i));
     if (type === "customer") {
       setState((prev) => ({ ...prev, userName: input.value }));
     } else {
@@ -53,13 +53,13 @@ const Form = ({ mode, type }) => {
   const handleFirstName = (e) => {
     e.persist();
     const input = e.target;
-    inputValidate(input, input.value.length > 2);
+    inputValidate(input, input.value.length > 2 && !input.value.match(/[^0-9a-z\s]/i));
     setState((prev) => ({ ...prev, firstName: input.value }));
   };
   const handleLastName = (e) => {
     e.persist();
     const input = e.target;
-    inputValidate(input, input.value.length > 2);
+    inputValidate(input, input.value.length > 2 && !input.value.match(/[^0-9a-z\s]/i));
     setState((prev) => ({ ...prev, lastName: input.value }));
   };
   const handleAddress = (e) => {
@@ -83,7 +83,7 @@ const Form = ({ mode, type }) => {
   const handleParish = (e) => {
     e.persist();
     const input = e.target;
-    inputValidate(input, input.value.length !== 0 && input !== "parish");
+    inputValidate(input, input.value.length !== 0 && input !== "Parish");
     setState((prev) => ({ ...prev, parish: input.value }));
   };
   const removeTip = (e) => {

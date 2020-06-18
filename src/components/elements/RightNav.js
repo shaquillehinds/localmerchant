@@ -24,7 +24,7 @@ const RightNav = () => {
           <a className={styles.nav_items__signup}>Login</a>
         </Link>
       )}
-      <Link href="/login">
+      <Link href={state.loggedIn ? `${state.user}/account` : "/login"}>
         <svg
           className={styles.nav_items__user}
           xmlns="http://www.w3.org/2000/svg"

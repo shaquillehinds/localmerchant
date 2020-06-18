@@ -117,13 +117,14 @@ const RootQueryType = new GraphQLObjectType({
         private: { type: GraphQLBoolean },
         store: { type: GraphQLString },
         tag: { type: GraphQLString },
+        category: { type: GraphQLString },
         search: { type: GraphQLString },
         limit: { type: GraphQLInt },
         skip: { type: GraphQLInt },
       },
       resolve: async (
         parent,
-        { store, tag, search, limit = 25, skip = 0, private = false },
+        { category: tags, store, tag, search, limit = 25, skip = 0, private = false },
         { token }
       ) => {
         if (search) {
@@ -135,10 +136,12 @@ const RootQueryType = new GraphQLObjectType({
         } else if (store) {
           return await Product.find({ store }).populate("store").skip(skip).limit(limit);
         } else if (tag) {
-          return await Product.find({ $text: { $search: tag } }, { tags: 0 })
+          return await Product.find({ $text: { $search: tag } })
             .populate("store")
             .skip(skip)
             .limit(limit);
+        } else if (tags) {
+          return await Product.find({ tags }).populate("store").skip(skip).limit(limit);
         }
         if (token && private) {
           const store = jwt.verify(token, process.env.JWT_SECRET, (error, decrypted) => {

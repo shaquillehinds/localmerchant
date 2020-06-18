@@ -16,11 +16,20 @@ export default () => {
     searchBy: "item",
     results: [],
     notWaiting: true,
-    timeout: undefined,
+    suggestionTimeout: undefined,
+    inputBlurTimeout: undefined,
   });
   const router = useRouter();
   useEffect(() => {
-    setState((prev) => ({ ...prev, results: [] }));
+    if (state.inputBlurTimeout) clearTimeout(state.inputBlurTimeout);
+    if (state)
+      setState((prev) => ({
+        ...prev,
+        results: [],
+        notWaiting: true,
+        suggestionTimeout: undefined,
+        inputBlurTimeout: undefined,
+      }));
   }, [router.query]);
 
   const changeSearchMode = (e) => {
@@ -28,49 +37,51 @@ export default () => {
     setState((prev) => ({ ...prev, searchBy: e.target.value }));
   };
   const getSuggestions = async (e) => {
-    e.persist();
-    if (e.target.value.length < 3) {
+    const searchValue = e.target.value.trim();
+    if (searchValue.length < 3) {
       return setState((prev) => ({ ...prev, results: [] }));
     }
     if (state.notWaiting) {
       setState((prev) => ({ ...prev, notWaiting: false }));
-      setTimeout(async () => {
+      const suggestionTimeout = setTimeout(async () => {
         let searchBy;
         state.searchBy === "item" ? (searchBy = "products") : (searchBy = "stores");
-        const results = (await graphqlFetch(searchQuery(searchBy, e.target.value)))[searchBy];
-        setState((prev) => ({ ...prev, results }));
-        setState((prev) => ({ ...prev, notWaiting: true }));
+        const results = (await graphqlFetch(searchQuery(searchBy, searchValue)))[searchBy];
+        setState((prev) => ({ ...prev, results, notWaiting: true }));
       }, 500);
+      setState((prev) => ({ ...prev, suggestionTimeout }));
     }
   };
   const handleSubmit = (e) => {
+    clearTimeout(state.suggestionTimeout);
+    clearTimeout(state.inputBlurTimeout);
     e.preventDefault();
     const searchValue = e.target.elements.search.value;
-    if (!searchValue) {
+    if (!searchValue || searchValue.match(/[^0-9a-z\s_-]/i)) {
       return null;
     }
-    setState((prev) => ({ ...prev, results: [] }));
     let searchBy;
     state.searchBy === "item" ? (searchBy = "/product") : (searchBy = "/store");
-    router.push(`${searchBy}?search=${searchValue}`);
     e.target.elements.search.value = "";
+    e.target.elements.search.blur();
+    setTimeout(() => router.push(`${searchBy}?search=${searchValue}`), 300);
   };
   const handleSuggestionClick = (info) => {
     if (info.name) {
-      state.timeout ? clearTimeout(state.timeout) : null;
+      clearTimeout(state.inputBlurTimeout);
       router.push(`/product?search=${info.name}`);
     } else if (info.storeName) {
-      state.timeout ? clearTimeout(state.timeout) : null;
+      clearTimeout(state.inputBlurTimeout);
       router.push(`/store/${info.storeURL}`);
     } else {
       console.log("error");
     }
   };
   const handleInputBlur = () => {
-    const timeout = setTimeout(() => {
+    const inputBlurTimeout = setTimeout(() => {
       setState((prev) => ({ ...prev, results: [] }));
     }, 300);
-    setState((prev) => ({ ...prev, timeout }));
+    setState((prev) => ({ ...prev, inputBlurTimeout }));
   };
   return (
     <div className={styles.searchBar}>

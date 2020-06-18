@@ -77,7 +77,8 @@
     }
     &_boost {
       @extend .product_card_button;
-      background-color: var(--color-primary);
+      background-color: var(--theme-primary);
+      color: var(--theme-white);
       p {
         pointer-events: none;
       }

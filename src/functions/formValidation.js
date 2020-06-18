@@ -14,7 +14,8 @@ const inputValidate = (input, condition) => {
   }
 };
 const validateAll = async (fields, state, mode, type, setState) => {
-  const names = ["userName", "storeName", "firstName", "lastName"];
+  const names = ["firstName", "lastName"];
+  const unique = ["userName", "storeName"];
   const isValid = fields.every((fieldName) => {
     if (fieldName === "email") {
       if (!validator.isEmail(state[fieldName])) {
@@ -26,7 +27,15 @@ const validateAll = async (fields, state, mode, type, setState) => {
       }
       return true;
     } else if (names.includes(fieldName)) {
-      if (!(state[fieldName].length > 2)) {
+      if (!(state[fieldName].length > 2) || state[fieldName].match(/[^0-9a-z\s]/i)) {
+        let tip = {};
+        tip[fieldName] = "*Required";
+        setState((prev) => ({ ...prev, tip }));
+        return false;
+      }
+      return true;
+    } else if (unique.includes(fieldName)) {
+      if (!(state[fieldName].length > 2) || state[fieldName].match(/[^0-9a-z\s_-]/i)) {
         let tip = {};
         tip[fieldName] = "*Required";
         setState((prev) => ({ ...prev, tip }));

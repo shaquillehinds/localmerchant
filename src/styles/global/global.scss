@@ -20,6 +20,7 @@ html {
   font-size: 62.5%;
 }
 body {
+  background-color: var(--theme-bg-white);
   font-family: "Lato", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   &::-webkit-scrollbar {
     height: 0.5rem;
