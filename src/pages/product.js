@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { searchProducts, graphqlFetch } from "../functions/api";
 import ProductCard from "../components/ProductCard";
 import transformNumber from "../functions/numberTransformer";
+import Qs from "qs";
 
 const CATEGORIES_QUERY = (level, category) => {
   return `query{
@@ -12,20 +13,57 @@ const CATEGORIES_QUERY = (level, category) => {
       }
     }`;
 };
+const ALL_CATEGORIES_QUERY = `
+  query{
+    categories (category: "category"){
+      all
+    }
+  }
+`;
 
 const Product = () => {
   const [state, setState] = useState({ products: [], query: "", key: "" });
   const router = useRouter();
   useEffect(() => {
+    const initTimestamp = new Date().getTime();
+    const categoryWorker = new Worker("./workers/categoryWorker.js");
     (async () => {
       const products = await searchProducts();
-      const query = router.query.search || router.query.category;
+      const queryString = window.location.search || window.location.category;
+      const { search, category, level } = Qs.parse(queryString, { ignoreQueryPrefix: true });
       let key;
-      router.query.search ? (key = "search") : (key = "category");
+      const query = search || category;
+      search ? (key = "search") : (key = "category");
       if (!query) {
         router.push("/");
       }
       setState((prev) => ({ ...prev, products, query, key }));
+      /************************** Level Finder ******************************/
+      const levels = localStorage.getItem("levels");
+      if (!levels) {
+        try {
+          const all = (await graphqlFetch(ALL_CATEGORIES_QUERY)).categories.all;
+          all.forEach((level, index) => {
+            localStorage.setItem(`level${index + 1}`, JSON.stringify(level.categories));
+          });
+          localStorage.setItem("levels", "yes");
+        } catch (e) {
+          console.log(e);
+        }
+      }
+      if (key === "category" && !level) {
+        const allLevels = [];
+        for (let i = 1; i <= 6; i++) {
+          allLevels.push(JSON.parse(localStorage.getItem(`level${i}`)));
+        }
+        categoryWorker.addEventListener("message", (e) => {
+          const { currentLevel, sub } = e.data;
+          const finishTimestamp = new Date().getTime();
+          console.log(`time: ${finishTimestamp - initTimestamp}`);
+          console.log(currentLevel, sub);
+        });
+        categoryWorker.postMessage({ category: query, allLevels });
+      }
     })();
   }, [router.query]);
   return (

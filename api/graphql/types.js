@@ -90,10 +90,9 @@ const AdminType = new GraphQLObjectType({
 const CategoryType = new GraphQLObjectType({
   name: "Product_Categories",
   fields: () => ({
-    main: {
-      type: GraphQLJSONObject,
-    },
+    main: { type: GraphQLJSONObject },
     subCategories: { type: new GraphQLList(GraphQLString) },
+    all: { type: new GraphQLList(GraphQLJSONObject) },
   }),
 });
 

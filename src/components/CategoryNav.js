@@ -33,7 +33,7 @@ const CategoryNav = () => {
       return setState((prev) => ({ ...prev, level: 2, categories: prev.initialObject[selected] }));
     }
     closeCategoryNav();
-    router.push(`/product?category=${selected}`);
+    router.push(`/product?category=${encodeURIComponent(selected)}`);
   };
   const handleMainMenuClick = () => {
     if (state.level === 2) {

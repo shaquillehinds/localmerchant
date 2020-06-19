@@ -197,7 +197,7 @@ const RootQueryType = new GraphQLObjectType({
       resolve: async (parent, { level, category }) => {
         const collection = mongoose.connection.db.collection("categories");
         if (level === "seven") return { subCategories: [] };
-        if (category) {
+        if (category && level) {
           try {
             const test = await collection
               .aggregate([
@@ -212,9 +212,13 @@ const RootQueryType = new GraphQLObjectType({
           } catch (e) {
             return e;
           }
+        } else if (level) {
+          const proj = await collection.findOne({ level });
+          if (proj.categories) return { main: proj.categories };
+        } else if (category) {
+          const allLevels = await (await collection.find({})).toArray();
+          return { all: allLevels };
         }
-        const proj = await collection.findOne({ level });
-        if (proj.categories) return { main: proj.categories };
         return { subCategories: [] };
       },
     },
