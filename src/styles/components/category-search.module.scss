@@ -1,0 +1,70 @@
+@import "../global//mixins.scss";
+
+.category_search {
+  &_wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 85%;
+    max-width: 35rem;
+    min-width: 35rem;
+    margin: 0 auto;
+    @media (min-width: 700px) {
+      padding-left: 3rem;
+    }
+  }
+  &_parent {
+    padding: 2rem 0;
+    margin-bottom: 1rem;
+    h2 {
+      font-size: var(--font-m);
+      color: var(--theme-primary);
+      font-weight: 600;
+    }
+  }
+  &_current {
+    align-self: center;
+    @media (min-width: 700px) {
+      color: var(--theme-tertiary);
+      align-self: flex-start;
+      padding-left: 0.5rem;
+      h1 {
+        font-size: var(--font-l);
+      }
+    }
+  }
+  &_select {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 0;
+    width: 100%;
+    max-width: 35rem;
+    overflow: hidden;
+
+    select {
+      border-radius: 6px;
+      //   height: 3.5rem;
+      outline-color: transparent;
+      font-size: var(--font-m);
+      font-weight: 500;
+      text-align-last: center;
+      max-width: 30rem;
+      overflow: hidden;
+    }
+  }
+  &_sub {
+    margin: 1rem 0 0 2rem;
+    word-wrap: wrap;
+    font-size: var(--font-m);
+    color: var(--theme-primary);
+    font-weight: 600;
+    display: none;
+
+    @media (min-width: 700px) {
+      display: block;
+    }
+    &_item {
+      margin-bottom: 1rem;
+    }
+  }
+}

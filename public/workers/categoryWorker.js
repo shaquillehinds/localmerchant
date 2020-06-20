@@ -1,15 +1,19 @@
-// self.addEventListener("message", (e) => {
-//   const { category, level, lvl } = e.data;
-//   if (level[category]) {
-//     self.postMessage({ currentLevel: lvl, sub: level[category] });
-//   }
-// });
-
 self.addEventListener("message", (e) => {
-  const { allLevels, category } = e.data;
-  allLevels.forEach((level, index) => {
-    if (level[category]) {
-      self.postMessage({ currentLevel: index + 1, sub: level[category] });
+  const { all, category } = e.data;
+  let loopBreak = false;
+  for (let level in all) {
+    if (loopBreak) break;
+    const currentLevel = all[level];
+    for (let cat in currentLevel) {
+      if (cat === category) {
+        self.postMessage({
+          parent: currentLevel[cat].parent,
+          sub: currentLevel[cat].categories,
+          currentLevel: level,
+        });
+        loopBreak = true;
+        break;
+      }
     }
-  });
+  }
 });
