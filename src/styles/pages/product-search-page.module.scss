@@ -1,11 +1,49 @@
+@import "../global/mixins";
 .product_search_page {
   &_wrapper {
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
 
-    @media (min-width: 700px) {
+    @include respond(phone) {
       flex-direction: row;
+    }
+  }
+  &_main {
+    @include respond(phone) {
+      padding-left: 2rem;
+      width: 100%;
+    }
+  }
+  &_products {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    @include respond(phone) {
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      flex-direction: row;
+    }
+  }
+  &_heading {
+    display: none;
+
+    @include respond(phone) {
+      display: flex;
+      font-size: var(--font-m);
+      color: var(--theme-primary);
+      align-items: center;
+
+      h2 {
+        display: inline-block;
+      }
+
+      &_wrapper {
+        margin: 4.5rem 0 4.5rem 2rem;
+        justify-content: space-between;
+        display: flex;
+        flex-wrap: wrap;
+      }
     }
   }
 }

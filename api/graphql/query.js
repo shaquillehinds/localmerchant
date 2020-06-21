@@ -217,7 +217,9 @@ const RootQueryType = new GraphQLObjectType({
           if (proj.categories) return { main: proj.categories };
         } else if (category) {
           const allLevels = (await (await collection.find({ level: "all" })).toArray())[0].categories;
-          return { main: allLevels };
+          const tails = (await (await collection.find({ level: "tail" })).toArray())[0].categories;
+          const main = { allLevels, tails };
+          return { main };
         }
         return { subCategories: [] };
       },

@@ -9,34 +9,54 @@
     max-width: 35rem;
     min-width: 35rem;
     margin: 0 auto;
-    @media (min-width: 700px) {
+
+    @include respond(phone) {
       padding-left: 3rem;
+      border-right: solid 1.5px var(--theme-grey);
+      margin-top: 3rem;
     }
   }
   &_parent {
-    padding: 2rem 0;
+    padding: 2rem 0 0 0;
     margin-bottom: 1rem;
-    h2 {
+    a {
       font-size: var(--font-m);
       color: var(--theme-primary);
       font-weight: 600;
+
+      &:hover {
+        color: var(--theme-tertiary);
+      }
+
+      @include respond(phone) {
+        font-size: var(--font-l);
+      }
+    }
+    @include respond(phone) {
+      margin-bottom: 3rem;
     }
   }
   &_current {
     align-self: center;
-    @media (min-width: 700px) {
+    margin: 2rem 0;
+    color: var(--theme-primary);
+    @include respond(phone) {
+      margin: 0;
       color: var(--theme-tertiary);
       align-self: flex-start;
       padding-left: 0.5rem;
       h1 {
-        font-size: var(--font-l);
+        font-size: var(--font-m);
+      }
+      h2 {
+        display: none;
       }
     }
   }
   &_select {
     display: flex;
     justify-content: center;
-    padding: 3rem 0;
+    padding: 0 0 3rem 0;
     width: 100%;
     max-width: 35rem;
     overflow: hidden;
@@ -60,11 +80,17 @@
     font-weight: 600;
     display: none;
 
-    @media (min-width: 700px) {
+    @include respond(phone) {
       display: block;
     }
     &_item {
       margin-bottom: 1rem;
+      &_current {
+        color: var(--theme-tertiary);
+      }
+      a:hover {
+        color: var(--theme-tertiary);
+      }
     }
   }
 }

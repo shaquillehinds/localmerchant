@@ -1,0 +1,15 @@
+.filter_sort {
+  &_wrapper {
+    display: flex;
+    justify-content: space-around;
+    max-width: 30rem;
+    min-width: 30rem;
+    padding: 0.5rem 0;
+    margin: 0 auto;
+
+    select {
+      text-align-last: center;
+      font-size: var(--font-m);
+    }
+  }
+}

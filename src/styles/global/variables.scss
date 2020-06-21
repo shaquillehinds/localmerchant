@@ -38,6 +38,9 @@
   --font-s: 1rem;
   --font-xs: 0.75rem;
 
+  //media-queries
+  --phone: 700px;
+
   //hamburger
   --hamburger-thickness: 0.27rem;
   @include respond(laptop) {
