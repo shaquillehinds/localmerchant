@@ -4,6 +4,7 @@ import styles from "../styles/components/select-category.module.scss";
 import page from "../styles/components/elements/page.module.scss";
 import font from "../styles/components/elements/fonts.module.scss";
 import { graphqlFetch, graphqlRenderedFetch } from "../functions/api";
+import cookies from "browser-cookies";
 
 const CATEGORIES_QUERY = (tag, level) => {
   if (level && tag) {
@@ -60,14 +61,18 @@ const SelectCategory = ({ categoryHandler, previousState }) => {
       return setState(() => previousState);
     }
     (async () => {
-      const main = (await graphqlFetch(CATEGORIES_QUERY(undefined, "one"))).categories.main;
-      const savedCategories = (await graphqlRenderedFetch(SAVED_QUERY)).store.categories;
-      setState((prev) => ({
-        ...prev,
-        levelOne: Object.keys(main),
-        startingCategories: main,
-        savedCategories,
-      }));
+      const customer = cookies.get("customer");
+      const loggedIn = cookies.get("loggedIn");
+      if (customer === "no" && loggedIn === "yes") {
+        const main = (await graphqlFetch(CATEGORIES_QUERY(undefined, "one"))).categories.main;
+        const savedCategories = (await graphqlRenderedFetch(SAVED_QUERY)).store.categories;
+        setState((prev) => ({
+          ...prev,
+          levelOne: Object.keys(main),
+          startingCategories: main,
+          savedCategories,
+        }));
+      }
     })();
   }, []);
   const getCategories = async (tag, level) => {

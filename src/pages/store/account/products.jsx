@@ -3,11 +3,13 @@ import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
 import ProductCard from "../../../components/ProductCard";
 import page from "../../../styles/components/elements/page.module.scss";
+import button from "../../../styles/components/elements/button.module.scss";
 import fonts from "../../../styles/components/elements/fonts.module.scss";
 import form from "../../../styles/components/form.module.scss";
 import card from "../../../styles/components/product-card.module.scss";
 import cookies from "browser-cookies";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import axios from "axios";
 import { graphqlRenderedFetch } from "../../../functions/api";
 
@@ -81,6 +83,14 @@ const Products = () => {
             </select>
           </span>
         </form>
+        <Link href="/product/new">
+          <a
+            style={{ display: "block", margin: "0 auto", fontSize: "var(--font-m)" }}
+            className={button.btn_primary}
+          >
+            New Product
+          </a>
+        </Link>
         <div className={card.product_cards}>
           {state.products.map((product) => {
             return (

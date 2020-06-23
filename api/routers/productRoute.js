@@ -2,17 +2,16 @@ const router = require("express").Router();
 const Product = require("../models/ProductModel");
 const Featured = require("../models/FeaturedModel");
 const { auth } = require("../middleware/auth");
-const sharp = require("sharp");
 const upload = require("../middleware/upload");
+const S3 = require("aws-sdk/clients/s3");
+const s3 = new S3();
 const mongoose = require("mongoose");
 
-// mongoose.connection.db.collection('categories')
-
-// function find (name, query, cb) {
-//   mongoose.connection.db.collection(name, function (err, collection) {
-//      collection.find(query).toArray(cb);
-//  });
-// }
+s3.config.update({
+  secretAccessKey: process.env.AWS_ACCESS_KEY,
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  region: "us-east-2",
+});
 
 router.get("/categories", async (req, res) => {
   const level = req.query.level || "one";
@@ -44,9 +43,9 @@ router.get("/categories", async (req, res) => {
   });
 });
 //create a new product
-router.route("/").post(auth, upload.array("image", 6), async (req, res) => {
+router.post("/", auth, upload.array("image", 6), async (req, res) => {
   try {
-    const { name, price, description = "" } = req.body;
+    const { name, price, description = "", inStock = true } = req.body;
     const store = req.user._id;
     const tags = JSON.parse(req.body.tags);
     while (tags.length > 18) {
@@ -59,6 +58,7 @@ router.route("/").post(auth, upload.array("image", 6), async (req, res) => {
       price,
       tags,
       store,
+      inStock,
       image,
       images,
       description,
@@ -70,23 +70,55 @@ router.route("/").post(auth, upload.array("image", 6), async (req, res) => {
   }
 });
 
-router.patch("/:id", auth, upload.array(), async (req, res) => {
-  const _id = req.query.id;
-  const product = await Product.findById(_id);
-  const updates = Object.keys(req.body.updates);
-  const allowedUpdates = ["name", "price", "tags", "description", "inStock"];
-  const valid = updates.every((update) => allowedUpdates.includes(update));
-  if (!valid) {
-    return res.status(400).send("Invalid update request");
-  }
-  try {
-    updates.forEach((update) => (product[update] = req.body.updates[update]));
-    await product.save();
-    res.status(202).send(req.user);
-  } catch (e) {
-    res.status(400).send(e);
-  }
-});
+router
+  .route("/:id")
+  .patch(auth, upload.array(), async (req, res) => {
+    const _id = req.params.id;
+    const product = await Product.findById(_id);
+    const updates = Object.keys(req.body);
+    const allowedUpdates = ["name", "price", "tags", "description", "inStock"];
+    const valid = updates.every((update) => allowedUpdates.includes(update));
+    if (!valid) {
+      return res.status(400).send("Invalid update request");
+    }
+    try {
+      updates.forEach((update) => {
+        if (update === "tags") product[update] = JSON.parse(req.body[update]);
+        else product[update] = req.body[update];
+      });
+      await product.save();
+      res.status(202).send(req.user);
+    } catch (e) {
+      console.log(e);
+      res.status(400).send(e);
+    }
+  })
+  .delete(auth, async (req, res) => {
+    const id = req.params.id;
+    try {
+      const product = await Product.findByIdAndDelete(id);
+      if (product.image) {
+        let Key = product.image.split("/").pop();
+        s3.deleteObject({ Bucket: "local-merchant", Key }, (err, data) => {
+          if (err) console.log(err);
+          else console.log(data);
+        });
+      }
+      if (product.images.length > 0) {
+        product.images.forEach((image, index) => {
+          if (index === 0) null;
+          else
+            s3.deleteObject({ Bucket: "local-merchant", Key: image.split("/").pop() }, (err, data) => {
+              if (err) console.log(err);
+              else console.log(data);
+            });
+        });
+      }
+      res.send(product);
+    } catch (e) {
+      res.status(400).send(e);
+    }
+  });
 
 router.patch("/:id/image", auth, upload.array(), async (req, res) => {
   const image = req.body.image;
@@ -115,16 +147,6 @@ router.patch("/:id/images", auth, upload.array("images", 6), async (req, res) =>
     res.status(202).send(product.images);
   } catch (e) {
     res.status(500).send(e);
-  }
-});
-
-router.delete("/:id", auth, async (req, res) => {
-  const id = req.query.id;
-  try {
-    const product = await Product.findByIdAndDelete(id);
-    res.send(product);
-  } catch (e) {
-    res.status(400).send(e);
   }
 });
 

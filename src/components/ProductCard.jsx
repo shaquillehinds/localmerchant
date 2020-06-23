@@ -8,14 +8,16 @@ export const ProductCard = ({ id, image, name, price, storeName, inStock, mode, 
     <div className={styles.product_card_wrapper_private}>
       <div className={styles.product_card_image}>
         <Link href={`/product/${id}`}>
-          <img src={image} />
+          <a>
+            <img src={image} />
+          </a>
         </Link>
       </div>
       <div className={styles.product_card_name}>
         <div className={styles.product_card_item}>
           <h5 className={styles.product_card_item_title}>Product Name</h5>
           <Link href={`/product/${id}`}>
-            <p className={styles.product_card_item_name}>{name}</p>
+            <a className={styles.product_card_item_name}>{name}</a>
           </Link>
           {inStock ? (
             <p className={styles.product_card_item_instock}>In Stock</p>
@@ -39,9 +41,13 @@ export const ProductCard = ({ id, image, name, price, storeName, inStock, mode, 
 
       {mode === "private" ? (
         <div className={styles.product_card_edit}>
-          <div className={styles.product_card_button_edit}>
-            <p>Edit</p>
-          </div>
+          <Link href={`/product/${id}/edit`}>
+            <a>
+              <div className={styles.product_card_button_edit}>
+                <p>Edit</p>
+              </div>
+            </a>
+          </Link>
         </div>
       ) : null}
 

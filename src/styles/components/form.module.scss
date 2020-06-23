@@ -58,6 +58,61 @@
     @include respond(tablet) {
       font-size: var(--font-m);
     }
+    &_radio {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+
+      &:checked ~ span {
+        background-color: var(--theme-primary);
+      }
+      &:checked ~ span:after {
+        display: flex;
+      }
+      &_wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        padding-left: 35px;
+        height: 3rem;
+        cursor: pointer;
+        font-size: var(--font-m);
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+
+        &:hover span {
+          background-color: var(--theme-grey);
+        }
+      }
+      &_checkmark {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: 0;
+        height: 25px;
+        width: 25px;
+        background-color: #eee;
+        border-radius: 50%;
+
+        &::after {
+          content: "";
+          position: absolute;
+          display: none;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: var(--theme-white);
+        }
+      }
+    }
     &_upload {
       width: 100%;
       position: relative;

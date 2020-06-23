@@ -1,43 +1,50 @@
-import styles from "../../styles/components/form.module.scss";
 import font from "../../styles/components/elements/fonts.module.scss";
 import loaders from "../../styles/components/elements/loaders.module.scss";
+import button from "../../styles/components/elements/button.module.scss";
 import page from "../../styles/components/elements/page.module.scss";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import button from "../../styles/components/elements/button.module.scss";
-import Link from "next/link";
-import numeral from "numeral";
+import ProductForm from "../../components/ProductForm";
 import { inputValidate } from "../../functions/formValidation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext } from "react";
+import { useRouter } from "next/router";
 import axios from "axios";
 import cookies from "browser-cookies";
 import SelectCategory from "../../components/SelectCategory";
 
+export const NewProductContext = createContext(null);
+
 const New = () => {
+  const router = useRouter();
   const [state, setState] = useState({
     name: "",
     price: "",
     tags: [],
+    attributeTags: [],
     images: [],
     description: "",
     loading: false,
     customer: false,
+    inStock: true,
     selectCategoryState: undefined,
   });
   useEffect(() => {
     const customer = cookies.get("customer");
-    if (customer === "yes") {
+    const loggedIn = cookies.get("loggedIn");
+    if (customer === "yes" || loggedIn === "no") {
       location.href = "/";
     }
   }, []);
-  const tagsHandler = (value) => {
+  const attributesHandler = (e) => {
+    const value = e.target.value;
     if (value.length > 2) {
-      return value
+      const attributeTags = value
         .split(",")
         .map((item) => item.trim())
         .filter((item) => item.length > 2);
+      setState((prev) => ({ ...prev, attributeTags }));
     } else {
-      return [];
+      setState((prev) => ({ ...prev, attributeTags: [] }));
     }
   };
   const categoryHandler = ({ state, tag }) => {
@@ -56,7 +63,7 @@ const New = () => {
   };
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    const tags = tagsHandler(e.target.elements.tags.value);
+    const tags = state.attributeTags;
     if (state.name.length < 3) {
       return alert("Enter A Valid Name");
     } else if (state.images.length > 6) {
@@ -74,6 +81,7 @@ const New = () => {
     formData.append("price", priceInCents);
     formData.append("tags", JSON.stringify([...state.tags, state.name, ...tags]));
     formData.append("description", state.description);
+    formData.append("inStock", state.inStock);
     state.images.forEach((image) => formData.append("image", image));
     setState((prev) => ({ ...prev, loading: true }));
     const data = await axios({
@@ -83,6 +91,7 @@ const New = () => {
       headers: { Authorization: `Bearer ${localStorage.getItem("JWT")}` },
     });
     setState((prev) => ({ ...prev, loading: false }));
+    router.push("/store/account/products");
   };
   const onPriceChange = (e) => {
     const price = e.target.value;
@@ -116,6 +125,13 @@ const New = () => {
     inputValidate(e.target, e.target.value.length > 2);
     setState((prev) => ({ ...prev, description }));
   };
+  const inStockHandler = (e) => {
+    setState((prev) => ({ ...prev, inStock: true }));
+  };
+  const outOfStockHandler = (e) => {
+    console.log("out of stock");
+    setState((prev) => ({ ...prev, inStock: false }));
+  };
   const goBackHandler = (e) => {
     setState((prev) => ({ ...prev, tags: [] }));
   };
@@ -124,7 +140,6 @@ const New = () => {
       name: state.tags[state.tags.length - 1],
       category: state.tags,
     });
-    // const updates = { categories: { name: state.tags[state.tags.length - 1], category: state.tags } };
     const updates = { categories: state.selectCategoryState.savedCategories };
     axios({
       method: "PATCH",
@@ -181,63 +196,19 @@ const New = () => {
       ) : state.tags.length === 0 ? (
         <SelectCategory categoryHandler={categoryHandler} previousState={state.selectCategoryState} />
       ) : (
-        <form onSubmit={onSubmitHandler} className={styles.form_wide}>
-          <input
-            type="text"
-            autoFocus
-            className={styles.form_input}
-            placeholder="Product Name"
-            required
-            value={state.name}
-            onChange={nameHandler}
+        <NewProductContext.Provider value={{ state }}>
+          <ProductForm
+            descriptionHandler={descriptionHandler}
+            onPriceChange={onPriceChange}
+            fileHandler={fileHandler}
+            descriptionHandler={descriptionHandler}
+            nameHandler={nameHandler}
+            onSubmitHandler={onSubmitHandler}
+            inStockHandler={inStockHandler}
+            outOfStockHandler={outOfStockHandler}
+            attributesHandler={attributesHandler}
           />
-          <span className={styles.form_input_wrapper}>
-            <input
-              type="text"
-              onChange={onPriceChange}
-              className={styles.form_input_narrow}
-              required
-              value={state.price}
-              placeholder="Price"
-            />
-          </span>
-          <span className={styles.form_input_wrapper}>
-            <span className={font.text_m}>Images</span>
-            <label htmlFor="upload" className={styles.form_input_upload_label}>
-              <input
-                type="file"
-                onChange={fileHandler}
-                required
-                id="upload"
-                accept="image/png, .jpeg, .jpg"
-                multiple
-                className={styles.form_input_upload}
-                placeholder="Price"
-              />
-              <span className={styles.form_input_upload_button}>Select</span>
-            </label>
-
-            <span className={font.text_m_grey}>6 Max</span>
-          </span>
-
-          <input
-            type="text"
-            name="tags"
-            placeholder="Tags (E.g headphones, earbuds) 10 Max"
-            className={styles.form_input}
-          />
-          <input
-            type="text"
-            placeholder="Descripton"
-            className={styles.form_input}
-            onChange={descriptionHandler}
-            value={state.description}
-          />
-          <button className={button.btn_primary}>Add</button>
-          <Link href="/">
-            <button className={button.btn_link}>Cancel</button>
-          </Link>
-        </form>
+        </NewProductContext.Provider>
       )}
 
       <Footer />
