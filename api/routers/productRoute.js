@@ -76,16 +76,17 @@ router
     const _id = req.params.id;
     const product = await Product.findById(_id);
     const updates = Object.keys(req.body);
-    const allowedUpdates = ["name", "price", "tags", "description", "inStock"];
+    const allowedUpdates = ["name", "price", "tags", "description", "inStock", "images"];
     const valid = updates.every((update) => allowedUpdates.includes(update));
     if (!valid) {
       return res.status(400).send("Invalid update request");
     }
     try {
       updates.forEach((update) => {
-        if (update === "tags") product[update] = JSON.parse(req.body[update]);
+        if (update === "tags" || update === "images") product[update] = JSON.parse(req.body[update]);
         else product[update] = req.body[update];
       });
+      product.image = JSON.parse(req.body.images)[0];
       await product.save();
       res.status(202).send(req.user);
     } catch (e) {
@@ -109,14 +110,16 @@ router
           if (index === 0) null;
           else
             s3.deleteObject({ Bucket: "local-merchant", Key: image.split("/").pop() }, (err, data) => {
-              if (err) console.log(err);
-              else console.log(data);
+              if (err) {
+                console.log(err);
+                return res.status(500).send(err);
+              } else console.log(data);
             });
         });
       }
-      res.send(product);
+      return res.send(product);
     } catch (e) {
-      res.status(400).send(e);
+      return res.status(400).send(e);
     }
   });
 

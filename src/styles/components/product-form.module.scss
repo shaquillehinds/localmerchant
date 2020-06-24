@@ -1,0 +1,36 @@
+@import "../global/mixins.scss";
+.drop {
+  &_wrapper {
+    display: none;
+    @include respond(phone) {
+      display: block;
+    }
+  }
+  &_zone {
+    height: 7rem;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    border: dashed 2px var(--theme-primary);
+    font-size: var(--font-m);
+    font-weight: 600;
+    color: var(--theme-grey);
+  }
+}
+.images {
+  &_wrapper {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  &_select {
+    width: 6rem;
+    height: 6rem;
+    pointer-events: none;
+
+    &_wrapper {
+      cursor: pointer;
+      margin: 0.5rem;
+      border: 3px solid var(--theme-primary);
+    }
+  }
+}

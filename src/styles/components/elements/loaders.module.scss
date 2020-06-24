@@ -76,17 +76,17 @@ $check-length: 36px;
 
 .successAnimationCircle {
   stroke-dasharray: $circle-length $circle-length;
-  stroke: var(--color-primary);
+  stroke: var(--color-tertiary);
   fill: var(--color-white);
 }
 
 .successAnimationCheck {
   stroke-dasharray: $check-length $check-length;
-  stroke: var(--color-primary);
+  stroke: var(--color-tertiary);
 }
 
 .successAnimationResult {
-  fill: var(--color-primary);
+  fill: var(--color-tertiary);
   opacity: 0;
 }
 

@@ -12,9 +12,14 @@
     text-transform: uppercase;
     position: relative;
     z-index: 5;
+    text-align: center;
     padding: 1.3rem 5.5rem;
     border-radius: 3px;
     color: var(--theme-primary);
+    &_l {
+      @extend .heading_text;
+      font-size: var(--font-l);
+    }
     &_m {
       @extend .heading_text;
       font-size: var(--font-m);
@@ -40,6 +45,14 @@
     color: var(--theme-primary);
     &_grey {
       @extend .text_m;
+      color: var(--color-grey);
+    }
+  }
+  &_l {
+    font-size: var(--font-l);
+    color: var(--theme-primary);
+    &_grey {
+      @extend .text_l;
       color: var(--color-grey);
     }
   }
