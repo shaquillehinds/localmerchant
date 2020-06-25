@@ -22,6 +22,7 @@ const PRODUCT_INFO_QUERY = (id) => `
       tags
       description
       inStock
+      delivery
       images
     }
   }
@@ -41,6 +42,7 @@ const edit = ({ id }) => {
     loading: false,
     customer: false,
     inStock: true,
+    delivery: false,
     selectCategoryState: undefined,
     updated: false,
   });
@@ -93,6 +95,7 @@ const edit = ({ id }) => {
     formData.append("tags", JSON.stringify([...state.tags, state.name, ...tags]));
     formData.append("description", state.description);
     formData.append("inStock", state.inStock);
+    formData.append("delivery", state.delivery);
     formData.append("images", JSON.stringify(state.images));
     setState((prev) => ({ ...prev, loading: true }));
     const data = await axios({
@@ -140,12 +143,15 @@ const edit = ({ id }) => {
     inputValidate(e.target, e.target.value.length > 2);
     setState((prev) => ({ ...prev, description }));
   };
-  const inStockHandler = (e) => {
-    console.log("instock");
-    setState((prev) => ({ ...prev, inStock: true }));
+  const stockHandler = (value) => {
+    let inStock;
+    value === "inStock" ? (inStock = true) : (inStock = false);
+    setState((prev) => ({ ...prev, inStock }));
   };
-  const outOfStockHandler = (e) => {
-    setState((prev) => ({ ...prev, inStock: false }));
+  const deliveryHandler = (value) => {
+    let delivery;
+    value === "delivery" ? (delivery = true) : (delivery = false);
+    setState((prev) => ({ ...prev, delivery }));
   };
   const deleteHandler = async (e) => {
     await axios({
@@ -153,7 +159,6 @@ const edit = ({ id }) => {
       url: `/api/product/${id}`,
       headers: { Authorization: `Bearer ${localStorage.getItem("JWT")}` },
     });
-    console.log("delete");
     router.push("/store/account/products");
   };
   return (
@@ -229,8 +234,8 @@ const edit = ({ id }) => {
               nameHandler={nameHandler}
               onSubmitHandler={onSubmitHandler}
               attributesHandler={attributesHandler}
-              inStockHandler={inStockHandler}
-              outOfStockHandler={outOfStockHandler}
+              stockHandler={stockHandler}
+              deliveryHandler={deliveryHandler}
               handleDelete={deleteHandler}
               imageSelectHandler={imageSelectHandler}
               edit={true}

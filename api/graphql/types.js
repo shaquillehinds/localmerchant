@@ -112,6 +112,7 @@ const ProductType = new GraphQLObjectType({
     tags: { type: new GraphQLList(GraphQLString) },
     store: { type: StoreType },
     inStock: { type: GraphQLBoolean },
+    delivery: { type: GraphQLBoolean },
     createdAt: { type: GraphQLDateTime },
     updatedAt: { type: GraphQLDateTime },
   }),

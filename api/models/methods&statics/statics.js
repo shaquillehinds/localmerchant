@@ -63,6 +63,17 @@ const findPartial = async function ({
       },
       { limit, sort, skip, populate: "store" }
     );
+  } else if (field2 === "delivery" || field2 === "inStock") {
+    search[field2] = true;
+    return await this.find(
+      search,
+      {
+        tags: 0,
+        images: 0,
+        description: 0,
+      },
+      { limit, sort, skip, populate: "store" }
+    );
   }
 };
 

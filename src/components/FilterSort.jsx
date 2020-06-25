@@ -4,6 +4,7 @@ import styles from "../styles/components/filter-sort.module.scss";
 import { useState, useContext, useEffect } from "react";
 import { graphqlFetch } from "../functions/api";
 import { AccountProductsContext } from "../pages/store/account/products";
+import { ProductSearchContext } from "../pages/product";
 
 const PRIVATE_PRODUCTS_QUERY = (tag, store, sort, skip = 0) => `
   query{
@@ -21,6 +22,22 @@ const PRIVATE_PRODUCTS_QUERY = (tag, store, sort, skip = 0) => `
     }
   }
 `;
+const PUBLIC_PRODUCTS_QUERY = (filter, sort, skip = 0) => `
+query{
+  products(filter:"${filter}", sort: {${sort[0]}:${sort[1]}}, skip: ${skip}){
+    _id
+    image
+    name
+    price
+    inStock
+    store {
+      _id
+      storeName
+      storeURL
+    }
+  }
+}
+`;
 
 const FilterSort = ({ mode, handleFilterSort }) => {
   const [state, setState] = useState({
@@ -35,7 +52,10 @@ const FilterSort = ({ mode, handleFilterSort }) => {
       var storeID = providerState.products[0].store._id;
     }
     var page = providerState.page;
-  } else null;
+  } else {
+    var { providerState } = useContext(ProductSearchContext);
+    var page = providerState.page;
+  }
   useEffect(() => {
     if (mode === "privateProducts" && providerState.products[0]) {
       setState((prev) => ({ ...prev, store: providerState.products[0].store._id }));
@@ -43,7 +63,6 @@ const FilterSort = ({ mode, handleFilterSort }) => {
     if (mode === "privateProducts" && state.store) {
       const skip = page * 1;
       (async () => {
-        console.log(state.filter, state.store, state.sort, skip, page);
         const data = await graphqlFetch(
           PRIVATE_PRODUCTS_QUERY(state.filter, state.store, state.sort, skip)
         );
@@ -63,7 +82,7 @@ const FilterSort = ({ mode, handleFilterSort }) => {
             const filter = document.querySelector("#filter").value;
             const products = (await graphqlFetch(PRIVATE_PRODUCTS_QUERY(filter, store, state.sort)))
               .products;
-            handleFilterSort(products);
+            handleFilterSort(products, 0);
             setState((prev) => ({ ...prev, filter, waiting: false }));
             clearTimeout(filterTimeout);
           }, 500);
@@ -73,8 +92,20 @@ const FilterSort = ({ mode, handleFilterSort }) => {
         setState((prev) => ({ ...prev, sort }));
         const products = (await graphqlFetch(PRIVATE_PRODUCTS_QUERY(state.filter, store, sort)))
           .products;
-        handleFilterSort(products);
+        handleFilterSort(products, 0);
       }
+    }
+  };
+  const handlePublicProducts = async (e) => {
+    const target = e.target;
+    if (target.id === "filter") {
+      console.log(e.target.value);
+      setState((prev) => ({ ...prev, filter: target.value }));
+      handleFilterSort(target.value, state.sort);
+    } else {
+      const sort = target.value.split(":");
+      setState((prev) => ({ ...prev, sort }));
+      handleFilterSort(state.filter, sort);
     }
   };
   return (
@@ -118,25 +149,33 @@ const FilterSort = ({ mode, handleFilterSort }) => {
       ) : (
         <div className={styles.filter_sort_wrapper}>
           <div>
-            <select className={form.form_select} defaultValue={"Filter"}>
+            <select
+              id="filter"
+              className={form.form_select}
+              defaultValue={"Filter"}
+              onChange={handlePublicProducts}
+            >
               <option disabled value={"Filter"} className={form.form_option}>
                 Filter
               </option>
-              <option value="All">All</option>
-              <option value="Delivery">Delivery</option>
-              <option value="In Stock">In Stock</option>
-              <option value="Out of Stock">Out of Stock</option>
+              <option value="">All</option>
+              <option value="delivery">Delivery</option>
+              <option value="inStock">In Stock</option>
             </select>
           </div>
           <div>
-            <select className={form.form_select} defaultValue={"Sort By"}>
+            <select
+              className={form.form_select}
+              defaultValue={"Sort By"}
+              onChange={handlePublicProducts}
+            >
               <option disabled value={"Sort By"} className={form.form_option}>
                 Sort By
               </option>
               <option value="createdAt:-1">Newest</option>
               <option value="createdAt:1">Oldest</option>
-              <option value="price:1">Price (High)</option>
-              <option value="price:-1">Price (Low)</option>
+              <option value="price:1">Price (Low)</option>
+              <option value="price:-1">Price (High)</option>
             </select>
           </div>
         </div>

@@ -27,6 +27,7 @@ const New = () => {
     loading: false,
     customer: false,
     inStock: true,
+    delivery: false,
     selectCategoryState: undefined,
   });
   useEffect(() => {
@@ -83,6 +84,7 @@ const New = () => {
     formData.append("tags", JSON.stringify([...state.tags, state.name, ...tags]));
     formData.append("description", state.description);
     formData.append("inStock", state.inStock);
+    formData.append("delivery", state.delivery);
     state.images.forEach((image) => formData.append("image", image));
     setState((prev) => ({ ...prev, loading: true }));
     const data = await axios({
@@ -125,12 +127,15 @@ const New = () => {
     inputValidate(e.target, e.target.value.length > 2);
     setState((prev) => ({ ...prev, description }));
   };
-  const inStockHandler = (e) => {
-    setState((prev) => ({ ...prev, inStock: true }));
+  const stockHandler = (value) => {
+    let inStock;
+    value === "inStock" ? (inStock = true) : (inStock = false);
+    setState((prev) => ({ ...prev, inStock }));
   };
-  const outOfStockHandler = (e) => {
-    console.log("out of stock");
-    setState((prev) => ({ ...prev, inStock: false }));
+  const deliveryHandler = (value) => {
+    let delivery;
+    value === "delivery" ? (delivery = true) : (delivery = false);
+    setState((prev) => ({ ...prev, delivery }));
   };
   const goBackHandler = (e) => {
     setState((prev) => ({ ...prev, tags: [] }));
@@ -268,8 +273,8 @@ const New = () => {
             descriptionHandler={descriptionHandler}
             nameHandler={nameHandler}
             onSubmitHandler={onSubmitHandler}
-            inStockHandler={inStockHandler}
-            outOfStockHandler={outOfStockHandler}
+            stockHandler={stockHandler}
+            deliveryHandler={deliveryHandler}
             attributesHandler={attributesHandler}
           />
         </NewProductContext.Provider>

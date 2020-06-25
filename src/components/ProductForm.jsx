@@ -19,6 +19,8 @@ const ProductForm = (props) => {
       if (state.attributeTags.length > 0) tagField.setAttribute("value", value);
       if (state.inStock) document.querySelector("#inStock").setAttribute("checked", "true");
       else document.querySelector("#outOfStock").setAttribute("checked", "true");
+      if (state.delivery) document.querySelector("#delivery").setAttribute("checked", "true");
+      else document.querySelector("#nodelivery").setAttribute("checked", "true");
     }
   }, [state]);
   const handleDrop = (e) => {
@@ -152,7 +154,7 @@ const ProductForm = (props) => {
               name="stock"
               value="inStock"
               id="inStock"
-              onChange={(e) => props.inStockHandler(e)}
+              onChange={(e) => props.stockHandler(e.target.value)}
             />
             <span className={styles.form_input_radio_checkmark}></span>
           </label>
@@ -165,7 +167,35 @@ const ProductForm = (props) => {
               name="stock"
               value="outOfStock"
               id="outOfStock"
-              onChange={(e) => props.outOfStockHandler(e)}
+              onChange={(e) => props.stockHandler(e.target.value)}
+            />
+            <span className={styles.form_input_radio_checkmark}></span>
+          </label>
+        </span>
+
+        <span className={styles.form_input_wrapper}>
+          <label className={styles.form_input_radio_wrapper} htmlFor="delivery">
+            Delivery
+            <input
+              type="radio"
+              className={styles.form_input_radio}
+              name="delivery"
+              value="delivery"
+              id="delivery"
+              onChange={(e) => props.deliveryHandler(e.target.value)}
+            />
+            <span className={styles.form_input_radio_checkmark}></span>
+          </label>
+
+          <label className={styles.form_input_radio_wrapper} htmlFor="nodelivery">
+            No Delivery
+            <input
+              type="radio"
+              className={styles.form_input_radio}
+              name="delivery"
+              value="nodelivery"
+              id="nodelivery"
+              onChange={(e) => props.deliveryHandler(e.target.value)}
             />
             <span className={styles.form_input_radio_checkmark}></span>
           </label>

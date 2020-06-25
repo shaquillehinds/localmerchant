@@ -36,9 +36,9 @@ const graphqlFetch = async (query) => {
   }
 };
 
-const tagSearchQuery = (key, search) => `
+const tagSearchQuery = (key, search, skip, filter = "", sort = ["createdAt", 1]) => `
     query{
-      products (${key}: "${search}") {
+      products (${key}: "${search}", skip: ${skip}, filter: "${filter}", sort: {${sort[0]}:${sort[1]}}) {
         _id
         name
         image
@@ -47,19 +47,21 @@ const tagSearchQuery = (key, search) => `
         tags
         store {
           storeName
+          storeURL
         }
       }
     }
   `;
 
-const searchProducts = async () => {
+const searchProducts = async (page = 0, filter, sort) => {
   const query = window.location.search || window.location.category;
   const { search, category } = Qs.parse(query, { ignoreQueryPrefix: true });
   const find = search || category;
   let key;
   search ? (key = "tag") : (key = "category");
+  const skip = page * 25;
   try {
-    return (await graphqlFetch(tagSearchQuery(key, find)))["products"];
+    return (await graphqlFetch(tagSearchQuery(key, find, skip, filter, sort)))["products"];
   } catch (e) {
     console.error(e);
   }

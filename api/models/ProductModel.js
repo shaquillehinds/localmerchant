@@ -35,6 +35,10 @@ const ProductSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    delivery: {
+      type: Boolean,
+      default: false,
+    },
     store: {
       type: Schema.Types.ObjectId,
       required: true,
@@ -49,8 +53,8 @@ const ProductSchema = new Schema(
 ProductSchema.index({ tags: "text", name: "text" });
 
 ProductSchema.methods.toJSON = function () {
-  const { _id, name, price, image, images, tags, store, description, inStock } = this;
-  return { _id, name, price, image, images, tags, store, description, inStock };
+  const { _id, name, price, image, images, tags, store, description, inStock, delivery } = this;
+  return { _id, name, price, image, images, tags, store, description, inStock, delivery };
 };
 
 ProductSchema.statics.findPartial = findPartial;

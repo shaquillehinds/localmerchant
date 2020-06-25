@@ -45,7 +45,7 @@ router.get("/categories", async (req, res) => {
 //create a new product
 router.post("/", auth, upload.array("image", 6), async (req, res) => {
   try {
-    const { name, price, description = "", inStock = true } = req.body;
+    const { name, price, description = "", inStock = true, delivery = false } = req.body;
     const store = req.user._id;
     const tags = JSON.parse(req.body.tags);
     while (tags.length > 18) {
@@ -59,6 +59,7 @@ router.post("/", auth, upload.array("image", 6), async (req, res) => {
       tags,
       store,
       inStock,
+      delivery,
       image,
       images,
       description,
@@ -76,7 +77,7 @@ router
     const _id = req.params.id;
     const product = await Product.findById(_id);
     const updates = Object.keys(req.body);
-    const allowedUpdates = ["name", "price", "tags", "description", "inStock", "images"];
+    const allowedUpdates = ["name", "price", "tags", "description", "inStock", "delivery", "images"];
     const valid = updates.every((update) => allowedUpdates.includes(update));
     if (!valid) {
       return res.status(400).send("Invalid update request");

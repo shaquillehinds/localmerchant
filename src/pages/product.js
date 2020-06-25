@@ -34,6 +34,7 @@ const Product = () => {
     parent: [],
     current: "",
     sub: [],
+    page: 0,
     mobile: false,
   });
   const router = useRouter();
@@ -41,7 +42,7 @@ const Product = () => {
     const initTimestamp = new Date().getTime();
     let tail = true;
     (async () => {
-      const products = await searchProducts();
+      const products = await searchProducts(state.page);
       const queryString = window.location.search || window.location.category;
       const { search, category, level } = Qs.parse(queryString, { ignoreQueryPrefix: true });
       let key;
@@ -131,6 +132,11 @@ const Product = () => {
     })();
   }, [router.query]);
 
+  const handleFilterSort = async (filter, sort) => {
+    const products = await searchProducts(state.page, filter, sort);
+    setState((prev) => ({ ...prev, products }));
+  };
+
   return (
     <div>
       <Header />
@@ -138,7 +144,6 @@ const Product = () => {
       <div className={styles.product_search_page_wrapper}>
         <ProductSearchContext.Provider value={{ state }}>
           <CategorySearch />
-          {/* {state.key === "category" ? <CategorySearch /> : null} */}
         </ProductSearchContext.Provider>
         <div className={styles.product_search_page_main}>
           <div className={styles.product_search_page_heading_wrapper}>
@@ -146,12 +151,14 @@ const Product = () => {
               {state.key === "category" ? (
                 <h1>{state.query}</h1>
               ) : (
-                <p>
+                <div>
                   Searched for: <h2>{state.query}</h2>
-                </p>
+                </div>
               )}
             </div>
-            <FilterSort />
+            <ProductSearchContext.Provider value={{ providerState: state }}>
+              <FilterSort handleFilterSort={handleFilterSort} />
+            </ProductSearchContext.Provider>
           </div>
           <div className={styles.product_search_page_products}>
             {state.products.map((product) => (

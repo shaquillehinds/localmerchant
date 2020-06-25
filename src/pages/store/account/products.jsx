@@ -56,8 +56,8 @@ const Products = () => {
       console.log(e);
     }
   };
-  const handleFilterSort = async (products) => {
-    setState((prev) => ({ ...prev, products }));
+  const handleFilterSort = async (products, page = state.page) => {
+    setState((prev) => ({ ...prev, products, page }));
   };
   return (
     <div>
