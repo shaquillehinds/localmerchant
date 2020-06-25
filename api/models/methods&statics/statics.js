@@ -37,17 +37,33 @@ const findAndLogin = async function (email, password, sessionToken) {
   }
 };
 
-const findPartial = async function (field, characters, limit = 10) {
+const findPartial = async function ({
+  field,
+  characters,
+  limit = 10,
+  field2,
+  characters2,
+  skip = 0,
+  sort = { createdAt: -1 },
+}) {
   const search = {};
-  search[field] = new RegExp(characters, "gi");
+  field ? (search[field] = new RegExp(characters, "gi")) : null;
   if (field === "name") {
-    return await this.find(search, { name: 1, _id: 1 }).limit(limit);
+    return await this.find(search, { name: 1, _id: 1 }, { limit });
+  } else if (field === "storeName") {
+    return await this.find(search, { storeName: 1, storeURL: 1, _id: 1 }, { limit });
+  } else if (field2 === "store") {
+    search[field2] = characters2;
+    return await this.find(
+      search,
+      {
+        tags: 0,
+        images: 0,
+        description: 0,
+      },
+      { limit, sort, skip, populate: "store" }
+    );
   }
-  return await this.find(search, {
-    storeName: 1,
-    storeURL: 1,
-    _id: 1,
-  }).limit(limit);
 };
 
 module.exports = { findAndLogin, findPartial };

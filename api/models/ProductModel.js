@@ -46,7 +46,7 @@ const ProductSchema = new Schema(
   }
 );
 
-ProductSchema.index({ tags: "text" });
+ProductSchema.index({ tags: "text", name: "text" });
 
 ProductSchema.methods.toJSON = function () {
   const { _id, name, price, image, images, tags, store, description, inStock } = this;

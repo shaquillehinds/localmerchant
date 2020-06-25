@@ -14,6 +14,7 @@ const {
   CategoryType,
 } = require("./types");
 const { GraphQLObjectType, GraphQLString, GraphQLList, GraphQLInt, GraphQLBoolean } = require("graphql");
+const { GraphQLJSONObject } = require("graphql-type-json");
 
 const RootQueryType = new GraphQLObjectType({
   name: "Query",
@@ -32,7 +33,7 @@ const RootQueryType = new GraphQLObjectType({
       resolve: async (parent, { industry, search, storeName, limit = 25, skip = 0 }, context) => {
         if (search) {
           try {
-            return await Store.findPartial("storeName", search);
+            return await Store.findPartial({ field: "storeName", characters: search });
           } catch (e) {
             return e;
           }
@@ -121,20 +122,41 @@ const RootQueryType = new GraphQLObjectType({
         search: { type: GraphQLString },
         limit: { type: GraphQLInt },
         skip: { type: GraphQLInt },
+        sort: { type: GraphQLJSONObject },
       },
       resolve: async (
         parent,
-        { category: tags, store, tag, search, limit = 25, skip = 0, private = false },
+        {
+          category: tags,
+          store,
+          tag,
+          search,
+          limit = 25,
+          skip = 0,
+          sort = { createdAt: -1 },
+          private = false,
+        },
         { token }
       ) => {
-        if (search) {
+        if (store) {
+          if (tag || tag === "") {
+            return await Product.findPartial({
+              field: "tags",
+              characters: tag,
+              limit,
+              skip,
+              sort,
+              field2: "store",
+              characters2: store,
+            });
+          }
+          return await Product.find({ store }).populate("store").skip(skip).limit(limit);
+        } else if (search) {
           try {
-            return await Product.findPartial("name", search);
+            return await Product.findPartial({ field: "name", characters: search });
           } catch (e) {
             return e;
           }
-        } else if (store) {
-          return await Product.find({ store }).populate("store").skip(skip).limit(limit);
         } else if (tag) {
           return await Product.find({ $text: { $search: tag } })
             .populate("store")

@@ -5,13 +5,15 @@ import ProductCard from "../../../components/ProductCard";
 import page from "../../../styles/components/elements/page.module.scss";
 import button from "../../../styles/components/elements/button.module.scss";
 import fonts from "../../../styles/components/elements/fonts.module.scss";
-import form from "../../../styles/components/form.module.scss";
+import FilterSort from "../../../components/FilterSort";
 import card from "../../../styles/components/product-card.module.scss";
 import cookies from "browser-cookies";
-import { useEffect, useState } from "react";
+import { useEffect, useState, createContext } from "react";
 import Link from "next/link";
 import axios from "axios";
 import { graphqlRenderedFetch } from "../../../functions/api";
+
+export const AccountProductsContext = createContext(null);
 
 const PRODUCTS_QUERY = `
   query {
@@ -22,13 +24,15 @@ const PRODUCTS_QUERY = `
       image
       inStock
       store{
+        _id
         storeName
+        storeURL
       }
     }
   }
 `;
 const Products = () => {
-  const [state, setState] = useState({ accountType: undefined, products: [] });
+  const [state, setState] = useState({ accountType: undefined, products: [], page: 0 });
   useEffect(() => {
     let accountType;
     cookies.get("customer") === "yes" ? (accountType = "customer") : (accountType = "store");
@@ -52,37 +56,28 @@ const Products = () => {
       console.log(e);
     }
   };
+  const handleFilterSort = async (products) => {
+    setState((prev) => ({ ...prev, products }));
+  };
   return (
     <div>
       <Header />
       <AccountNav active={"products"} accountType={state.accountType} />
       <div className={page.setup_noflex} style={{ paddingTop: 1 + "rem" }}>
-        <h2 className={fonts.heading_text} style={{ textAlign: "center" }}>
+        <h2
+          onClick={() => {
+            setState((prev) => ({ ...prev, page: prev.page + 1 }));
+          }}
+          className={fonts.heading_text}
+          style={{ textAlign: "center" }}
+        >
           My Store Products
         </h2>
-        <form>
-          <span
-            className={form.form_input_wrapper}
-            style={{ padding: 2 + "rem", maxWidth: 40 + "rem", marginLeft: "auto", marginRight: "auto" }}
-          >
-            <input
-              className={form.form_input_narrow}
-              placeholder="Search Filter"
-              type="text"
-              name="filter"
-              id="filter"
-            />
-            <select className={form.form_select} defaultValue="Sort By">
-              <option className={form.form_option} disabled>
-                Sort By
-              </option>
-              <option value="Date (New)">Date (New)</option>
-              <option value="Date (Old)">Date (Old)</option>
-              <option value="Name (Asc)">Name (Asc)</option>
-              <option value="Name (Des)">Name (Des)</option>
-            </select>
-          </span>
-        </form>
+        {state.products ? (
+          <AccountProductsContext.Provider value={{ providerState: state }}>
+            <FilterSort mode="privateProducts" handleFilterSort={handleFilterSort} />
+          </AccountProductsContext.Provider>
+        ) : null}
         <Link href="/product/new">
           <a
             style={{ display: "block", margin: "0 auto", fontSize: "var(--font-m)" }}

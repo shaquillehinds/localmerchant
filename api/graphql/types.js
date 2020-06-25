@@ -6,7 +6,7 @@ const {
   GraphQLInt,
   GraphQLBoolean,
 } = require("graphql");
-
+const { GraphQLDateTime } = require("graphql-iso-date");
 const { GraphQLJSONObject } = require("graphql-type-json");
 
 const StoreFields = {
@@ -21,6 +21,8 @@ const StoreFields = {
   industry: { type: GraphQLString },
   address: { type: GraphQLString },
   parish: { type: GraphQLString },
+  createdAt: { type: GraphQLDateTime },
+  updatedAt: { type: GraphQLDateTime },
   categories: {
     type: new GraphQLList(
       new GraphQLObjectType({
@@ -61,6 +63,8 @@ const CustomerType = new GraphQLObjectType({
     phone: { type: GraphQLInt },
     watchlist: { type: new GraphQLList(GraphQLString) },
     address: { type: GraphQLString },
+    createdAt: { type: GraphQLDateTime },
+    updatedAt: { type: GraphQLDateTime },
     coord: {
       type: new GraphQLObjectType({
         name: "coordc",
@@ -108,6 +112,8 @@ const ProductType = new GraphQLObjectType({
     tags: { type: new GraphQLList(GraphQLString) },
     store: { type: StoreType },
     inStock: { type: GraphQLBoolean },
+    createdAt: { type: GraphQLDateTime },
+    updatedAt: { type: GraphQLDateTime },
   }),
 });
 
