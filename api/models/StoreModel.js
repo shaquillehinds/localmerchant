@@ -82,6 +82,24 @@ const StoreSchema = new Schema(
       default: "Bronze",
       trim: true,
     },
+    open: [
+      {
+        days: [
+          {
+            type: Number,
+            default: [1, 2, 3, 4, 5],
+          },
+        ],
+        opening: {
+          type: String,
+          default: "0800",
+        },
+        closing: {
+          type: String,
+          default: "1700",
+        },
+      },
+    ],
     categories: [
       {
         name: {

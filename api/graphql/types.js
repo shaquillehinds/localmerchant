@@ -23,6 +23,7 @@ const StoreFields = {
   parish: { type: GraphQLString },
   createdAt: { type: GraphQLDateTime },
   updatedAt: { type: GraphQLDateTime },
+  open: { type: new GraphQLList(GraphQLJSONObject) },
   categories: {
     type: new GraphQLList(
       new GraphQLObjectType({

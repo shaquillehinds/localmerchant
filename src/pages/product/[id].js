@@ -29,9 +29,13 @@ const ProductPage = ({ id }) => {
   useEffect(() => {
     console.log(id);
     (async () => {
-      const product = (await graphqlFetch(PRODUCT_QUERY(id))).product;
-      console.log(product);
-      setState((prev) => ({ product }));
+      const response = await graphqlFetch(PRODUCT_QUERY(id));
+      console.log(id);
+      console.log(response);
+      if (response) {
+        const product = response.product;
+        setState((prev) => ({ product }));
+      }
     })();
   }, []);
   return (

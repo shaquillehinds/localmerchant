@@ -32,7 +32,7 @@ const Form = ({ mode, type }) => {
     e.persist();
     const input = e.target;
     inputValidate(input, validator.isEmail(input.value));
-    setState((prev) => ({ ...prev, email: input.value }));
+    setState((prev) => ({ ...prev, email: input.value.toLowerCase() }));
   };
   const handlePassword = (e) => {
     e.persist();

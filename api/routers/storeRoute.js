@@ -16,6 +16,7 @@ router.post("/", upload.array("image"), async (req, res) => {
     if (emailExists) {
       return res.send({ email: "This email is already in use." });
     }
+    req.body.open = [{ days: [1, 2, 3, 4, 5], opening: 8, closing: 17 }];
     const store = new Store(req.body);
     const token = await store.generateAuthToken();
     req.session.token = token;

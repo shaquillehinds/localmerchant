@@ -1,7 +1,6 @@
 import styles from "../styles/components/product-card.module.scss";
 import numeral from "numeral";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 export const ProductCard = ({ id, image, name, price, storeName, inStock, mode, handleBoost }) => {
   return (
