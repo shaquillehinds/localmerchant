@@ -3,7 +3,7 @@ import form from "../styles/components/form.module.scss";
 import styles from "../styles/components/select-category.module.scss";
 import page from "../styles/components/elements/page.module.scss";
 import font from "../styles/components/elements/fonts.module.scss";
-import { graphqlFetch, graphqlRenderedFetch } from "../functions/api";
+import { graphqlFetch } from "../functions/api";
 import cookies from "browser-cookies";
 
 const CATEGORIES_QUERY = (tag, level) => {
@@ -23,17 +23,8 @@ const CATEGORIES_QUERY = (tag, level) => {
       }`;
   }
 };
-const SAVED_QUERY = `
-query{
-    store {
-        categories {
-            name
-            category
-        }
-    }
-}`;
 
-const SelectCategory = ({ categoryHandler, previousState }) => {
+const SelectCategory = ({ categoryHandler, savedCategories, previousState }) => {
   const [state, setState] = useState({
     levelOne: undefined,
     tagTree: [],
@@ -65,7 +56,6 @@ const SelectCategory = ({ categoryHandler, previousState }) => {
       const loggedIn = cookies.get("loggedIn");
       if (customer === "no" && loggedIn === "yes") {
         const main = (await graphqlFetch(CATEGORIES_QUERY(undefined, "one"))).categories.main;
-        const savedCategories = (await graphqlRenderedFetch(SAVED_QUERY)).store.categories;
         setState((prev) => ({
           ...prev,
           levelOne: Object.keys(main),
@@ -74,7 +64,7 @@ const SelectCategory = ({ categoryHandler, previousState }) => {
         }));
       }
     })();
-  }, []);
+  }, [savedCategories]);
   const getCategories = async (tag, level) => {
     return (await graphqlFetch(CATEGORIES_QUERY(tag, level))).categories.subCategories;
   };

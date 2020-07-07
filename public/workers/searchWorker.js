@@ -1,11 +1,10 @@
 self.addEventListener("message", (e) => {
-  console.log("here");
+  console.log("from search worker");
   const { parentLevel, parent, all, current } = e.data;
   for (let lvl in all) {
     if (parentLevel === lvl) {
       for (let cat in all[lvl]) {
         if (parent === cat) {
-          console.log(cat);
           return self.postMessage({ parent: [parent], current, sub: all[lvl][cat].categories });
         }
       }

@@ -11,8 +11,20 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import cookies from "browser-cookies";
 import SelectCategory from "../../components/SelectCategory";
+import SearchCategory from "../../components/SearchCategory";
+import { graphqlRenderedFetch } from "../../functions/api";
 
 export const NewProductContext = createContext(null);
+
+const SAVED_QUERY = `
+query{
+    store {
+        categories {
+            name
+            category
+        }
+    }
+}`;
 
 const New = () => {
   const router = useRouter();
@@ -29,6 +41,8 @@ const New = () => {
     inStock: true,
     delivery: false,
     selectCategoryState: undefined,
+    savedCategories: [],
+    searchCategory: false,
   });
   useEffect(() => {
     const customer = cookies.get("customer");
@@ -36,6 +50,10 @@ const New = () => {
     if (customer === "yes" || loggedIn === "no") {
       location.href = "/";
     }
+    (async () => {
+      const savedCategories = (await graphqlRenderedFetch(SAVED_QUERY)).store.categories;
+      setState((prev) => ({ ...prev, savedCategories }));
+    })();
   }, []);
   const attributesHandler = (e) => {
     const value = e.target.value;
@@ -62,6 +80,17 @@ const New = () => {
       tags: [...state.tagTree],
       selectCategoryState: state,
     }));
+  };
+  const searchCategoryHandler = (tags) => {
+    console.log(tags);
+    if (tags) {
+      setState((prev) => ({ ...prev, tags, selectCategoryState: "", searchCategory: false }));
+    }
+  };
+  const toggleSearchCategory = () => {
+    state.searchCategory
+      ? setState((prev) => ({ ...prev, searchCategory: false }))
+      : setState((prev) => ({ ...prev, searchCategory: true }));
   };
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -140,18 +169,23 @@ const New = () => {
   const goBackHandler = (e) => {
     setState((prev) => ({ ...prev, tags: [] }));
   };
-  const saveCategoryHandler = () => {
-    state.selectCategoryState.savedCategories.push({
-      name: state.tags[state.tags.length - 1],
-      category: state.tags,
-    });
-    const updates = { categories: state.selectCategoryState.savedCategories };
-    axios({
-      method: "PATCH",
-      url: "/api/store",
-      data: { updates },
-      headers: { Authorization: `Bearer ${localStorage.getItem("JWT")}` },
-    });
+  const saveCategoryHandler = async () => {
+    const saved = state.savedCategories.map((item) => item.name);
+    if (!saved.includes(state.tags[state.tags.length - 1])) {
+      console.log("new");
+      const categories = state.savedCategories;
+      categories.push({ name: state.tags[state.tags.length - 1], category: state.tags });
+      setState((prev) => ({ ...prev, savedCategories: categories }));
+      const updates = { categories };
+      axios({
+        method: "PATCH",
+        url: "/api/store",
+        data: { updates },
+        headers: { Authorization: `Bearer ${localStorage.getItem("JWT")}` },
+      });
+    } else {
+      console.log("Already Added");
+    }
   };
   return (
     <div>
@@ -193,13 +227,29 @@ const New = () => {
             &#8592; Go Back
           </p>
         </div>
-      ) : null}
+      ) : (
+        <div className={font.heading_text_m} style={{ textAlign: "center", marginBottom: "1rem" }}>
+          <button
+            onClick={toggleSearchCategory}
+            className={button.btn_primary}
+            style={{ fontWeight: 600 }}
+          >
+            {!state.searchCategory ? "Find Category" : "Select Category"}
+          </button>
+        </div>
+      )}
       {state.loading ? (
         <div className={page.setup}>
           <div className={loaders.ring__loader}></div>
         </div>
+      ) : state.searchCategory ? (
+        <SearchCategory searchCategoryHandler={searchCategoryHandler} />
       ) : state.tags.length === 0 ? (
-        <SelectCategory categoryHandler={categoryHandler} previousState={state.selectCategoryState} />
+        <SelectCategory
+          savedCategories={state.savedCategories}
+          categoryHandler={categoryHandler}
+          previousState={state.selectCategoryState}
+        />
       ) : state.added ? (
         <div className={page.setup} style={{ paddingTop: "2.5rem" }}>
           <div className={form.form_wide} style={{ maxHeight: "30rem" }}>

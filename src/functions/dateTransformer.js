@@ -125,4 +125,4 @@ const toStorageFormat = ({ days, opening, closing }) => {
   return transformed;
 };
 
-module.exports = { toDayAndTime, toStorageFormat };
+export { toDayAndTime, toStorageFormat };

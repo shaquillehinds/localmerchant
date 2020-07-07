@@ -1,4 +1,5 @@
 self.addEventListener("message", (e) => {
+  console.log("from category worker");
   const { all, category } = e.data;
   let loopBreak = false;
   for (let level in all) {

@@ -2,6 +2,7 @@ import Header from "../components/Header";
 import { useEffect, useState, createContext } from "react";
 import { useRouter } from "next/router";
 import { searchProducts, graphqlFetch } from "../functions/api";
+import setCategories from "../functions/setCategories";
 import ProductCard from "../components/ProductCard";
 import transformNumber from "../functions/numberTransformer";
 import Qs from "qs";
@@ -16,13 +17,6 @@ const CATEGORIES_QUERY = (level, category) => {
       }
     }`;
 };
-const ALL_CATEGORIES_QUERY = `
-  query{
-    categories (category: "category"){
-      main
-    }
-  }
-`;
 
 export const ProductSearchContext = createContext(null);
 
@@ -39,7 +33,6 @@ const Product = () => {
   });
   const router = useRouter();
   useEffect(() => {
-    const initTimestamp = new Date().getTime();
     let tail = true;
     (async () => {
       const products = await searchProducts(state.page);
@@ -59,33 +52,29 @@ const Product = () => {
       const levels = localStorage.getItem("levels");
       if (!levels) {
         try {
-          const all = (await graphqlFetch(ALL_CATEGORIES_QUERY)).categories.main.allLevels;
-          const tails = (await graphqlFetch(ALL_CATEGORIES_QUERY)).categories.main.tails;
-          localStorage.setItem("allLevels", JSON.stringify(all));
-          localStorage.setItem("tails", JSON.stringify(tails));
-          localStorage.setItem("levels", "yes");
+          await setCategories();
         } catch (e) {
           console.log(e);
         }
       }
+
       if (key === "category" && !level) {
         const categoryWorker = new Worker("./workers/categoryWorker.js");
         const categoryTailWorker = new Worker("./workers/categoryTailWorker.js");
         categoryWorker.addEventListener("message", (e) => {
           const { currentLevel, sub, parent } = e.data;
           const finishTimestamp = new Date().getTime();
-          console.log(`time: ${finishTimestamp - initTimestamp}`);
+          console.log(`category time: ${finishTimestamp - initTimestamp}`);
           setState((prev) => ({ ...prev, sub, parent, current: "" }));
           tail = false;
-          console.log(currentLevel, sub, parent);
         });
         categoryTailWorker.addEventListener("message", (e) => {
           const { parent } = e.data;
           const finishTimestamp = new Date().getTime();
-          console.log(`time: ${finishTimestamp - initTimestamp}`);
+          console.log(`tail time: ${finishTimestamp - initTimestamp}`);
           if (tail) setState((prev) => ({ ...prev, parent, sub: [] }));
-          console.log(parent);
         });
+        let initTimestamp = new Date().getTime();
         categoryWorker.postMessage({
           category: query,
           all: JSON.parse(localStorage.getItem("allLevels")),
@@ -104,14 +93,13 @@ const Product = () => {
           let activated = false;
           searchWorker.addEventListener("message", (e) => {
             const { parent, sub, current } = e.data;
-            console.log(sub, parent, current);
             const finishTimestamp = new Date().getTime();
-            console.log(`time: ${finishTimestamp - initTimestamp}`);
+            console.log(`search time: ${finishTimestamp - initTimestamp}`);
             setState((prev) => ({ ...prev, parent, sub, current }));
           });
-
+          let initTimestamp = new Date().getTime();
           tags.forEach((tag, index, thisArray) => {
-            if (tag.toLowerCase() === search.toLowerCase() && !activated) {
+            if (!activated && tag.toLowerCase() === search.toLowerCase()) {
               searchWorker.postMessage({
                 parent: thisArray[index - 2],
                 parentLevel: transformNumber(index - 1),
