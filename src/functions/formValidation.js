@@ -185,7 +185,7 @@ const validateAll = async (fields, state, mode, type, setState) => {
             ...prev,
             tip: { email: res.data.email },
           }));
-        } else if (res.data.success) {
+        } else if (res.status === 202) {
           return "success";
         }
       } catch (e) {

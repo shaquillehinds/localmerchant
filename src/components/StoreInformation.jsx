@@ -47,7 +47,7 @@ const StoreInformation = ({ actionHandler }) => {
     update[i] = value;
     setState((prev) => ({ ...prev, updatedInfo: { ...prev.updatedInfo, ...update } }));
   };
-  const saveHandler = () => {
+  const saveHandler = async () => {
     const isUpdated = Object.keys(state.updatedInfo).every(
       (field) => state.updatedInfo[field] === state.initialInfo[field]
     );
@@ -60,7 +60,7 @@ const StoreInformation = ({ actionHandler }) => {
       );
       console.log(updatedFields);
       updatedFields.forEach((field) => (validateState[field] = state.updatedInfo[field]));
-      const validated = validateAll(updatedFields, validateState, "update", "edit", setState);
+      const validated = await validateAll(updatedFields, validateState, "update", "edit", setState);
       if (validated === "success") actionHandler({ action: "Done" });
     }
   };

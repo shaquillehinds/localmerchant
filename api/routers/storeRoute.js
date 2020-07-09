@@ -64,6 +64,7 @@ router.patch("/", auth, upload.array(), async (req, res) => {
     "phone",
     "phone2",
     "image",
+    "parish",
     "industry",
     "address",
     "password",
