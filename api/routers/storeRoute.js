@@ -62,6 +62,7 @@ router.patch("/", auth, upload.array(), async (req, res) => {
     "storeURL",
     "email",
     "phone",
+    "phone2",
     "image",
     "industry",
     "address",
@@ -73,6 +74,26 @@ router.patch("/", auth, upload.array(), async (req, res) => {
   if (!valid) {
     return res.status(400).send("Invalid update request");
   }
+  if (updates.includes("storeName")) {
+    if (req.body.updates.storeName === req.user.storeName) {
+      null;
+    } else {
+      const nameExists = await Store.findOne({ storeName: req.body.updates.storeName });
+      if (nameExists) {
+        return res.send({ storeName: "Store name already exists." });
+      }
+    }
+  }
+  if (updates.includes("email")) {
+    if (req.body.updates.email === req.user.email) {
+      null;
+    } else {
+      const emailExists = await Store.findOne({ email: req.body.updates.email });
+      if (emailExists) {
+        return res.send({ email: "This email is already in use." });
+      }
+    }
+  }
   try {
     updates.forEach((update) => (req.user[update] = req.body.updates[update]));
     if (req.files) {
@@ -81,7 +102,7 @@ router.patch("/", auth, upload.array(), async (req, res) => {
       }
     }
     await req.user.save();
-    res.status(202).send(req.user);
+    res.status(202).send({ success: true });
   } catch (e) {
     console.log(e);
     res.status(400).send(e);

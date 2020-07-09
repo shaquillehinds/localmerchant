@@ -72,9 +72,12 @@ const StoreSchema = new Schema(
       minlength: 7,
       required: true,
     },
-    industry: {
+    phone2: {
+      type: Number,
+      minlength: 7,
+    },
+    storeType: {
       type: String,
-      required: true,
       trim: true,
     },
     rank: {
@@ -156,6 +159,7 @@ StoreSchema.methods.toJSON = function () {
     image,
     email,
     phone,
+    phone2,
     industry,
     address,
     coord,
@@ -170,6 +174,7 @@ StoreSchema.methods.toJSON = function () {
     image,
     email,
     phone,
+    phone2,
     industry,
     address,
     coord,

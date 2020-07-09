@@ -18,6 +18,7 @@ const StoreFields = {
   image: { type: GraphQLString },
   email: { type: GraphQLString },
   phone: { type: GraphQLInt },
+  phone2: { type: GraphQLInt },
   industry: { type: GraphQLString },
   address: { type: GraphQLString },
   parish: { type: GraphQLString },

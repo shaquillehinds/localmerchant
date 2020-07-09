@@ -124,11 +124,13 @@
   }
   &__result {
     height: 3rem;
+    line-height: 1.5;
     font-size: var(--font-m);
     padding: 0.4rem 2rem;
     width: 100%;
     background-color: rgba(255, 255, 255, 0.9);
     color: var(--color-black);
+    overflow: hidden;
     cursor: pointer;
 
     &_name {

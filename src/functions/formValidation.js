@@ -43,7 +43,14 @@ const validateAll = async (fields, state, mode, type, setState) => {
       }
       return true;
     } else if (fieldName === "password" || fieldName === "address") {
-      if (!(state[fieldName].length > 6)) {
+      if (mode === "update" && state[fieldName].length !== 0 && state[fieldName].length < 7) {
+        let tip = {};
+        fieldName === "password"
+          ? (tip[fieldName] = "7 character or more")
+          : (tip[fieldName] = "*required");
+        setState((prev) => ({ ...prev, tip }));
+        return false;
+      } else if (!(state[fieldName].length > 6)) {
         let tip = {};
         fieldName === "password"
           ? (tip[fieldName] = "7 character or more")
@@ -54,6 +61,15 @@ const validateAll = async (fields, state, mode, type, setState) => {
       return true;
     } else if (fieldName === "phone") {
       if (!validator.isMobilePhone(state[fieldName])) {
+        setState((prev) => ({
+          ...prev,
+          tip: { phone: "Numbers only! 7 digits +" },
+        }));
+        return false;
+      }
+      return true;
+    } else if (fieldName === "phone2") {
+      if (state[fieldName] !== null && !validator.isMobilePhone(state[fieldName])) {
         setState((prev) => ({
           ...prev,
           tip: { phone: "Numbers only! 7 digits +" },
@@ -133,6 +149,47 @@ const validateAll = async (fields, state, mode, type, setState) => {
           location.href = "/";
         }
       } catch (e) {
+        setState((prev) => ({
+          ...prev,
+          tip: { email: "Invalid Email or Password" },
+        }));
+      }
+    } else if ((type = "edit")) {
+      try {
+        const res = await axios({
+          url: `/api/store`,
+          method: "patch",
+          data: {
+            updates: {
+              firstName: state.firstName,
+              lastName: state.lastName,
+              storeName: state.storeName,
+              address: state.address,
+              phone: state.phone,
+              phone2: state.phone2,
+              industry: state.industry,
+              parish: state.parish,
+              email: state.email,
+              password: state.password,
+            },
+          },
+          headers: { Authorization: `Bearer ${localStorage.getItem("JWT")}` },
+        });
+        if (res.data.storeName) {
+          setState((prev) => ({
+            ...prev,
+            tip: { storeName: res.data.storeName },
+          }));
+        } else if (res.data.email) {
+          setState((prev) => ({
+            ...prev,
+            tip: { email: res.data.email },
+          }));
+        } else if (res.data.success) {
+          return "success";
+        }
+      } catch (e) {
+        console.log(e);
         setState((prev) => ({
           ...prev,
           tip: { email: "Invalid Email or Password" },
